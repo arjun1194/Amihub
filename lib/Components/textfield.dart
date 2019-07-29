@@ -1,37 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:amihub/Theme/theme.dart';
+import 'package:flutter/widgets.dart';
 
-
-class MyTextField extends StatelessWidget {
-  MyTextField(this.hintText,this.keyboardType,this.obscureText);
-  final hintText;
+class MyTextField extends StatefulWidget {
+  final String hintText;
   final TextInputType keyboardType;
   final bool obscureText;
-  final TextEditingController textEditingController = TextEditingController();
+  final TextEditingController textEditingController;
 
-  String getText(){
-    return textEditingController.text;
+  MyTextField(
+      {Key key, this.hintText, this.keyboardType, this.obscureText, this.textEditingController})
+      : super(key: key);
 
-  }
+  @override
+  _MyTextFieldState createState() => _MyTextFieldState();
+}
 
+class _MyTextFieldState extends State<MyTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 32, right: 32, bottom: 16),
       child: TextField(
-        keyboardType: TextInputType.text,
+        keyboardType: widget.keyboardType,
         autofocus: false,
-        obscureText: obscureText,
+        obscureText: widget.obscureText,
         decoration: InputDecoration(
-            hintText: hintText,
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: greyMain)),
-            focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: lightGreen))),
-        controller: textEditingController,
+            hintText: widget.hintText,
+            border: OutlineInputBorder(borderSide: BorderSide(color: greyMain)),
+            focusedBorder:
+                OutlineInputBorder(borderSide: BorderSide(color: lightGreen))),
+        controller:widget.textEditingController ,
       ),
     );
   }
-
-
 }
+
+//this.hintText,this.keyboardType,this.obscureText

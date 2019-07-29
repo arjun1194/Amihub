@@ -14,6 +14,6 @@ class CaptchaPage extends StatefulWidget {
 class _CaptchaPageState extends State<CaptchaPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Container(color: Colors.lightGreen,width:double.infinity,child: Center(child: Text('Username= ${widget.username} \n Password = ${widget.password}'),),)));
+    return Scaffold(body: Center(child: Container(color:Colors.white,width:double.infinity,child: Center(child: Text('Username= ${widget.username} \n Password = ${widget.password}'),),)));
   }
 }

@@ -20,4 +20,4 @@ const fontSplashScreen = "Roboto";
 
 //const texts
 
-const textSplashScreen = "Amihub";
+const appTitle = "Amihub";
