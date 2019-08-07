@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:amihub/Theme/theme.dart';
 
+//TODO:( Title text )add it in Components without hardCoding
 
 class LoginText extends StatelessWidget {
   @override
@@ -7,8 +9,8 @@ class LoginText extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Text(
-        "Login to Amihub",
-        style: TextStyle(fontSize: 30),
+        "Login",
+        style: headingStyle,
       ),
     );
   }

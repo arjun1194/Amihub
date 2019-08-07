@@ -22,11 +22,21 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
+
   cupertino_icons: ^0.1.2
+  flutter_webview_plugin: ^0.3.5
+  dio: 2.1.0
+  shared_preferences: ^0.5.3+4
+  http_interceptor: ^0.0.3
+
+
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+
 
 
 # For information on the generic Dart part of this file, see the
@@ -43,6 +53,24 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/grumpy1.png
+    - assets/dog1.jpg
+    - assets/amihub.png
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: fonts/Raleway-Black.ttf
+        - asset: fonts/Raleway-BlackItalic.ttf
+        - asset: fonts/Raleway-Bold.ttf
+        - asset: fonts/Raleway-BoldItalic.ttf
+        - asset: fonts/Raleway-Light.ttf
+        - asset: fonts/Raleway-LightItalic.ttf
+        - asset: fonts/Raleway-Medium.ttf
+        - asset: fonts/Raleway-MediumItalic.ttf
+        - asset: fonts/Raleway-Regular.ttf
+        - asset: fonts/Raleway-Thin.ttf
+        - asset: fonts/Raleway-ThinItalic.ttf
+          style: italic
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

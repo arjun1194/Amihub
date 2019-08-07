@@ -1,9 +1,12 @@
 import 'package:amihub/Components/textfield.dart';
 import 'package:amihub/Login/login-icon.dart';
 import 'package:amihub/Login/login-inputs.dart';
+import 'package:amihub/Login/login-remember-forgot.dart';
 import 'package:amihub/Login/login-text.dart';
 import 'package:amihub/Theme/theme.dart';
+import 'package:amihub/ViewModels/login_model.dart';
 import 'package:amihub/captcha.dart';
+import 'package:amihub/forgot_password.dart';
 import 'package:amihub/unnamed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,32 +46,40 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void login(String username,String password){
-    var route = MaterialPageRoute(builder: (BuildContext context)=>CaptchaPage(username:username,password: password,));
-    Navigator.push(context, route);
+  void login(LoginModel loginModel){
+
+    if(username!=null && password!=null) {
+      Navigator.pushNamedAndRemoveUntil(context,'/captcha',(Route<dynamic> route) => false,arguments: loginModel);
+    }
+  }
+  void forgotPassword(){
+    Navigator.pushNamedAndRemoveUntil(context,'/Forgot',(Route<dynamic> route) => false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding:false,
         body: Center(
-      child: Container(color: Colors.white,
-                child: Column(
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             LoginIcon(),
             LoginText(),
             LoginInputs(
-              username: username,
-              password: password,
+      username: username,
+      password: password,
             ),
+            LoginRememberForgot(forgotOnPressed: forgotPassword,),
             LoginButton(
-              onPressed: (){print(usernameController.text);print(passwordController.text);login(usernameController.text,passwordController.text);},
+              onPressed: (){
+                  LoginModel loginModel = LoginModel(usernameController.text,passwordController.text);
+                  login(loginModel);
+                },
             ),
           ],
         ),
-      ),
     ),);
   }
 }
