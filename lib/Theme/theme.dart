@@ -1,34 +1,32 @@
 //themedata : all the theme related information is in this file
 import 'package:flutter/material.dart';
 
-
 //colors
-
 
 const greenMain = Color(0xFF203782);
 const fontMain = Color(0xFF0F100F);
-const appbackground = Color(0xFFA3B9A6);
+const appBackground = Color(0xFFA3B9A6);
 const whiteMain = Color(0xFFE0F3E8);
 const greyMain = Color(0xFFA3B9A6);
 const lightGreen = Color(0xFF203782);
 const lighterGreen = Color(0xFFa1d1ba);
 
 //const texts
-const appTitle = "Amihub";
+const appTitle = 'Amihub';
 
 //font-family
-const fontSplashScreen = "Roboto";
+const fontSplashScreen = 'Roboto';
 
 //text styles
-const headingStyle =TextStyle(fontSize: 40,fontFamily: 'Raleway',fontWeight:FontWeight.bold );
-const buttonTextStyle = TextStyle(color: Colors.white,fontFamily: 'Raleway');
+const headingStyle =
+    TextStyle(fontSize: 40, fontFamily: 'Raleway', fontWeight: FontWeight.bold);
+const buttonTextStyle = TextStyle(color: Colors.white, fontFamily: 'Raleway');
 
 //api end point
- var amihubUrl = "http://192.168.1.154:8080";
+var amihubUrl = 'http://localhost:8080';
+
 //Webview url
-var webviewUrl = "https://student.amizone.net";
-
-
+var webViewUrl = 'https://student.amizone.net';
 
 //javascript-code
 var js_removeWebviewBackground =
@@ -37,4 +35,5 @@ var js_setWebviewBackgroundColor =
     "document.getElementsByTagName('body')[0].style.backgroundColor = '#fafafa';";
 var js_setWebviewCenter =
     "document.getElementById('login-box').style='position:absolute !important;top:300px !important;left:25% !important';width:200px !important; ";
-var js_getCaptchaResponse = "document.getElementById('g-recaptcha-response').value;";
+var js_getCaptchaResponse =
+    "document.getElementById('g-recaptcha-response').value;";

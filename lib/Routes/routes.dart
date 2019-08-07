@@ -4,15 +4,13 @@ import 'package:amihub/home.dart';
 import 'package:amihub/load.dart';
 import 'package:amihub/login.dart';
 import 'package:amihub/main.dart';
-import 'package:amihub/unnamed.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart' as prefix0;
 
 Map<String, WidgetBuilder> routes = {
-  '/': (BuildContext context) => HomePage(),
+  '/': (BuildContext context) => LoginPage(),
   '/home': (BuildContext context) => MyApp(),
   '/captcha': (BuildContext context) => CaptchaPage(),
   '/forgotPassword': (BuildContext context) => ForgotPassword(),
   '/load': (BuildContext context) => LoadApi(),
-  '/homepage':(BuildContext context)=> HomePage(),
+  '/homepage': (BuildContext context) => HomePage(),
 };

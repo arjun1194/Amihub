@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var currentIndex = 0;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
   //LoadViewModel loadViewModel = ModalRoute.of(context).settings.arguments;
 
   SharedPreferences sharedPreferences;
@@ -33,16 +34,13 @@ class _HomePageState extends State<HomePage> {
     BottomNavItem("", Icon(Icons.home), greenMain, "Home").bottomNavItem,
   ];
 
-  onMenuClick(){
+  onMenuClick() {}
 
-  }
   @override
   Widget build(BuildContext context) {
-
-
-    return Scaffold(key: _scaffoldKey,
+    return Scaffold(
+        key: _scaffoldKey,
         drawer: Drawer(
-
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the drawer if there isn't enough vertical
           // space to fit everything.
@@ -77,7 +75,9 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-        appBar: HomePageAppbar.getAppBar((){_scaffoldKey.currentState.openDrawer();}),
+        appBar: HomePageAppbar.getAppBar(() {
+          _scaffoldKey.currentState.openDrawer();
+        }),
         bottomNavigationBar: BottomNavigationBar(
           selectedIconTheme: IconThemeData(color: lightGreen),
           selectedLabelStyle: TextStyle(color: lightGreen),

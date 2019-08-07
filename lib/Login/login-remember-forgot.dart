@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class LoginRememberForgot extends StatefulWidget {
   final VoidCallback forgotOnPressed;
 
-  LoginRememberForgot({Key key,this.forgotOnPressed}):super(key:key);
+  LoginRememberForgot({Key key, this.forgotOnPressed}) : super(key: key);
 
   @override
   _LoginRememberForgotState createState() => _LoginRememberForgotState();
@@ -18,7 +18,7 @@ class _LoginRememberForgotState extends State<LoginRememberForgot> {
     return Padding(
       padding: const EdgeInsets.only(left: 8),
       child: Padding(
-        padding: const EdgeInsets.only(left:8.0,right: 8.0),
+        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
         child: Row(
           children: <Widget>[
             Checkbox(
@@ -30,7 +30,15 @@ class _LoginRememberForgotState extends State<LoginRememberForgot> {
               },
             ),
             Expanded(child: Text("Remember me")),
-            FlatButton(child: Text("Forgot Password?",style: TextStyle(color: lightGreen),),onPressed: (){widget.forgotOnPressed();},)
+            FlatButton(
+              child: Text(
+                "Forgot Password?",
+                style: TextStyle(color: lightGreen),
+              ),
+              onPressed: () {
+                widget.forgotOnPressed();
+              },
+            )
           ],
         ),
       ),
