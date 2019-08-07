@@ -15,7 +15,7 @@ class BottomNavItem {
        this.text = text;
        this.icon = icon;
        this.activeIconText = activeIconText;
-       this.bottomNavItem = BottomNavigationBarItem(title:Text(text),icon: Icon(Icons.home),);
+       this.bottomNavItem = BottomNavigationBarItem(title:Text(text,style: TextStyle(color: Colors.black54),),icon: icon  );
 
   }
 
