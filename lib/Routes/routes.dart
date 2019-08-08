@@ -6,10 +6,12 @@ import 'package:amihub/login.dart';
 import 'package:amihub/main.dart';
 import 'package:flutter/material.dart';
 
+import '../captcha_page.dart';
+
 Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => LoginPage(),
   '/home': (BuildContext context) => MyApp(),
-  '/captcha': (BuildContext context) => CaptchaPage(),
+  '/captcha': (BuildContext context) => CaptchaPageNew(),
   '/forgotPassword': (BuildContext context) => ForgotPassword(),
   '/load': (BuildContext context) => LoadApi(),
   '/homepage': (BuildContext context) => HomePage(),

@@ -22,6 +22,7 @@ class _CaptchaPageState extends State<CaptchaPage> {
 
   @override
   void initState() {
+    super.initState();
     _onStateChanged =
         flutterWebViewPlugin.onStateChanged.listen((WebViewStateChanged state) {
       if (mounted) {
@@ -40,7 +41,7 @@ class _CaptchaPageState extends State<CaptchaPage> {
         flutterWebViewPlugin.launch(
           webViewUrl,
           hidden: false,
-          rect: new Rect.fromLTWH(0, appbarHeight + 32, width, height * 0.7),
+          rect: Rect.fromLTWH(width/2 - 120, width*0.5, 240, 100)
         );
       });
     }
@@ -48,10 +49,10 @@ class _CaptchaPageState extends State<CaptchaPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
     flutterWebViewPlugin.close();
     flutterWebViewPlugin.dispose();
+    super.dispose();
+
   }
 
   getCaptchaResponse(String username, String password) async {
@@ -79,33 +80,23 @@ class _CaptchaPageState extends State<CaptchaPage> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
     final LoginModel args = ModalRoute.of(context).settings.arguments;
-
     return Scaffold(
-        appBar: myAppbar,
-        body: Center(
-            child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-              ),
-              Stack(
-                alignment: Alignment.bottomCenter,
-                children: <Widget>[
-                  RaisedButton(
-                    child: Text("Next"),
-                    onPressed: () {
-                      nextPage(args.username, args.password);
-                    },
-                    color: lightGreen,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        )));
+      body: Padding(
+        padding: EdgeInsets.only(),
+        child: RaisedButton(
+          child: Text("LOGIN"),
+          color: Colors.blueGrey[400],
+          splashColor: Colors.blueGrey[200],
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0)),
+          textColor: Colors.white,
+          highlightElevation: 5.0,
+          elevation: 7.0,
+          onPressed: () {},
+        ),
+      ),
+    );
   }
 }

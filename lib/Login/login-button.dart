@@ -8,23 +8,20 @@ class LoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 32, right: 32),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-              child: RaisedButton(
-            color: lightGreen,
-            child: Text(
-              " L O G I N ",
-              style: buttonTextStyle,
-            ),
-            onPressed: () {
-              onPressed();
-            },
-          )),
-        ],
-      ),
+    return Row(
+      children: <Widget>[
+        RaisedButton(
+          child: Text("LOGIN",),
+          color: Colors.blueGrey[400],
+          splashColor: Colors.blueGrey[200],
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0)),
+          textColor: Colors.white,
+          highlightElevation: 5.0,
+          elevation: 7.0,
+          onPressed: () {},
+        ),
+      ],
     );
   }
 }

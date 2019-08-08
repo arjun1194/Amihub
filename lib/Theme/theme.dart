@@ -34,6 +34,6 @@ var js_removeWebviewBackground =
 var js_setWebviewBackgroundColor =
     "document.getElementsByTagName('body')[0].style.backgroundColor = '#fafafa';";
 var js_setWebviewCenter =
-    "document.getElementById('login-box').style='position:absolute !important;top:300px !important;left:25% !important';width:200px !important; ";
+    "document.getElementById('login-box').style='position:absolute !important;top:300px !important;left:25% !important;width:200px !important; '";
 var js_getCaptchaResponse =
     "document.getElementById('g-recaptcha-response').value;";
