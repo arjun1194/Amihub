@@ -22,24 +22,30 @@ class _HomePageDrawerState extends State<HomePageDrawer> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Color(0xfffafafa)),
-                    height: 64,
-                    width: 64,
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          "https://amizone.net/amizone/Images/Signatures/5722381_P.png"),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: Color(0xfffafafa)),
+                      height: 64,
+                      width: 64,
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                            "https://amizone.net/amizone/Images/Signatures/5722381_P.png"),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("Arjun Bhardwaj",style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: "Raleway",fontWeight: FontWeight.bold),),
-                  )
-
-                ],),
-
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Arjun Bhardwaj",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
             decoration: BoxDecoration(

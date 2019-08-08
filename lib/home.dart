@@ -13,6 +13,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   var currentIndex = 0;
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
+
   //LoadViewModel loadViewModel = ModalRoute.of(context).settings.arguments;
 
   SharedPreferences sharedPreferences;
@@ -29,28 +30,56 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<BottomNavigationBarItem> list = [
-    BottomNavItem("home", Icon(Icons.home,), greenMain, "Home").bottomNavItem,
-    BottomNavItem("academics", Icon(Icons.school,), greenMain, "Home").bottomNavItem,
-    BottomNavItem("chat", Icon(Icons.question_answer,), greenMain, "Home").bottomNavItem,
-    BottomNavItem("profile", Icon(Icons.person,), greenMain, "Home").bottomNavItem,
+    BottomNavItem(
+            "Home",
+            Icon(
+              Icons.home,
+            ),
+            greenMain,
+            "Home")
+        .bottomNavItem,
+    BottomNavItem(
+            "Academics",
+            Icon(
+              Icons.school,
+            ),
+            greenMain,
+            "Home")
+        .bottomNavItem,
+    BottomNavItem(
+            "Chat",
+            Icon(
+              Icons.question_answer,
+            ),
+            greenMain,
+            "Home")
+        .bottomNavItem,
+    BottomNavItem(
+            "Profile",
+            Icon(
+              Icons.person,
+            ),
+            greenMain,
+            "Home")
+        .bottomNavItem,
   ];
 
-  onMenuClick(){
+  onMenuClick() {}
 
-  }
   @override
   Widget build(BuildContext context) {
-
-
-    return Scaffold(key: _scaffoldKey,
+    return Scaffold(
+        key: _scaffoldKey,
         drawer: HomePageDrawer(),
-        appBar: HomePageAppbar.getAppBar((){_scaffoldKey.currentState.openDrawer();}),
+        appBar: HomePageAppbar.getAppBar(() {
+          _scaffoldKey.currentState.openDrawer();
+        }),
         bottomNavigationBar: BottomNavigationBar(
           unselectedItemColor: Colors.grey,
           selectedIconTheme: IconThemeData(color: lightGreen),
           currentIndex: currentIndex,
           items: list,
-          onTap: (int i) {
+          onTap: (i) {
             setCurrent(i);
           },
           selectedItemColor: Colors.blue,
