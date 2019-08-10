@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import '../captcha_page.dart';
 
 Map<String, WidgetBuilder> routes = {
-  '/': (BuildContext context) => LoginPage(),
+  '/': (BuildContext context) => HomePage(),
   '/home': (BuildContext context) => MyApp(),
   '/captcha': (BuildContext context) => CaptchaPageNew(),
   '/forgotPassword': (BuildContext context) => ForgotPassword(),

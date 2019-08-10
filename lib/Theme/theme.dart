@@ -11,6 +11,16 @@ const greyMain = Color(0xFFA3B9A6);
 const lightGreen = Color(0xFF203782);
 const lighterGreen = Color(0xFFa1d1ba);
 
+
+
+const cardColor1= Color(0xFFC2BBD8);
+const cardColor2 = Color(0xFF93B198);
+const cardColor3 = Color(0xFFB1AE8F);
+const cardColor4 = Color(0xFFB19A9A);
+const cardColor5 = Color(0xFF8391B1);
+const cardColor6 = Color(0xFF83B1A4);
+
+
 //const texts
 const appTitle = 'Amihub';
 
@@ -23,7 +33,7 @@ const headingStyle =
 const buttonTextStyle = TextStyle(color: Colors.white, fontFamily: 'Raleway');
 
 //api end point
-var amihubUrl = 'http://localhost:8080';
+var amihubUrl = 'http://api.avirias.me:8080';
 
 //Webview url
 var webViewUrl = 'https://student.amizone.net';

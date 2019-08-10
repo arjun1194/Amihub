@@ -1,9 +1,20 @@
+import 'dart:convert';
+
 import 'package:amihub/Components/bottom_navigation_item.dart';
 import 'package:amihub/Home/home_appbar.dart';
+import 'package:amihub/Home/home_future_builder.dart';
 import 'package:amihub/Home/navigation_drawer.dart';
+import 'package:amihub/Home/today_class_card.dart';
+import 'package:amihub/Repository/amizone_repository.dart';
 import 'package:amihub/Theme/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/widgets.dart';
+
+import 'ViewModels/today_class_model.dart';
+
+
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,15 +23,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var currentIndex = 0;
+  var jsonData="asd";
+  AmizoneRepository amizoneRepository = AmizoneRepository();
+
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey();
-
-  //LoadViewModel loadViewModel = ModalRoute.of(context).settings.arguments;
-
-  SharedPreferences sharedPreferences;
 
   @override
   void initState() {
     super.initState();
+      //@test for getTodayClass()
+      int username = 5722381;
   }
 
   setCurrent(int i) {
@@ -64,8 +76,6 @@ class _HomePageState extends State<HomePage> {
         .bottomNavItem,
   ];
 
-  onMenuClick() {}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +93,31 @@ class _HomePageState extends State<HomePage> {
             setCurrent(i);
           },
           selectedItemColor: Colors.blue,
-        ));
+        ),
+      body:Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          scrollDirection: Axis.vertical,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Todays Classes",style: TextStyle(fontFamily: "Raleway",fontSize: 20),),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TodayClassBuilder(),
+            )
+          ],),
+      ) ,
+    );
   }
+
+
+
+
+
+
+
+
+
 }
