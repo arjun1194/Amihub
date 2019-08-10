@@ -24,29 +24,20 @@ class _CaptchaPageNewState extends State<CaptchaPageNew> {
     webViewController
         .evaluateJavascript(js_removeWebviewBackground)
         .then((value) {
-      webViewController
-          .evaluateJavascript(js_setWebviewBackgroundColor)
-          .then((value) {
-        webViewController.evaluateJavascript(js_setWebviewCenter);
-      });
+      webViewController.evaluateJavascript(js_setWebviewCenter);
     });
   }
 
   _webView() {
     return WebView(
         initialUrl: "https://student.amizone.net",
+        debuggingEnabled: true,
         javascriptMode: JavascriptMode.unrestricted,
-        javascriptChannels: [
-          JavascriptChannel(
-              name: "fuck",
-              onMessageReceived: (message) {
-                print("Again Fuck");
-              })
-        ].toSet(),
         onWebViewCreated: (webViewController) {
           _controller = webViewController;
         },
         onPageFinished: (url) {
+          _clearWebsite(_controller, context);
           setState(() {
             isRendered = true;
           });
@@ -55,8 +46,6 @@ class _CaptchaPageNewState extends State<CaptchaPageNew> {
               _stackIndex = 0;
             });
           });
-
-          _clearWebsite(_controller, context);
         });
   }
 
@@ -73,6 +62,8 @@ class _CaptchaPageNewState extends State<CaptchaPageNew> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var statusBarHeight = MediaQuery.of(context).padding.top;
     final LoginModel args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
         key: _scaffoldKey,
@@ -83,13 +74,16 @@ class _CaptchaPageNewState extends State<CaptchaPageNew> {
               children: <Widget>[
                 Align(
                   alignment: Alignment.center,
-                  child: _webView(),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: statusBarHeight),
+                    child: _webView(),
+                  ),
                 ),
                 isRendered
                     ? Align(
                         alignment: Alignment.bottomCenter,
                         child: Padding(
-                          padding: EdgeInsets.only(bottom: 100),
+                          padding: EdgeInsets.only(bottom: width * 0.15),
                           child: RaisedButton(
                             child: Text("LOGIN"),
                             color: Colors.blueGrey[400],
@@ -112,6 +106,12 @@ class _CaptchaPageNewState extends State<CaptchaPageNew> {
                               } else {
                                 _scaffoldKey.currentState.showSnackBar(SnackBar(
                                   content: Text("Please slove the recaptcha"),
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: Duration(milliseconds: 1500),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8)),
+                                  elevation: 5,
+                                  backgroundColor: Color(0xff1F1B24),
                                 ));
                               }
                             },

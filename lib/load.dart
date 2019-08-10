@@ -10,21 +10,17 @@ class LoadApi extends StatefulWidget {
   _LoadApiState createState() => _LoadApiState();
 }
 
-
-
 class _LoadApiState extends State<LoadApi> {
-
-  isLoginSuccessful(String username,String password,String gcaptcha,BuildContext context){
-    loginWithUsername(username, password, gcaptcha).then((Response resp){
-        if(resp.statusCode==201){
-          //login was successful so get JWT as a response body and use it to fetch other API's
-          //save the JWT in sharedPreferences
-          //Navigator.pushNamedRemoveUntil(/home);
-        }
+  isLoginSuccessful(
+      String username, String password, String gcaptcha, BuildContext context) {
+    loginWithUsername(username, password, gcaptcha).then((Response resp) {
+      if (resp.statusCode == 201) {
+        //login was successful so get JWT as a response body and use it to fetch other API's
+        //save the JWT in sharedPreferences
+        //Navigator.pushNamedRemoveUntil(/home);
+      }
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -69,19 +65,16 @@ class _LoadApiState extends State<LoadApi> {
     );
   }
 
-
-
   @override
   void didUpdateWidget(LoadApi oldWidget) {
     print("somthing changed!!!!!!!!!!!!!!!");
   }
 
-  Future<Response> loginWithUsername(String username,String password,String gcaptcha) {
+  Future<Response> loginWithUsername(
+      String username, String password, String gcaptcha) {
     Client client = Client();
-    String url = amihubUrl+"/login?username=$username&password=$password&captchaResponse=$gcaptcha";
+    String url = amihubUrl +
+        "/login?username=$username&password=$password&captchaResponse=$gcaptcha";
     return client.get(url);
-
   }
-
-
 }

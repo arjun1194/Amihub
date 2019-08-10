@@ -23,7 +23,7 @@ const headingStyle =
 const buttonTextStyle = TextStyle(color: Colors.white, fontFamily: 'Raleway');
 
 //api end point
-var amihubUrl = 'http://localhost:8080';
+var amihubUrl = 'http://api.avirias.me:8080';
 
 //Webview url
 var webViewUrl = 'https://student.amizone.net';
@@ -34,6 +34,6 @@ var js_removeWebviewBackground =
 var js_setWebviewBackgroundColor =
     "document.getElementsByTagName('body')[0].style.backgroundColor = '#fafafa';";
 var js_setWebviewCenter =
-    "document.getElementById('login-box').style='position:absolute !important;top:300px !important;left:25% !important;width:200px !important; '";
+    "document.getElementById('login-box').style='position:absolute !important;top:150px !important;left:25% !important;width:60% !important; '";
 var js_getCaptchaResponse =
     "document.getElementById('g-recaptcha-response').value;";
