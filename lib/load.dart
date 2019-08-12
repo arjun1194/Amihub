@@ -4,6 +4,7 @@ import 'package:amihub/ViewModels/captcha_model.dart';
 import 'package:amihub/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoadApi extends StatefulWidget {
   @override
@@ -11,16 +12,7 @@ class LoadApi extends StatefulWidget {
 }
 
 class _LoadApiState extends State<LoadApi> {
-  isLoginSuccessful(
-      String username, String password, String gcaptcha, BuildContext context) {
-    loginWithUsername(username, password, gcaptcha).then((Response resp) {
-      if (resp.statusCode == 201) {
-        //login was successful so get JWT as a response body and use it to fetch other API's
-        //save the JWT in sharedPreferences
-        //Navigator.pushNamedRemoveUntil(/home);
-      }
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,24 +22,25 @@ class _LoadApiState extends State<LoadApi> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          FutureBuilder<String>(
-            future: isLoginSuccessful(
-                args.username, args.password, args.captcha, context),
+          FutureBuilder<Response>(
+            future: loginWithUsername(args.username, args.password, args.captcha),
             // a previously-obtained Future<String> or null
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<Response> snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
                   return Center(
-                      child: Text(
-                    'Awaiting result...',
-                    style: headingStyle,
-                  ));
+                      child: CircularProgressIndicator());
                 case ConnectionState.done:
                   if (snapshot.hasError)
                     return Center(child: Text('Error: ${snapshot.error}'));
+                  SharedPreferences.getInstance().then((sharedPreferences){
+                      sharedPreferences.setString("Authorization", snapshot.data.headers['authorization']).then((saved){
+                        Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
+                      });
+                  });
                   return Center(
                       child: Text(
-                    '${snapshot.data}',
+                    '',
                     style: headingStyle,
                   ));
                 case ConnectionState.none:
@@ -71,10 +64,13 @@ class _LoadApiState extends State<LoadApi> {
   }
 
   Future<Response> loginWithUsername(
-      String username, String password, String gcaptcha) {
+      String username, String password, String gcaptcha) async{
     Client client = Client();
     String url = amihubUrl +
         "/login?username=$username&password=$password&captchaResponse=$gcaptcha";
-    return client.get(url);
+     Response resp =  await client.get(url);
+    if (resp.statusCode == 201) {
+        return resp;
+    }
   }
 }
