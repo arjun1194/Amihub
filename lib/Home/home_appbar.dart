@@ -1,9 +1,11 @@
 import 'package:amihub/Theme/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomePageAppbar {
   static getAppBar(VoidCallback onMenuClick) {
     return AppBar(
+      brightness: Brightness.light,
       leading: FlatButton(
         child: Icon(Icons.menu),
         onPressed: onMenuClick,
