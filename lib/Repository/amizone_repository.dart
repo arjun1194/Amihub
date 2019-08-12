@@ -12,12 +12,12 @@ class AmizoneRepository {
 
   Future<List<TodayClass>> fetchTodayClass() async {
     HttpWithInterceptor http = HttpWithInterceptor.build(
-        interceptors: [AmizoneInterceptor("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJhdmlyaWFzIiwiY3NyZiI6IjI5ZmQ3ZmU3LWJiYjMtMTFlOS1iMWNmLTAzMjk4MGE2MjY5OSIsImlkIjo1NzIyMzgxLCJleHAiOjE1NzA2NjU2MDAsImlhdCI6MTU2NTQ3MTM3OCwianRpIjoiMjlmZDdmZTYtYmJiMy0xMWU5LWIxY2YtZTE5YjU1NTMzMWIyIn0.ONA7YKCmz2FvicauoSVtvs7Kd-PaaTPVimhHRV3vw6pm9wkZo8FaftgpqzhfffXd8Y56pVqt3bWM_sL7npebyg")]);
+        interceptors: [AmizoneInterceptor()]);
 
     var jsonData;
     List<TodayClass> todayClassList;
     try {
-      var response = await http.get("$amihubUrl/todayClass?start=2019-08-06&end=2019-08-06");
+      var response = await http.get("$amihubUrl/todayClass");
 
       if (response.statusCode == 200) {
         if(response.body==""){
