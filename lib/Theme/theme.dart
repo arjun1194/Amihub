@@ -1,4 +1,5 @@
 //themedata : all the theme related information is in this file
+import 'package:amihub/Components/bottom_navigation_item.dart';
 import 'package:flutter/material.dart';
 
 //colors
@@ -47,3 +48,39 @@ var js_setWebviewCenter =
     "document.getElementById('login-box').style='position:absolute !important;top:150px !important;left:25% !important;width:60% !important; '";
 var js_getCaptchaResponse =
     "document.getElementById('g-recaptcha-response').value;";
+
+
+List<BottomNavigationBarItem> list = [
+    BottomNavItem(
+        "Home",
+        Icon(
+            Icons.home,
+        ),
+        greenMain,
+        "Home")
+        .bottomNavItem,
+    BottomNavItem(
+        "Academics",
+        Icon(
+            Icons.school,
+        ),
+        greenMain,
+        "Home")
+        .bottomNavItem,
+    BottomNavItem(
+        "Chat",
+        Icon(
+            Icons.question_answer,
+        ),
+        greenMain,
+        "Home")
+        .bottomNavItem,
+    BottomNavItem(
+        "Profile",
+        Icon(
+            Icons.person,
+        ),
+        greenMain,
+        "Home")
+        .bottomNavItem,
+];
