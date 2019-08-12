@@ -3,19 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomePageAppbar {
-  static getAppBar(VoidCallback onMenuClick) {
+  static getAppBar() {
     return AppBar(
       brightness: Brightness.light,
-      leading: FlatButton(
-        child: Icon(Icons.menu),
-        onPressed: onMenuClick,
-      ),
-      actions: <Widget>[
-        Container(
-          height: 32,
-          width: 32,
-        )
-      ],
       backgroundColor: Color(0xfffafafa),
       elevation: 0,
       title: Row(
