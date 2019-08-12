@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AmizoneInterceptor extends InterceptorContract{
-  final jwtToken;
 
-  AmizoneInterceptor(this.jwtToken);
+
+  AmizoneInterceptor();
   @override
   Future<RequestData> interceptRequest({RequestData data}) async {
     try {
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      final jwtToken = sharedPreferences.get('Authorization');
       data.headers["Authorization"] = jwtToken;
     } catch (e) {
       print(e);
