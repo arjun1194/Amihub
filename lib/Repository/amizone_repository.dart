@@ -28,7 +28,9 @@ class AmizoneRepository {
           todayClassList = List.generate(size, (int index){
             Color attendanceColor = HexColor(jsonData[index]['color']);
             String courseCode = jsonData[index]['courseCode'];
-            String facultyName = jsonData[index]['facultyName'];
+            String facultyName = jsonData[index]['facultyName'].toString();
+            var indexFacultySplit = facultyName.indexOf('[');
+            facultyName = facultyName.substring(0,indexFacultySplit);
             String roomNo = jsonData[index]['roomNo'];
             String startTime = jsonData[index]['start'];
             String endTime = jsonData[index]['end'];
