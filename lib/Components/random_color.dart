@@ -1,9 +1,17 @@
 import "dart:math";
+
 import 'package:flutter/material.dart';
 
-import 'package:amihub/Theme/theme.dart';
-
-var list = [cardColor1,cardColor2,cardColor3,cardColor4,cardColor5,cardColor6];
+var list = [
+  Colors.red,
+  Colors.green,
+  Colors.pink,
+  Colors.blue,
+  Colors.orange,
+  Colors.teal,
+  Colors.grey,
+  Colors.lime
+];
 
 
 Color createRandomColor(){

@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:amihub/Theme/theme.dart';
 import 'package:amihub/ViewModels/captcha_model.dart';
-import 'package:amihub/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,10 +42,8 @@ class _LoadApiState extends State<LoadApi> {
                     style: headingStyle,
                   ));
                 case ConnectionState.none:
-                  // TODO: Handle this case.
                   break;
                 case ConnectionState.active:
-                  // TODO: Handle this case.
                   break;
               }
               return Text("End"); // unreachable

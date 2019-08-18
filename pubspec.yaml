@@ -28,6 +28,7 @@ dependencies:
   webview_flutter:
   shared_preferences: ^0.5.3+4
   http_interceptor: ^0.0.3
+  backdrop: ^0.1.8
 
 
 

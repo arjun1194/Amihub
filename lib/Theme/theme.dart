@@ -13,15 +13,16 @@ const lightGreen = Color(0xFF203782);
 const lighterGreen = Color(0xFFa1d1ba);
 
 
-
-const cardColor1= Color(0xFFC2BBD8);
-const cardColor2 = Color(0xFF93B198);
-const cardColor3 = Color(0xFFB1AE8F);
-const cardColor4 = Color(0xFFB19A9A);
-const cardColor5 = Color(0xFF8391B1);
-const cardColor6 = Color(0xFF83B1A4);
-
-
+const lightOrange = Color(0xffFF8F53);
+const darkOrange = Color(0xffFE614E);
+const lightRed = Color(0xffF72F54);
+const darkRed = Color(0xffFD2E6A);
+const lightPurple = Color(0xff6974DD);
+const darkPurple = Color(0xff6B69C9);
+const lightBlue = Color(0xff12CCD9);
+const darkBlue = Color(0xff0FC5F3);
+const lightIndigo = Color(0xff3660FA);
+const darkIndigo = Color(0xff5759F9);
 //const texts
 const appTitle = 'Amihub';
 
