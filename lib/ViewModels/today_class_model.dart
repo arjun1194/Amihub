@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+
 
 class TodayClass {
-  Color attendanceColor;
+  String attendanceColor;
   String  courseCode;
   String  courseTitle;
   String facultyName;
@@ -11,6 +11,8 @@ class TodayClass {
 
 TodayClass( this.attendanceColor, this.courseCode, this.courseTitle,
   this.facultyName, this.roomNo, this.startTime, this.endTime);
+
+
 }
 
 

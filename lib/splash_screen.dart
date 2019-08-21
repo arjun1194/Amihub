@@ -39,4 +39,9 @@ class _SplashScreenState extends State<SplashScreen> {
     //TODO: implement this function
     return true;
   }
+
+  bool CheckVersionValid() {
+    //TODO:implement this  function
+    return true;
+  }
 }

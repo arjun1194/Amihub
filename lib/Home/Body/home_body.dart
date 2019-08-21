@@ -13,7 +13,11 @@ class _HomeBodyState extends State<HomeBody> {
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text("Today's Classes",style:TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("Today's Classes",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+        ),
         Container(height: 200,
           child: ListView(
             scrollDirection: Axis.horizontal,

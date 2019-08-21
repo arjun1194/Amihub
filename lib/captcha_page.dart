@@ -1,11 +1,13 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
 import 'package:amihub/Theme/theme.dart';
+import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 import 'ViewModels/captcha_model.dart';
 import 'ViewModels/login_model.dart';
 
+//TODO: initialize this as sson as JWT isnt found so that webpage loading is faster, also Make a Internet connection not availabe detector
 class CaptchaPageNew extends StatefulWidget {
   @override
   _CaptchaPageNewState createState() => _CaptchaPageNewState();

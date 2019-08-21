@@ -38,7 +38,7 @@ class _LoadApiState extends State<LoadApi> {
                   });
                   return Center(
                       child: Text(
-                    '',
+                        'fucked you motherfucker',
                     style: headingStyle,
                   ));
                 case ConnectionState.none:

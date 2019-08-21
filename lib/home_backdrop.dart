@@ -40,26 +40,29 @@ class _HomeState extends State<Home> {
 
     return BackdropScaffold(
       title: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              'assets/amihub.png',
-              height: 32,
-              width: 32,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: Text(
-                appTitle,
-                style: TextStyle(
-                  color: Colors.grey.shade200.withOpacity(0.7),
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Raleway",
-                ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 32),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset(
+                'assets/amihub.png',
+                height: 32,
+                width: 32,
               ),
-            )
-          ],
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Text(
+                  appTitle,
+                  style: TextStyle(
+                    color: Colors.grey.shade200.withOpacity(0.7),
+                    fontWeight: FontWeight.bold,
+                    fontFamily: "Raleway",
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
       backLayerColor: Color(0xff171C1F),
@@ -69,10 +72,7 @@ class _HomeState extends State<Home> {
           changeSelected: changeSelected,
         ),
       ),
-      frontLayer: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: homeWidget,
-      ),
+      frontLayer: homeWidget,
       iconPosition: BackdropIconPosition.leading,
       actions: <Widget>[
         FlatButton(
