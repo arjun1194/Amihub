@@ -1,13 +1,8 @@
 import 'package:amihub/Components/textfield.dart';
-import 'package:amihub/Login/login-icon.dart';
 import 'package:amihub/Login/login-inputs.dart';
-import 'package:amihub/Login/login-remember-forgot.dart';
-import 'package:amihub/Login/login-text.dart';
 import 'package:amihub/ViewModels/login_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'Login/login-button.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -24,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+
+    //
     inputs = LoginInputs();
     usernameController = TextEditingController();
     passwordController = TextEditingController();

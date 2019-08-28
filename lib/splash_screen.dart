@@ -9,6 +9,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
+    super.initState();
     SharedPreferences.getInstance().then((sharedPreferences) {
       if (sharedPreferences.containsKey('Authorization') && checkAuthValid()) {
         print('<---JWT is detected--->');
@@ -30,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.asset("amihub.png"),
+        child: Image.asset("amihub.png", color: Colors.black,),
       ),
     );
   }
@@ -40,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return true;
   }
 
-  bool CheckVersionValid() {
+  bool checkVersionValid() {
     //TODO:implement this  function
     return true;
   }

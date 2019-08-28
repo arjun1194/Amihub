@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class TestWidget extends StatefulWidget {
   final String courseName;
   final String facultyName;
-  final int attendanceState;
+  final String attendanceColor;
   final String roomNo;
   final String courseCode;
   final String startTime;
@@ -17,7 +17,7 @@ class TestWidget extends StatefulWidget {
   TestWidget(
       this.courseName,
       this.facultyName,
-      this.attendanceState,
+      this.attendanceColor,
       this.roomNo,
       this.courseCode,
       this.startTime,
@@ -35,14 +35,42 @@ class _TestWidgetState extends State<TestWidget> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    print("--------------------------->>" + height.toString());
-    print("--------------------------->>" + width.toString());
+    var startHour = int.parse(widget.startTime
+        .substring(widget.startTime.length - 11, widget.startTime.length - 9));
+    startHour = (startHour < 7) ? startHour + 12 : startHour;
+    var startMinute = int.parse(widget.startTime
+        .substring(widget.startTime.length - 8, widget.startTime.length - 6));
+    var startDate = int.parse(widget.startTime.substring(2, 4));
+    var startDateTime = DateTime(DateTime
+        .now()
+        .year, DateTime
+        .now()
+        .month,
+        startDate, startHour, startMinute);
+
+    var endHour = int.parse(widget.endTime
+        .substring(widget.endTime.length - 11, widget.endTime.length - 9));
+    endHour = (endHour < 7) ? endHour + 12 : endHour;
+    var endMinute = int.parse(widget.endTime.substring(
+        widget.endTime.length - 8, widget.endTime.length - 6));
+    var endDate = int.parse(widget.endTime.substring(2, 4));
+    var endDateTime = DateTime(DateTime
+        .now()
+        .year, DateTime
+        .now()
+        .month, endDate, endHour, endMinute);
+    int attendanceState = -1;
+    widget.attendanceColor == "#4FCC4F"
+        ? attendanceState = 1
+        : widget.attendanceColor == "#f00"
+        ? attendanceState = 2
+        : attendanceState = 0;
+
 
     return Center(
         child: Stack(
       children: <Widget>[
         Container(
-            height: 250,
             width: 0.9 * width,
             decoration: BoxDecoration(
                 boxShadow: [
@@ -75,50 +103,41 @@ class _TestWidgetState extends State<TestWidget> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Wrap(
+                      Text(
+                        widget.courseName,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 22, color: Colors.white),
+                      ),
+                      Row(
                         children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  widget.courseName,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontSize: 22, color: Colors.white),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 4),
-                                  child: Text(
-                                    widget.facultyName,
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white.withOpacity(0.8)),
-                                  ),
-                                ),
-                              ],
-                            ),
+                          Icon(
+                            CupertinoIcons.person_add_solid,
+                            color: Colors.white,
                           ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                widget.attendanceState == 0
-                                    ? ""
-                                    : widget.attendanceState == 1
-                                        ? "Present"
-                                        : widget.attendanceState == 2
-                                            ? "absent"
-                                            : "error",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                              Icon(
-                                Icons.check_circle,
-                                color: Colors.white,
-                              ),
-                            ],
+                          SizedBox(
+                            width: 5,
                           ),
+                          Text(
+                            widget.facultyName,
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white.withOpacity(0.95)),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Icon(
+                            Icons.timer,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+//                              (DateTime.now().isAfter(endDateTime))? Text("Class Completed",style: TextStyle(color: Colors.white),) :
+                          Text("$startHour:$startMinute - $endHour:$endMinute",
+                              style: TextStyle(color: Colors.white))
                         ],
                       ),
                       Padding(
@@ -126,32 +145,70 @@ class _TestWidgetState extends State<TestWidget> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Icon(
-                              Icons.account_balance,
-                              color: Colors.white,
+                            Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.account_balance,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(
+                                  width: 5.0,
+                                ),
+                                Text(
+                                  widget.roomNo,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              ],
                             ),
-                            Text(
-                              widget.roomNo,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
+                            Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.description,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(
+                                  width: 5.0,
+                                ),
+                                Text(
+                                  widget.courseCode,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              ],
                             ),
-                            Icon(
-                              Icons.description,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              widget.courseCode,
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
-                            ),
-                            Icon(
-                              Icons.timer,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              "complete",
-                              style:
-                                  TextStyle(fontSize: 16, color: Colors.white),
+                            Row(
+                              children: <Widget>[
+                                attendanceState == 1
+                                    ? Icon(
+                                  Icons.check_circle,
+                                  color: Colors.white,
+                                )
+                                    : attendanceState == 2
+                                    ? Icon(
+                                  Icons.block,
+                                  color: Colors.white,
+                                )
+                                    : Icon(Icons.home,
+                                    color: Colors.transparent),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    attendanceState == 0
+                                        ? ""
+                                        : attendanceState == 1
+                                        ? "Present"
+                                        : attendanceState == 2
+                                        ? "absent"
+                                        : "error",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: attendanceState == 2
+                                            ? FontWeight.bold
+                                            : FontWeight.normal),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

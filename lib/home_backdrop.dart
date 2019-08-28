@@ -1,6 +1,7 @@
 import 'package:amihub/Components/backdrop_buttons.dart';
 import 'package:amihub/Home/Body/home_body.dart';
 import 'package:amihub/Home/Body/my_courses.dart';
+import 'package:amihub/Repository/amizone_repository.dart';
 import 'package:amihub/Theme/theme.dart';
 import 'package:backdrop/backdrop.dart';
 import 'package:flutter/cupertino.dart';
@@ -77,6 +78,7 @@ class _HomeState extends State<Home> {
       actions: <Widget>[
         FlatButton(
           child: Text(""),
+          onPressed: () {},
         )
       ],
     );
@@ -84,8 +86,11 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
+    super.initState();
     selected = 0;
     homeWidget = HomeBody();
+    AmizoneRepository amizoneRepository = AmizoneRepository();
+    amizoneRepository.fetchTodayClass();
   }
 }
 

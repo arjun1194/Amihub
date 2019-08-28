@@ -26,28 +26,6 @@ List<Color>darkColors = [
   Color(0xff6c69d0)
 ];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//const texts
 const appTitle = 'Amihub';
 
 
