@@ -21,7 +21,7 @@ class _HomeBodyState extends State<HomeBody> {
         Container(height: 200,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            children: <Widget>[TodayClassBuilder(),],
+            children: <Widget>[HomeTodayClassBuilder(),],
           ),
         ),
       ],

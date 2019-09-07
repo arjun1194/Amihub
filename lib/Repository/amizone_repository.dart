@@ -10,8 +10,9 @@ class AmizoneRepository {
   Future<List<dynamic>> fetchTodayClass() async {
     HttpWithInterceptor http = HttpWithInterceptor.build(
         interceptors: [AmizoneInterceptor()]);
-    var response = await http.get('$amihubUrl/todayClass');
-    print(jsonDecode(response.body));
+    var response = await http.get(
+        '$amihubUrl/todayClass?start=9/6/2019&end=9/6/2019');
+    //print(jsonDecode(response.body));
     return await jsonDecode(response.body);
   }
 
@@ -19,7 +20,7 @@ class AmizoneRepository {
     HttpWithInterceptor http = HttpWithInterceptor.build(
         interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/myCourses?semester=$semester');
-    print(jsonDecode(response.body));
+    //print(jsonDecode(response.body));
     return await jsonDecode(response.body);
   }
 
@@ -29,7 +30,7 @@ class AmizoneRepository {
         interceptors: [AmizoneInterceptor()]);
     var response = await http.get(
         '$amihubUrl/todayClass?start=$start&end=$end');
-    print(jsonDecode(response.body));
+    //print(jsonDecode(response.body));
     return await jsonDecode(response.body);
   }
 

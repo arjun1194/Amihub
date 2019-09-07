@@ -4,12 +4,12 @@ import 'package:amihub/Repository/amizone_repository.dart';
 import 'package:amihub/Theme/theme.dart';
 import 'package:flutter/material.dart';
 
-class TodayClassBuilder extends StatefulWidget {
+class HomeTodayClassBuilder extends StatefulWidget {
   @override
-  _TodayClassBuilderState createState() => _TodayClassBuilderState();
+  _HomeTodayClassBuilderState createState() => _HomeTodayClassBuilderState();
 }
 
-class _TodayClassBuilderState extends State<TodayClassBuilder> {
+class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   AmizoneRepository amizoneRepository = AmizoneRepository();
 
 
@@ -68,3 +68,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
     );
   }
 }
+
+
+
+

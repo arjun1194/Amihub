@@ -1,3 +1,5 @@
+import 'package:amihub/Components/animation_test.dart';
+import 'package:amihub/Home/Body/course/course.dart';
 import 'package:amihub/forgot_password.dart';
 import 'package:amihub/home_backdrop.dart';
 import 'package:amihub/load.dart';

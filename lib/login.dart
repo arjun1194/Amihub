@@ -41,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
   void login(LoginModel loginModel) {
     if (username != null && password != null) {
       Navigator.pushNamedAndRemoveUntil(
-          context, '/captcha', (Route<dynamic> route) => false,
+          context, '/load', (Route<dynamic> route) => false,
           arguments: loginModel);
     }
   }

@@ -25,30 +25,56 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
             return TodayClassSeamer();
           case ConnectionState.done:
             if (snapshot.hasError || snapshot.data == null)
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text("Some error has occured Please try again later!"),
-                  RaisedButton(
-                    child: Text("Retry"),
-                    onPressed: () {
-                      setState(() {});
-                    },
-                  )
-                ],
-              );
+              return Center(child: Text('No classes for today'));
             //TODO:get from backend that this semester doesn't have data yet
-            if (snapshot.data == "blah")
+            if (snapshot.data.toString() == "blah")
               return Center(
                   child: Text("This Semester Data doesnt exist for you"));
             //re make this
-            return Text("${snapshot.data}");
+            return ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+              itemCount: snapshot.data.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  children: <Widget>[
+                    ListTile(
+
+                      title: Text(snapshot.data[index]['title'],
+                        style: TextStyle(fontWeight: FontWeight.bold),),
+                      subtitle: Text(snapshot.data[index]['courseCode']),
+                      leading: Container(
+                        color: (snapshot.data[index]['color'] == "#f00")
+                            ? Colors.red
+                            : (snapshot.data[index]['color'] == "#4FCC4F")
+                            ? Colors.green
+                            : Colors.transparent,
+                        width: 8,
+                      ),
+
+
+                    ),
+                    (index != snapshot.data.length - 1)
+                        ? Divider()
+                        : Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(
+                            child: Text(
+                              "",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey),
+                            ))),
+                  ],
+                );
+              },
+            );
           case ConnectionState.none:
             break;
           case ConnectionState.active:
             break;
         }
-        return Text("End"); // unreachable
+        return Text(" "); // unreachable
       },
     );
   }

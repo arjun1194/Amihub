@@ -18,10 +18,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Application 1',
-      theme: ThemeData(
-        accentColor: lightGreen,
-        fontFamily: "OpenSans",
-      ),
       routes: routes,
     );
   }

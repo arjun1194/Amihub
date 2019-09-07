@@ -1,8 +1,11 @@
+import 'package:amihub/Login/login-button.dart';
 import 'package:amihub/Theme/theme.dart';
 import 'package:amihub/ViewModels/captcha_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'ViewModels/login_model.dart';
 
 class LoadApi extends StatefulWidget {
   @override
@@ -14,14 +17,17 @@ class _LoadApiState extends State<LoadApi> {
 
   @override
   Widget build(BuildContext context) {
-    final CaptchaModel args = ModalRoute.of(context).settings.arguments;
+    final LoginModel args = ModalRoute
+        .of(context)
+        .settings
+        .arguments;
 
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           FutureBuilder<Response>(
-            future: loginWithUsername(args.username, args.password, args.captcha),
+            future: login(args.username, args.password),
             // a previously-obtained Future<String> or null
             builder: (BuildContext context, AsyncSnapshot<Response> snapshot) {
               switch (snapshot.connectionState) {
@@ -31,16 +37,17 @@ class _LoadApiState extends State<LoadApi> {
                 case ConnectionState.done:
                   if (snapshot.hasError)
                     return Center(child: Text('Error: ${snapshot.error}'));
+
                   SharedPreferences.getInstance().then((sharedPreferences){
-                      sharedPreferences.setString("Authorization", snapshot.data.headers['authorization']).then((saved){
-                        Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
-                      });
+                    sharedPreferences.setString("Authorization", snapshot.data.headers['authorization']).then((saved){
+                      Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
+                    });
                   });
                   return Center(
                       child: Text(
-                        'fucked you motherfucker',
-                    style: headingStyle,
-                  ));
+                        'Loading Your Stuff',
+                        style: headingStyle,
+                      ));
                 case ConnectionState.none:
                   break;
                 case ConnectionState.active:
@@ -59,14 +66,26 @@ class _LoadApiState extends State<LoadApi> {
     print("somthing changed!!!!!!!!!!!!!!!");
   }
 
-  Future<Response> loginWithUsername(
-      String username, String password, String gcaptcha) async{
+  Future<Response> loginWithCaptcha(String username, String password, String gcaptcha) async{
     Client client = Client();
     String url = amihubUrl +
         "/login?username=$username&password=$password&captchaResponse=$gcaptcha";
-     Response resp =  await client.get(url);
+    Response resp = await client.get(url);
     if (resp.statusCode == 201) {
-        return resp;
+      return resp;
     }
   }
+
+  Future<Response> login(String username, String password) async {
+    Client client = Client();
+    String url = amihubUrl + "/login";
+    print("--->$username" + "---->$password");
+    String requestBody = '{"username":$username, "password":"$password"}';
+    var headers = {"content-type": "application/json"};
+    Response resp = await client.post(url, headers: headers, body: requestBody);
+
+    return resp;
+  }
+
+
 }
