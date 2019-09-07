@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:amihub/Components/today_class_card.dart';
 import 'package:amihub/Components/today_class_seamer.dart';
 import 'package:amihub/Repository/amizone_repository.dart';
@@ -53,8 +55,8 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
                       snapshot.data[index]['courseCode'],
                       snapshot.data[index]['start'],
                       snapshot.data[index]['end'],
-                      lightColors[0],
-                      darkColors[1]),
+                      lightColors[math.max(index, index % lightColors.length)],
+                      darkColors[math.max(index, index % lightColors.length)]),
                 );
               }),
             ),);
