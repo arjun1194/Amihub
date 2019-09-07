@@ -48,7 +48,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
                           0, snapshot.data[index]['facultyName']
                           .toString()
                           .indexOf('[')),
-                      snapshot.data[index]['attendanceColor'],
+                      snapshot.data[index]['color'],
                       snapshot.data[index]['roomNo'],
                       snapshot.data[index]['courseCode'],
                       snapshot.data[index]['start'],

@@ -65,10 +65,10 @@ class _TestWidgetState extends State<TestWidget> {
         .now()
         .day;
     print(endDateTime);
-    int attendanceState = -1;
-    (widget.attendanceColor == "#4FCC4F") ? attendanceState = 1 : (widget
-        .attendanceColor == "#f00") ? attendanceState = 2 : attendanceState = 0;
-    print(attendanceState);
+    int attendanceState = 1;
+    (widget.attendanceColor == "#4FCC4F") ? attendanceState = 1 :
+    (widget.attendanceColor == "#f00") ? attendanceState = 2 : attendanceState =
+    0;
 
     return Center(
         child: Stack(
@@ -182,26 +182,21 @@ class _TestWidgetState extends State<TestWidget> {
                                 ),
                                 Row(
                                   children: <Widget>[
-                                    attendanceState == 1
+                                    (attendanceState == 1)
                                         ? Icon(
-                                      Icons.check_circle,
-                                      color: Colors.white,
-                                    )
-                                        : attendanceState == 2
-                                        ? Icon(
-                                      Icons.block,
-                                      color: Colors.white,
-                                    )
-                                        : Icon(Icons.home,
-                                        color: Colors.transparent),
+                                      Icons.check_circle, color: Colors.white,)
+                                        :
+                                    (attendanceState == 2) ? Icon(
+                                      Icons.block, color: Colors.white,) :
+                                    Icon(Icons.home, color: Colors.transparent),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 5),
                                       child: Text(
-                                        attendanceState == 0
+                                        (attendanceState == 0)
                                             ? ""
-                                            : attendanceState == 1
+                                            : (attendanceState == 1)
                                             ? "Present"
-                                            : attendanceState == 2
+                                            : (attendanceState == 2)
                                             ? "absent"
                                             : "error",
                                         style: TextStyle(
