@@ -1,4 +1,8 @@
+import 'package:amihub/Home/Body/myprofile/my_profile_builder.dart';
+import 'package:amihub/Repository/amizone_repository.dart';
 import 'package:flutter/material.dart';
+
+
 
 class HomeMyProfile extends StatefulWidget {
   @override
@@ -6,12 +10,14 @@ class HomeMyProfile extends StatefulWidget {
 }
 
 class _HomeMyProfileState extends State<HomeMyProfile> {
+  AmizoneRepository amizoneRepository = AmizoneRepository();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.teal,
-      width: double.infinity,
-      height: double.infinity,
-    );
+    return MyProfileBuilder();
   }
 }
+
+
+
+
+

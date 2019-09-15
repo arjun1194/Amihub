@@ -44,6 +44,9 @@ class _LoginPageState extends State<LoginPage> {
           context, '/load', (Route<dynamic> route) => false,
           arguments: loginModel);
     }
+    else{
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Please Enter Username and Password"),duration: Duration(seconds: 1),));
+    }
   }
 
   void forgotPassword() {

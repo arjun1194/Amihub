@@ -32,22 +32,15 @@ class _LoadApiState extends State<LoadApi> {
             builder: (BuildContext context, AsyncSnapshot<Response> snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
-                  return Center(
-                      child: CircularProgressIndicator());
-                case ConnectionState.done:
-                  if (snapshot.hasError)
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                  return Center(child: CircularProgressIndicator());
+                case ConnectionState.done:  if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
+                                            else SharedPreferences.getInstance().then((sharedPreferences){
+                                              sharedPreferences.setString("Authorization", snapshot.data.headers['authorization']).then((saved){
+                                              Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
+                                              });
+                                            });
 
-                  SharedPreferences.getInstance().then((sharedPreferences){
-                    sharedPreferences.setString("Authorization", snapshot.data.headers['authorization']).then((saved){
-                      Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
-                    });
-                  });
-                  return Center(
-                      child: Text(
-                        'Loading Your Stuff',
-                        style: headingStyle,
-                      ));
+                                            return Center(child: Text('Username or Password', style: headingStyle,));
                 case ConnectionState.none:
                   break;
                 case ConnectionState.active:
@@ -84,7 +77,8 @@ class _LoadApiState extends State<LoadApi> {
     var headers = {"content-type": "application/json"};
     Response resp = await client.post(url, headers: headers, body: requestBody);
 
-    return resp;
+    if(resp.statusCode==201)return resp;
+    else Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
   }
 
 

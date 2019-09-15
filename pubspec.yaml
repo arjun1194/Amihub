@@ -55,8 +55,6 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/grumpy1.png
-    - assets/dog1.jpg
     - assets/amihub.png
   fonts:
     - family: Raleway

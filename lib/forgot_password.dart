@@ -16,7 +16,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       body: Column(
         children: <Widget>[
           SizedBox(
-            child: Image.asset('assets/dog1.jpg'),
+            child: Container(),
             width: 0.6 * width,
             height: 0.3 * height,
           )

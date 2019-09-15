@@ -51,6 +51,7 @@ class _CaptchaPageState extends State<CaptchaPage> {
   void dispose() {
     flutterWebViewPlugin.close();
     flutterWebViewPlugin.dispose();
+    _onStateChanged.cancel();
     super.dispose();
 
   }

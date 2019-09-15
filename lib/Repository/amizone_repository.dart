@@ -34,4 +34,13 @@ class AmizoneRepository {
     return await jsonDecode(response.body);
   }
 
+  Future<dynamic> fetchMyProfile() async {
+    HttpWithInterceptor http = HttpWithInterceptor.build(
+        interceptors: [AmizoneInterceptor()]);
+    var response = await http.get(
+        '$amihubUrl/myProfile' );
+    //print(jsonDecode(response.body));
+    return await jsonDecode(response.body);
+  }
+
 }
