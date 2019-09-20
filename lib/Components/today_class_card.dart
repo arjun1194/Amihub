@@ -38,33 +38,25 @@ class _TestWidgetState extends State<TestWidget> {
 
     var startHour = int.tryParse(widget.startTime.substring(
         widget.startTime.length - 11, widget.startTime.length - 9));
-    print(startHour);
     var startMinute = int.tryParse(widget.startTime.substring(
         widget.startTime.length - 8, widget.startTime.length - 6));
-    print(startMinute);
     var startDate = DateTime
         .now()
         .day;
-    print(startDate.toString() + "errrrrrrrrrr");
     var startDateTime = DateTime(DateTime
         .now()
         .year, DateTime
         .now()
         .month, startDate, startHour, startMinute);
-    print(startDateTime);
 
     var endHour = int.tryParse(widget.endTime.substring(
         widget.endTime.length - 11, widget.endTime.length - 9));
-    print(endHour);
     var endMinute = int.tryParse(widget.endTime.substring(
         widget.endTime.length - 8, widget.endTime.length - 6));
-    print(endMinute);
     var endDate = int.tryParse(widget.endTime.substring(2, 4));
-    print(endDate);
     var endDateTime = DateTime
         .now()
         .day;
-    print(endDateTime);
     int attendanceState = 1;
     (widget.attendanceColor == "#4FCC4F") ? attendanceState = 1 :
     (widget.attendanceColor == "#f00") ? attendanceState = 2 : attendanceState =
@@ -74,7 +66,7 @@ class _TestWidgetState extends State<TestWidget> {
         child: Stack(
           children: <Widget>[
             Container(
-                width: 0.9 * width,
+                width: 0.95 * width,
                 decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
@@ -101,7 +93,7 @@ class _TestWidgetState extends State<TestWidget> {
                       color: Colors.white.withOpacity(0.1),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(18.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,17 +212,7 @@ class _TestWidgetState extends State<TestWidget> {
         ));
   }
 
-  @override
-  void initState() {
-    print("``````````````````````````````");
-    print(widget.startTime);
-    print(widget.endTime);
-    print(widget.attendanceColor);
-    print(widget.courseCode);
-    print(widget.courseName);
-    print(widget.facultyName);
-    print("``````````````````````````````");
-  }
+
 }
 
 enum CircleAlignment {

@@ -35,7 +35,47 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:   return MyCourseSeamer();
           case ConnectionState.done:
-            if (snapshot.hasError || snapshot.data == null)   return Text("Some error has occured Please try again later!");
+            if (snapshot.hasError || snapshot.data == null)
+              return Column(crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text("My Courses", style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 32),
+                    child: Container(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.all(32),
+                              child: Icon(Icons.cloud_off, color: Colors.white,
+                                size: 108,),
+                              decoration: BoxDecoration(color: Colors.grey[400],
+                                  borderRadius: BorderRadius.circular(999)),),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text('Could not fetch Courses',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18,),),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                'Please Check Your internet and try again',),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
             //TODO:get from backend that this semester doesn't have data yet
             if (snapshot.data == "blah")
               return Text("This Semester Data doesnt exist for you");
@@ -49,7 +89,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                   shrinkWrap: true,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(left: 32,top: 32),
+                      padding: const EdgeInsets.only(left: 16, top: 16),
                       child: Text("My Courses",style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
                     ), Padding(
                       padding: const EdgeInsets.only(left: 32,right: 32),

@@ -1,3 +1,4 @@
+import 'package:amihub/Theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,9 +13,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     SharedPreferences.getInstance().then((sharedPreferences) {
       if (sharedPreferences.containsKey('Authorization') && checkAuthValid()) {
-        print('<---JWT is detected--->');
-
-        print('<---JWt is valid : logging you in --->');
+        print('<---JWt is valid : logging you in --->\n\n\n');
         Navigator.pushNamedAndRemoveUntil(
             context, '/home', (Route<dynamic> route) => false);
       } else {
@@ -30,8 +29,20 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Image.asset("amihub.png", color: Colors.black,),
+      body: Container(
+        color: greenMain,
+        height: double.infinity,
+        width: double.infinity,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('Amihub', style: TextStyle(color: Colors.white,
+                fontSize: 40,
+                fontWeight: FontWeight.bold),),
+            Text('attendance tracking system for Amity University',
+              style: TextStyle(color: Colors.white, fontSize: 20),)
+          ],
+        ),
       ),
     );
   }

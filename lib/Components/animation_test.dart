@@ -1,47 +1,40 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/physics.dart';
 
 class TestAnimation extends StatefulWidget {
   @override
   _TestAnimationState createState() => _TestAnimationState();
 }
 
-class _TestAnimationState extends State<TestAnimation>
-    with SingleTickerProviderStateMixin {
-
+class _TestAnimationState extends State<TestAnimation> {
   Animation<double> animation;
   AnimationController controller;
 
+  PageController pageController;
 
   @override
   void initState() {
-    super.initState();
-    controller =
-        AnimationController(duration: Duration(seconds: 10), vsync: this,);
-    animation = Tween<double>(begin: 0, end: 255).animate(controller)
-      ..addListener(() {
-        setState(() {
-          print(animation.value);
-        });
-      });
-    if (controller.value == 255)
-      controller.reverse();
-    else if (controller.value == 0) controller.forward();
+    pageController = PageController(initialPage: 0);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Padding(
-      padding: EdgeInsets.all(animation.value),
-      child: Container(width: 300, height: 300, child: FlutterLogo()),
-    ));
+    return Scaffold(body: Center(
+      child: PageView(
+        onPageChanged: (int val) {
+          pageController.animateToPage(val,
+              duration: Duration(milliseconds: 500), curve: Curves.decelerate);
+        },
+        scrollDirection: Axis.horizontal,
+        children: <Widget>[
+          Container(width: 300, height: 300, color: Colors.red,),
+          Container(width: 300, height: 300, color: Colors.green,),
+          Container(width: 300, height: 300, color: Colors.yellow,),
+          Container(width: 300, height: 300, color: Colors.blue,),
+        ],
+        pageSnapping: true,
+        controller: pageController,
+      ),
+    ),);
   }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-
 }

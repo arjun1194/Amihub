@@ -11,7 +11,7 @@ class AmizoneRepository {
     HttpWithInterceptor http = HttpWithInterceptor.build(
         interceptors: [AmizoneInterceptor()]);
     var response = await http.get(
-        '$amihubUrl/todayClass?start=9/6/2019&end=9/6/2019');
+        '$amihubUrl/todayClass');
     //print(jsonDecode(response.body));
     return await jsonDecode(response.body);
   }
