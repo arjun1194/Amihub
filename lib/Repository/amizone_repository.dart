@@ -12,7 +12,7 @@ class AmizoneRepository {
         interceptors: [AmizoneInterceptor()]);
     var response = await http.get(
         '$amihubUrl/todayClass');
-    //print(jsonDecode(response.body));
+//    print(jsonDecode("*******************"+response.body.toString()));
     return await jsonDecode(response.body);
   }
 

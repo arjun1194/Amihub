@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class TodayClassSeamer extends StatefulWidget {
+class HomeTodayClassSeamer extends StatefulWidget {
   @override
-  _TodayClassSeamerState createState() => _TodayClassSeamerState();
+  _HomeTodayClassSeamerState createState() => _HomeTodayClassSeamerState();
 }
 
-class _TodayClassSeamerState extends State<TodayClassSeamer>
+class _HomeTodayClassSeamerState extends State<HomeTodayClassSeamer>
     with SingleTickerProviderStateMixin {
   Animation<Color> animation;
   AnimationController animationController;

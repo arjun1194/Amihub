@@ -2,6 +2,8 @@ import 'package:amihub/Repository/amizone_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'my_course_seamer.dart';
+
 class MyCourseBuilder extends StatefulWidget {
   @override
   _MyCourseBuilderState createState() => _MyCourseBuilderState();
@@ -149,42 +151,3 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
   }
 }
 
-class MyCourseSeamer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      scrollDirection: Axis.vertical,
-      itemCount: 10,
-      itemBuilder: (BuildContext context, int index) {
-        return Column(
-          children: <Widget>[
-            ListTile(
-              title: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    color: Colors.grey,
-                    width: 200,
-                    height: 20,
-                  )),
-              subtitle: Text(" "),
-              leading: Container(
-                decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(999)),
-                height: 32,
-                width: 32,
-              ),
-              trailing: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[Text(" "), Text(" ")],
-              ),
-              onTap: () {},
-            ),
-            Divider(),
-          ],
-        );
-      },
-    );
-  }
-}
