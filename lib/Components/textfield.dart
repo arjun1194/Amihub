@@ -46,7 +46,7 @@ class _MyTextFieldState extends State<MyTextField> {
           focusColor: Color(0xff656C8C),
           labelText: widget.hintText,
           labelStyle: TextStyle(
-              color: Colors.blueGrey.shade800, fontFamily: "Playfair"),
+            color: Colors.blueGrey.shade800,),
           focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Color(0xff656C8C)),
               borderRadius: BorderRadius.circular(30)),

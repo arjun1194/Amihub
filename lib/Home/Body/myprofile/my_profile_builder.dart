@@ -49,7 +49,7 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
                               mobileNumber: snapshot.data['mobile'].toString(),
                               permanentAddress: snapshot.data['permanentAddress'].toString(),
                               phoneNumber: snapshot.data['phone'].toString(),
-                              pincode: snapshot.data['pinCode'].toString(),
+                    pinCode: snapshot.data['pinCode'].toString(),
                   ),
                 ),
                 Center(child: Text("In case of discrepancy contact support@amihub.com",style: TextStyle(fontSize: 14,color: Colors.grey),)),

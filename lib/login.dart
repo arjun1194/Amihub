@@ -40,8 +40,8 @@ class _LoginPageState extends State<LoginPage> {
 
   void login(LoginModel loginModel) {
     if (username != null && password != null) {
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/load', (Route<dynamic> route) => false,
+      Navigator.pushNamed(
+          context, '/load',
           arguments: loginModel);
     }
     else{
@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                       letterSpacing: 1.0,
                       fontWeight: FontWeight.bold,
                       fontSize: 40,
-                      fontFamily: "Playfair"),
+                  ),
                 ),
                 SizedBox(
                   height: 30,
@@ -150,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                           fontSize: 18,
                           color: Colors.black,
-                          fontFamily: "Playfair"),
+                      ),
                     ),
                     splashColor: Colors.blueGrey[50],
                     shape: RoundedRectangleBorder(

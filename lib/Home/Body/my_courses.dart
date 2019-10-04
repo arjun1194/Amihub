@@ -1,7 +1,6 @@
 import 'package:amihub/Home/Body/course/my_courses_future_builder.dart';
 import 'package:flutter/material.dart';
 
-
 class HomeMyCourses extends StatefulWidget {
   @override
   _HomeMyCoursesState createState() => _HomeMyCoursesState();

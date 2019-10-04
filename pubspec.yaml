@@ -32,6 +32,10 @@ dependencies:
   random_color:
   flutter_datetime_picker: ^1.2.6
   dots_indicator: ^1.0.0
+  sembast: ^2.1.0
+  path_provider:
+  sqflite:
+
 
 
 
@@ -58,6 +62,7 @@ flutter:
   assets:
     - assets/amihub.png
     - assets/logo.png
+    - assets/authentication.png
   fonts:
     - family: Raleway
       fonts:

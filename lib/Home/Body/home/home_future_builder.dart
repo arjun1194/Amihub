@@ -125,9 +125,9 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
                       snapshot.data[index]['start'],
                       snapshot.data[index]['end'],
                       lightColors[
-                      math.max(index, index % lightColors.length)],
+                      math.min(index, index % lightColors.length)],
                       darkColors[
-                      math.max(index, index % lightColors.length)]),
+                      math.min(index, index % lightColors.length)]),
                 );
               }),
               pageSnapping: true,

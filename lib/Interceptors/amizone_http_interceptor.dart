@@ -20,5 +20,7 @@ class AmizoneInterceptor extends InterceptorContract {
   }
 
   @override
-  Future<ResponseData> interceptResponse({ResponseData data}) async => data;
+  Future<ResponseData> interceptResponse({ResponseData data}) async {
+    return data;
+  }
 }

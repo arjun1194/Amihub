@@ -1,6 +1,5 @@
-import 'package:amihub/Login/login-button.dart';
+import 'package:amihub/Repository/amizone_repository.dart';
 import 'package:amihub/Theme/theme.dart';
-import 'package:amihub/ViewModels/captcha_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,6 +13,8 @@ class LoadApi extends StatefulWidget {
 
 class _LoadApiState extends State<LoadApi> {
 
+  AmizoneRepository _amizoneRepository;
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,63 +23,82 @@ class _LoadApiState extends State<LoadApi> {
         .settings
         .arguments;
 
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          FutureBuilder<Response>(
-            future: login(args.username, args.password),
-            // a previously-obtained Future<String> or null
-            builder: (BuildContext context, AsyncSnapshot<Response> snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.waiting:
-                  return Center(child: CircularProgressIndicator());
-                case ConnectionState.done:  if (snapshot.hasError) return Center(child: Text('Error: ${snapshot.error}'));
-                                            else SharedPreferences.getInstance().then((sharedPreferences){
-                                              sharedPreferences.setString("Authorization", snapshot.data.headers['authorization']).then((saved){
-                                              Navigator.pushNamedAndRemoveUntil(context, '/home', (Route<dynamic> route) => false);
-                                              });
-                                            });
+    return FutureBuilder<Response>(
+      future: _amizoneRepository.login(args.username, args.password),
+      builder: (BuildContext context, AsyncSnapshot<Response> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return Scaffold(body: Center(
+                child: Center(child: CircularProgressIndicator())));
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return Scaffold(
+                appBar: AppBar(
+                  backgroundColor: greenMain, title: Text("Login Failed"),),
+                body: Column(mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset('assets/authentication.png'),
+                    ), Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text('Aw snap! we hit a roadblock',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),),
+                    ), Text("Some error has occured")]),
+              );
+            }
+            if (snapshot.data.body == "Maybe userId or Password is Wrong") {
+              return Scaffold(
+                appBar: AppBar(
+                  backgroundColor: greenMain, title: Text("Login Failed"),),
+                body: Column(mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset('assets/authentication.png'),
+                    ), Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text('Aw snap! we hit a roadblock',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),),
+                    ), Text(snapshot.data.body.toString())]),
+              );
+            }
+            else
+              SharedPreferences.getInstance().then((sharedPreferences) {
+                sharedPreferences.setString(
+                    "Authorization", snapshot.data.headers['authorization'])
+                    .then((saved) {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/home', (Route<dynamic> route) => false);
+                });
+              });
 
-                                            return Center(child: Text('Username or Password', style: headingStyle,));
-                case ConnectionState.none:
-                  break;
-                case ConnectionState.active:
-                  break;
-              }
-              return Text("End"); // unreachable
-            },
-          )
-        ],
-      ),
+            return Scaffold(
+              body: Column(mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Image.asset('assets/authentication.png'),
+                    ), Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text('Welcome to $appTitle',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.bold),),
+                    ), Text("Logging you in to your profile")]),
+            );
+          case ConnectionState.none:
+            break;
+          case ConnectionState.active:
+            break;
+        }
+        return Text("End"); // unreachable
+      },
     );
   }
 
   @override
-  void didUpdateWidget(LoadApi oldWidget) {
-    print("somthing changed!!!!!!!!!!!!!!!");
-  }
-
-  Future<Response> loginWithCaptcha(String username, String password, String gcaptcha) async{
-    Client client = Client();
-    String url = amihubUrl +
-        "/login?username=$username&password=$password&captchaResponse=$gcaptcha";
-    Response resp = await client.get(url);
-    if (resp.statusCode == 201) {
-      return resp;
-    }
-  }
-
-  Future<Response> login(String username, String password) async {
-    Client client = Client();
-    String url = amihubUrl + "/login";
-    print("--->$username" + "---->$password");
-    String requestBody = '{"username":$username, "password":"$password"}';
-    var headers = {"content-type": "application/json"};
-    Response resp = await client.post(url, headers: headers, body: requestBody);
-
-    if(resp.statusCode==201)return resp;
-    else Navigator.pushNamedAndRemoveUntil(context, '/login', (Route<dynamic> route) => false);
+  void initState() {
+    _amizoneRepository = AmizoneRepository();
   }
 
 

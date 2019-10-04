@@ -2,14 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class PersonalDetails extends StatelessWidget {
-  String fatherName;
-  DateTime dateOfBirth;
-  String phoneNumber;
-  String mobileNumber;
-  String email;
-  String contactAddress;
-  String permanentAddress;
-  String pincode;
+  final String fatherName;
+  final DateTime dateOfBirth;
+  final String phoneNumber;
+  final String mobileNumber;
+  final String email;
+  final String contactAddress;
+  final String permanentAddress;
+  final String pinCode;
 
   PersonalDetails(
       {Key key,
@@ -20,7 +20,7 @@ class PersonalDetails extends StatelessWidget {
       @required this.email,
       @required this.contactAddress,
       @required this.permanentAddress,
-      @required this.pincode})
+        @required this.pinCode})
       : super(key: key);
 
   @override
@@ -60,7 +60,7 @@ class PersonalDetails extends StatelessWidget {
         ),
         PersonalDetail(
           profileKey: "Pincode",
-          profileValue: pincode,
+          profileValue: pinCode,
         ),Divider(),
       ],
     );
@@ -68,8 +68,8 @@ class PersonalDetails extends StatelessWidget {
 }
 
 class PersonalDetail extends StatelessWidget {
-  String profileKey;
-  String profileValue;
+  final String profileKey;
+  final String profileValue;
 
   PersonalDetail(
       {Key key, @required this.profileKey, @required this.profileValue})
