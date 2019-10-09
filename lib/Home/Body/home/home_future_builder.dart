@@ -63,7 +63,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
                         )
                       ],
                       gradient: LinearGradient(
-                          colors: [Colors.white70, Colors.white],
+                          colors: [Colors.white, Colors.white],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter),
                       borderRadius: BorderRadius.all(Radius.circular(10))),

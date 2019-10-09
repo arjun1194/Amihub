@@ -14,6 +14,7 @@ class _TestAnimationState extends State<TestAnimation> {
 
   @override
   void initState() {
+    super.initState();
     pageController = PageController(initialPage: 0);
   }
 

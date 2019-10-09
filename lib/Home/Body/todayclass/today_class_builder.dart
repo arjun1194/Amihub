@@ -28,7 +28,6 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
   }
 
   Future<void> onRefresh() {
-    //open to changes right now!
     setState(() {});
     return DatabaseHelper.db.deleteTodayClassesWithDate(
         "${selectDate.month}/${selectDate.day}/${selectDate.year}");

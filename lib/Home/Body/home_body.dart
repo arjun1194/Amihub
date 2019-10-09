@@ -1,4 +1,7 @@
+import 'package:amihub/Components/donut_chart.dart';
+import 'package:amihub/Components/horizontal_chart.dart';
 import 'package:amihub/Home/Body/home/home_future_builder.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
@@ -20,17 +23,29 @@ class _HomeBodyState extends State<HomeBody> {
         .height;
 
 
-    return Column(crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(scrollDirection: Axis.vertical, shrinkWrap: true,
       children: <Widget>[
         Container(
           padding: const EdgeInsets.all(16.0),
           child: Text("Today's Classes",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+            style: TextStyle(fontSize: 20),),
         ),
-        Container(height: 0.3 * height,
+        Container(height: 0.35 * height,
           width: 0.95 * width,
           child: HomeTodayClassBuilder(),
         ),
+        Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Text("Attendance Summary",
+            style: TextStyle(fontSize: 20),),
+        ),
+        DonutChartFutureBuilder(),
+        Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Text("Score Summary",
+            style: TextStyle(fontSize: 20),),
+        ),
+        HorizontalChartBuilder(),
       ],
     );
   }

@@ -123,4 +123,12 @@ class DatabaseHelper {
     List<Course> list = response.map((c) => Course.fromJson(c)).toList();
     return list;
   }
+
+  Future<void> deleteDatabase() async {
+    final db = await database;
+    String sql = "DELETE FROM course";
+    String sql2 = "DELETE FROM todayClass";
+    await db.rawQuery(sql);
+    await db.rawQuery(sql2);
+  }
 }

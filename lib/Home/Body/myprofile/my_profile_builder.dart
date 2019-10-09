@@ -52,7 +52,8 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
                     pinCode: snapshot.data['pinCode'].toString(),
                   ),
                 ),
-                Center(child: Text("In case of discrepancy contact support@amihub.com",style: TextStyle(fontSize: 14,color: Colors.grey),)),
+                Center(child: Text("error? contact support@amihub.com",
+                  style: TextStyle(fontSize: 14, color: Colors.grey),)),
               ],
             );
           case ConnectionState.none:

@@ -99,7 +99,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
           );
         }
         Widget CourseBuild() {
-          Padding(
+          return Padding(
             padding: const EdgeInsets.only(left: 4, right: 4, top: 8),
             child: ListView(
                 scrollDirection: Axis.vertical,
