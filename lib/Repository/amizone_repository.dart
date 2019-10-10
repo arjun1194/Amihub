@@ -27,11 +27,41 @@ class AmizoneRepository {
           double.tryParse(perc.substring(0, perc.indexOf("%")))));
     }
 
+    List<CourseAttendance> courseAttend = List.generate(3, (int index) {
+      return CourseAttendance("$index", 0.0);
+    });
 
-    return courseAttendance;
+    List<double> justList = List.generate(3, (index) => 0.0);
+
+    courseAttendance.forEach((course) {
+      if (course.attendance < 75) {
+        courseAttend
+            .elementAt(0)
+            .attendance += course.attendance;
+        justList[0] += 1;
+      }
+      else if (course.attendance >= 75 && course.attendance < 85) {
+        courseAttend
+            .elementAt(1)
+            .attendance += course.attendance;
+        justList[1] += 1;
+      }
+      else {
+        courseAttend
+            .elementAt(2)
+            .attendance += course.attendance;
+        justList[2] += 1;
+      }
+    });
+
+
+    for (int i = 0; i < courseAttend.length; i++) {
+      courseAttend[i].attendance = justList[i];
+    }
+    return courseAttend;
   }
 
-  Future<List<Score>> fetchcurrentScore() async {
+  Future<List<Score>> fetchCurrentScore() async {
     HttpWithInterceptor http =
     HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/metadata');
@@ -58,8 +88,7 @@ class AmizoneRepository {
   Future<List<dynamic>> fetchTodayClass() async {
     HttpWithInterceptor http =
     HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-    var response =
-    await http.get('$amihubUrl/todayClass');
+    var response = await http.get('$amihubUrl/todayClass');
     return await convert.jsonDecode(response.body);
   }
 
@@ -180,8 +209,8 @@ class AmizoneRepository {
       sp.remove('Authorization');
     });
     dbHelper.deleteDatabase().then((e) {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          '/', (Route<dynamic> route) => false);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     });
   }
 }

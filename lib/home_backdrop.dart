@@ -73,7 +73,10 @@ class _HomeState extends State<Home> {
           changeSelected: changeSelected,
         ),
       ),
-      frontLayer: homeWidget,
+      frontLayer: Padding(
+        padding: const EdgeInsets.fromLTRB(3, 8, 3, 8),
+        child: homeWidget,
+      ),
       iconPosition: BackdropIconPosition.leading,
       actions: <Widget>[
         FlatButton(

@@ -19,6 +19,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Application 1',
       routes: routes,
+      theme: ThemeData(
+          fontFamily: "OpenSans"
+      ),
     );
   }
 }

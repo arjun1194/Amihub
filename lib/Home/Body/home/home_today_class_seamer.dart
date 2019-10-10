@@ -1,11 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class HomeTodayClassSeamer extends StatefulWidget {
+class HomeTodayClassShimmer extends StatefulWidget {
   @override
-  _HomeTodayClassSeamerState createState() => _HomeTodayClassSeamerState();
+  _HomeTodayClassShimmerState createState() => _HomeTodayClassShimmerState();
 }
 
-class _HomeTodayClassSeamerState extends State<HomeTodayClassSeamer>
+class _HomeTodayClassShimmerState extends State<HomeTodayClassShimmer>
     with SingleTickerProviderStateMixin {
   Animation<Color> animation;
   AnimationController animationController;
@@ -19,8 +20,8 @@ class _HomeTodayClassSeamerState extends State<HomeTodayClassSeamer>
     );
 
     animation = new ColorTween(
-      begin: const Color(0xeadcdcdc),
-      end: const Color(0xeaacacac),
+      begin: const Color(0xffd6d6d6),
+      end: const Color(0xffe8e8e8),
     ).animate(animationController)
       ..addListener(() {
         setState(() {});
@@ -49,51 +50,102 @@ class _HomeTodayClassSeamerState extends State<HomeTodayClassSeamer>
     double height = MediaQuery.of(context).size.height;
 
     return Padding(
-      padding: EdgeInsets.all(8),
-      child: Container(
-          height: 0.3 * height,
-          width: 0.95 * width,
-          decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  blurRadius: 6.0,
-                  // has the effect of softening the shadow
-                  spreadRadius: 1.0,
-                  // has the effect of extending the shadow
-                  offset: Offset(
-                    3.0, // horizontal, move right 10
-                    1.0, // vertical, move down 10
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+        child: Material(
+          shadowColor: Colors.grey.shade200,
+          elevation: 10,
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.white70, Colors.white],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter),
+                borderRadius: BorderRadius.all(Radius.circular(13))),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: getContainer(width * 0.7, 22),
                   ),
-                )
-              ],
-              gradient: LinearGradient(
-                  colors: [Colors.white70, Colors.white],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: 0.8 * width,
-                  height: 20,
-                  color: animation.value,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Container(
-                    width: 0.25 * width,
-                    height: 10,
-                    color: animation.value,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        CupertinoIcons.person_add_solid,
+                        color: animation.value,
+                        size: 28,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      getContainer(width * 0.4, 18)
+                    ],
                   ),
-                ),
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Icon(
+                        Icons.timer,
+                        color: animation.value,
+                        size: 28,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      getContainer(width * 0.3, 18)
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.account_balance,
+                            color: animation.value,
+                            size: 28,
+                          ),
+                          SizedBox(
+                            width: 5.0,
+                          ),
+                          getContainer(60, 18),
+                        ],
+                      ),
+                      SizedBox(
+                        width: width * 0.21,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.description,
+                            size: 28,
+                            color: animation.value,
+                          ),
+                          SizedBox(
+                            width: 5.0,
+                          ),
+                          getContainer(60, 18),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
+        ));
+  }
+
+  Container getContainer(double width, double height) {
+    return Container(
+      height: height,
+      width: width,
+      color: animation.value,
     );
   }
 }

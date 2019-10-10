@@ -20,9 +20,11 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
 
   @override
   void initState() {
+    super.initState();
     currentPage = 0;
     pageController = PageController(initialPage: currentPage);
   }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery
@@ -39,39 +41,24 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
       builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return HomeTodayClassSeamer();
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: HomeTodayClassShimmer(),
+            );
 
           case ConnectionState.done:
-            return
-              (snapshot.hasError || snapshot.data == null) ? Padding(
-                padding: EdgeInsets.all(8),
-                child: Container(
-                  height: 0.3 * height,
-                  width: 0.95 * width,
-                  decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 6.0,
-                          // has the effect of softening the shadow
-                          spreadRadius: 1.0,
-                          // has the effect of extending the shadow
-                          offset: Offset(
-                            3.0, // horizontal, move right 10
-                            1.0, // vertical, move down 10
-                          ),
-                        )
-                      ],
-                      gradient: LinearGradient(
-                          colors: [Colors.white, Colors.white],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Center(child: Icon(
-                    Icons.cloud_off, size: 32, color: Colors.grey,)),
-                ),
-              ) :
-              (snapshot.data.elementAt(0) == "No Class") ? Padding(
+            return (snapshot.hasError || snapshot.data == null)
+                ? Padding(
+              padding: EdgeInsets.all(8),
+              child: Center(
+                  child: Icon(
+                    Icons.cloud_off,
+                    size: 32,
+                    color: Colors.grey,
+                  )),
+            )
+                : (snapshot.data.elementAt(0) == "No Class")
+                ? Padding(
               padding: EdgeInsets.all(8),
               child: Container(
                 height: 0.3 * height,
@@ -94,12 +81,17 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
                         colors: [Colors.white70, Colors.white],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Center(child: Icon(
-                  Icons.cloud_off, size: 32, color: Colors.grey,)),
+                    borderRadius:
+                    BorderRadius.all(Radius.circular(10))),
+                child: Center(
+                    child: Icon(
+                      Icons.cloud_off,
+                      size: 32,
+                      color: Colors.grey,
+                    )),
               ),
-              ) :
-              PageView(
+            )
+                : PageView(
               onPageChanged: (int val) {
                 currentPage = val;
                 pageController.animateToPage(val,
@@ -124,17 +116,15 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
                       snapshot.data[index]['courseCode'],
                       snapshot.data[index]['start'],
                       snapshot.data[index]['end'],
-                      lightColors[
-                      math.min(index, index % lightColors.length)],
-                      darkColors[
-                      math.min(index, index % lightColors.length)]),
+                      lightColors[math.min(
+                          index, index % lightColors.length)],
+                      darkColors[math.min(
+                          index, index % lightColors.length)]),
                 );
               }),
               pageSnapping: true,
               controller: pageController,
             );
-
-
 
           case ConnectionState.none:
             break;

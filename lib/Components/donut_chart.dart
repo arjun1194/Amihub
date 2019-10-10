@@ -23,7 +23,7 @@ class _DonutChartFutureBuilderState extends State<DonutChartFutureBuilder> {
             return Text('');
           case ConnectionState.active:
           case ConnectionState.waiting:
-            return DonutChartSeamer();
+            return DonutChartShimmer();
           case ConnectionState.done:
             if (snapshot.hasError) return Text('Error: ${snapshot.error}');
             return DonutChartBuild(
@@ -35,7 +35,49 @@ class _DonutChartFutureBuilderState extends State<DonutChartFutureBuilder> {
   }
 }
 
-class DonutChartSeamer extends StatelessWidget {
+class DonutChartShimmer extends StatefulWidget {
+  @override
+  _DonutChartShimmerState createState() => _DonutChartShimmerState();
+}
+
+class _DonutChartShimmerState extends State<DonutChartShimmer>
+    with SingleTickerProviderStateMixin {
+  Animation<Color> animation;
+  AnimationController animationController;
+
+  @override
+  initState() {
+    super.initState();
+    animationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    animation = new ColorTween(
+      begin: Colors.grey.shade200,
+      end: Colors.grey.shade400,
+    ).animate(animationController)
+      ..addListener(() {
+        setState(() {});
+      });
+
+    animationController.forward();
+
+    animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        animationController.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        animationController.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -49,80 +91,72 @@ class DonutChartSeamer extends StatelessWidget {
             courseAttendance.courseName,
         measureFn: (CourseAttendance courseAttendance, _) =>
             courseAttendance.attendance,
-        colorFn: (CourseAttendance courseAttendance, _) {
-          if (courseAttendance.attendance > 85)
-            return charts.Color.fromHex(code: grey);
-          else if (courseAttendance.attendance > 75 &&
-              courseAttendance.attendance <= 85)
-            return charts.Color.fromHex(code: grey);
-          else
-            return charts.Color.fromHex(code: grey);
-        },
-        data: [CourseAttendance("", 100)],
+        colorFn: (CourseAttendance courseAttendance, _) =>
+            charts.ColorUtil.fromDartColor(animation.value),
+        data: [
+          CourseAttendance(" ", 100),
+          CourseAttendance("  ", 100),
+          CourseAttendance("   ", 200)
+        ],
       )
     ];
     return Padding(
       padding: EdgeInsets.all(8),
-      child: Container(
-        height: 0.35 * height,
-        width: 0.95 * width,
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                blurRadius: 6.0,
-                // has the effect of softening the shadow
-                spreadRadius: 1.0,
-                // has the effect of extending the shadow
-                offset: Offset(
-                  3.0, // horizontal, move right 10
-                  1.0, // vertical, move down 10
-                ),
-              )
-            ],
-            gradient: LinearGradient(
-                colors: [Colors.white, Colors.white],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter),
-            borderRadius: BorderRadius.all(Radius.circular(10))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 0.35 * height,
-              width: 0.6 * width,
-              child: DonutChart(seriesList: series, animate: true),
+      child: Material(
+        color: Colors.transparent,
+        shadowColor: Color(0xffd6d6d6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+        elevation: 10,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(13),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Colors.white70, Colors.white],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter),
             ),
-            Column(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                ChartAnnotations(
-                  "Above 75",
-                  Color(0xffafafaf),
-                  textColor: Colors.grey,
+                Container(
+                  height: 0.35 * height,
+                  width: 0.6 * width,
+                  child: DonutChart(seriesList: series, animate: false),
                 ),
-                ChartAnnotations(
-                  "75 to 85",
-                  Color(0xffafafaf),
-                  textColor: Colors.grey,
-                ),
-                ChartAnnotations(
-                  "Below 75",
-                  Color(0xffafafaf),
-                  textColor: Colors.grey,
+                Padding(
+                  padding: EdgeInsets.only(top: width * 0.07),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      ChartAnnotations(
+                        "Above 75",
+                        animation.value,
+                        textColor: Colors.grey,
+                      ),
+                      ChartAnnotations(
+                        "75 to 85",
+                        animation.value,
+                        textColor: Colors.grey,
+                      ),
+                      ChartAnnotations(
+                        "Below 75",
+                        animation.value,
+                        textColor: Colors.grey,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
-
-//     ""
 
 class DonutChartBuild extends StatelessWidget {
   final List<CourseAttendance> courses;
@@ -142,13 +176,18 @@ class DonutChartBuild extends StatelessWidget {
         id: 'attendance',
         domainFn: (CourseAttendance courseAttendance, _) =>
             courseAttendance.courseName,
+        labelAccessorFn: (CourseAttendance courseAttendance, _) {
+          if (courseAttendance.attendance.round() != 0)
+            return '${courseAttendance.attendance.round()}';
+          else
+            return "";
+        },
         measureFn: (CourseAttendance courseAttendance, _) =>
             courseAttendance.attendance,
         colorFn: (CourseAttendance courseAttendance, _) {
-          if (courseAttendance.attendance > 85)
+          if (courseAttendance.courseName == "2")
             return charts.Color.fromHex(code: color1);
-          else if (courseAttendance.attendance > 75 &&
-              courseAttendance.attendance <= 85)
+          else if (courseAttendance.courseName == "1")
             return charts.Color.fromHex(code: color2);
           else
             return charts.Color.fromHex(code: color3);
@@ -159,62 +198,63 @@ class DonutChartBuild extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.all(8),
-      child: Container(
-        height: 0.35 * height,
-        width: 0.95 * width,
-        decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                blurRadius: 6.0,
-                // has the effect of softening the shadow
-                spreadRadius: 1.0,
-                // has the effect of extending the shadow
-                offset: Offset(
-                  3.0, // horizontal, move right 10
-                  1.0, // vertical, move down 10
-                ),
-              )
-            ],
-            gradient: LinearGradient(
-                colors: [Colors.white, Colors.white],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter),
-            borderRadius: BorderRadius.all(Radius.circular(10))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              height: 0.35 * height,
-              width: 0.6 * width,
-              child: DonutChart(seriesList: series, animate: true),
-            ),
-            Column(
+      child: Material(
+        color: Colors.transparent,
+        shadowColor: Color(0xffd6d6d6),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+        elevation: 10,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(13),
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.white, Colors.white],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter),
+                borderRadius: BorderRadius.all(Radius.circular(10))),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                ChartAnnotations("Above 85", Color(0xff56CD93)),
-                ChartAnnotations("75 to 85", Color(0xffECA24D)),
-                ChartAnnotations("Below 75", Color(0xffFF5479)),
-                FlatButton(
-                  onPressed: () {},
-                  child: Row(
+                Container(
+                  height: 0.35 * height,
+                  width: 0.6 * width,
+                  child: DonutChart(
+                    seriesList: series,
+                    animate: true,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: width * 0.07),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        "SEE ALL",
-                        style: TextStyle(color: Colors.lightBlue),
-                      ),
-                      Icon(
-                        Icons.arrow_forward,
-                        color: Colors.lightBlue,
+                      ChartAnnotations("Above 85", Color(0xff56CD93)),
+                      ChartAnnotations("75 to 85", Color(0xffECA24D)),
+                      ChartAnnotations("Below 75", Color(0xffFF5479)),
+                      FlatButton(
+                        onPressed: () {},
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              "SEE ALL",
+                              style: TextStyle(color: Colors.lightBlue),
+                            ),
+                            Icon(
+                              Icons.arrow_forward,
+                              size: 20,
+                              color: Colors.lightBlue,
+                            )
+                          ],
+                        ),
                       )
                     ],
                   ),
-                )
+                ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -229,10 +269,14 @@ class DonutChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: charts.PieChart(seriesList,
-          animate: animate,
-          defaultRenderer: new charts.ArcRendererConfig(arcWidth: 40)),
+    return charts.PieChart(
+      seriesList,
+      animate: animate,
+      animationDuration: Duration(milliseconds: 500),
+      defaultRenderer: new charts.ArcRendererConfig(
+          arcWidth: 40,
+          strokeWidthPx: 3,
+          arcRendererDecorators: [new charts.ArcLabelDecorator()]),
     );
   }
 }
@@ -251,9 +295,12 @@ class ChartAnnotations extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: color,
+            ),
             width: 16,
             height: 16,
-            color: color,
           ),
         ),
         Text(
