@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:amihub/Models/today_class.dart';
 import 'package:amihub/Repository/amizone_repository.dart';
 import 'package:amihub/Theme/theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,9 +37,10 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
         .size
         .height;
 
-    return FutureBuilder<List<dynamic>>(
+    return FutureBuilder<List<TodayClass>>(
       future: amizoneRepository.fetchTodayClass(),
-      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+      builder: (BuildContext context,
+          AsyncSnapshot<List<TodayClass>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Padding(
@@ -47,6 +49,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
             );
 
           case ConnectionState.done:
+            print(snapshot.data);
             return (snapshot.hasError || snapshot.data == null)
                 ? Padding(
               padding: EdgeInsets.all(8),
@@ -57,7 +60,9 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
                     color: Colors.grey,
                   )),
             )
-                : (snapshot.data.elementAt(0) == "No Class")
+                : (snapshot.data
+                .elementAt(0)
+                .courseCode == "")
                 ? Padding(
               padding: EdgeInsets.all(8),
               child: Container(
@@ -103,19 +108,19 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TestWidget(
-                      snapshot.data[index]['title'],
-                      snapshot.data[index]['facultyName']
+                      snapshot.data[index].title,
+                      snapshot.data[index].facultyName
                           .toString()
                           .substring(
                           0,
-                          snapshot.data[index]['facultyName']
+                          snapshot.data[index].facultyName
                               .toString()
                               .indexOf('[')),
-                      snapshot.data[index]['color'],
-                      snapshot.data[index]['roomNo'],
-                      snapshot.data[index]['courseCode'],
-                      snapshot.data[index]['start'],
-                      snapshot.data[index]['end'],
+                      snapshot.data[index].color,
+                      snapshot.data[index].roomNo,
+                      snapshot.data[index].courseCode,
+                      snapshot.data[index].start,
+                      snapshot.data[index].end,
                       lightColors[math.min(
                           index, index % lightColors.length)],
                       darkColors[math.min(
