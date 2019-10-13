@@ -85,11 +85,16 @@ class AmizoneRepository {
     return jsonResponse;
   }
 
-  Future<List<dynamic>> fetchTodayClass() async {
+  Future<List<TodayClass>> fetchTodayClass() async {
+    List<TodayClass> todayClass = [];
     HttpWithInterceptor http =
     HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/todayClass');
-    return await convert.jsonDecode(response.body);
+    var jsonResponse = convert.jsonDecode(response.body);
+    for (var element in jsonResponse) {
+      todayClass.add(TodayClass.fromJson(element));
+    }
+    return todayClass;
   }
 
 //  Future<List<dynamic>> fetchTodayClassWithDate(
