@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-class MyCourseSeamer extends StatefulWidget {
+class MyCourseShimmer extends StatefulWidget {
   @override
-  _MyCourseSeamerState createState() => _MyCourseSeamerState();
+  _MyCourseShimmerState createState() => _MyCourseShimmerState();
 }
 
-class _MyCourseSeamerState extends State<MyCourseSeamer>
+class _MyCourseShimmerState extends State<MyCourseShimmer>
     with SingleTickerProviderStateMixin {
-  @override
   Animation<Color> animation;
   AnimationController animationController;
 
@@ -50,48 +49,36 @@ class _MyCourseSeamerState extends State<MyCourseSeamer>
 
     return ListView.builder(
       scrollDirection: Axis.vertical,
-      itemCount: 8,
+      itemCount: 6,
+      shrinkWrap: true,
       itemBuilder: (context, int index) {
-        if (index == 0)
-          return Padding(
-            padding: const EdgeInsets.only(top: 32, left: 32),
-            child: Text(
-              "My Courses",
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Colors.grey),
-            ),
-          );
-        else
-          return Column(
-            children: <Widget>[
-              ListTile(
-                title: Container(
+        return Column(
+          children: <Widget>[
+            ListTile(
+              title: Padding(
+                padding: const EdgeInsets.only(right: 40),
+                child: Container(
                   color: animation.value,
                   width: 0.5 * width,
                   height: 20,
                 ),
-                subtitle: Padding(
-                  padding: EdgeInsets.only(left: 0, right: 0.6 * width, top: 8),
-                  child: Container(color: animation.value, height: 10),
-                ),
-                contentPadding: EdgeInsets.only(left: 0),
-                leading: Container(
-                  decoration: BoxDecoration(
-                    color: animation.value,
-                  ),
-                  width: 8,
-                ),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[Text(" "), Text(" ")],
-                ),
-                onTap: () {},
               ),
-              Divider(),
-            ],
-          );
+              subtitle: Padding(
+                padding: EdgeInsets.only(left: 0, right: 0.6 * width, top: 8),
+                child: Container(color: animation.value, height: 10),
+              ),
+              contentPadding: EdgeInsets.only(left: 0),
+              leading: Container(
+                decoration: BoxDecoration(
+                  color: animation.value,
+                ),
+                width: 8,
+              ),
+              onTap: () {},
+            ),
+            Divider(),
+          ],
+        );
       },
     );
   }

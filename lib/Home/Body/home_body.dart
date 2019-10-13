@@ -1,7 +1,6 @@
 import 'package:amihub/Components/donut_chart.dart';
 import 'package:amihub/Components/horizontal_chart.dart';
 import 'package:amihub/Home/Body/home/home_future_builder.dart';
-import 'package:amihub/Home/Body/home/home_today_class_seamer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,18 +12,13 @@ class HomeBody extends StatefulWidget {
 class _HomeBodyState extends State<HomeBody> {
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery
-        .of(context)
-        .size
-        .height;
-    var width = MediaQuery
-        .of(context)
-        .size
-        .height;
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.height;
 
     return ListView(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
+      padding: EdgeInsets.only(bottom: 15),
       physics: BouncingScrollPhysics(),
       children: <Widget>[
         buildPadding("Today's Class"),

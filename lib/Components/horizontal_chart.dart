@@ -1,10 +1,14 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:amihub/Models/score.dart';
 import 'package:amihub/Repository/amizone_repository.dart';
 import 'package:charts_flutter/flutter.dart';
+import 'package:charts_flutter/src/text_style.dart' as style;
+import 'package:charts_flutter/src/text_element.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class HorizontalChartBuilder extends StatefulWidget {
   @override
@@ -22,7 +26,7 @@ class _HorizontalChartBuilderState extends State<HorizontalChartBuilder> {
       Score(semester: 5, cgpa: 6.17, sgpa: 7.21),
       Score(semester: 6, cgpa: 6.29, sgpa: 6.83),
     ];
-    return HorizontalChart(score: score);
+    return HorizontalChartBuild(score);
   }
 //  @override
 //  Widget build(BuildContext context) {
@@ -129,7 +133,6 @@ class HorizontalChartBuild extends StatelessWidget {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
     return Padding(
       padding: EdgeInsets.all(8),
       child: Material(
@@ -140,41 +143,24 @@ class HorizontalChartBuild extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(13),
           child: Container(
+            padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [Colors.white, Colors.white],
+                    colors: [Colors.white.withOpacity(0.9), Colors.white],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter),
                 borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  height: 0.35 * height,
-                  width: 0.9 * width,
-                  margin: EdgeInsets.all(10),
-                  child: HorizontalChart(score: score),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text("CGPA"),
-                    Text("SGPA")
-                  ],
-                ),
-              ],
-            ),
+            child: HorizontalChart(score: score),
           ),
         ),
       ),
     );
   }
+
 }
 
 // ignore: must_be_immutable
-class HorizontalChart extends StatelessWidget {
+class HorizontalChart extends StatefulWidget {
   final List<Score> score;
   List<Series<Score, int>> seriesList;
 
@@ -199,20 +185,33 @@ class HorizontalChart extends StatelessWidget {
   }
 
   @override
+  _HorizontalChartState createState() => _HorizontalChartState();
+}
+
+class _HorizontalChartState extends State<HorizontalChart> {
+  String textSelected;
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      child: LineChart(
-        seriesList,
-        primaryMeasureAxis: new NumericAxisSpec(
-            tickProviderSpec: new StaticNumericTickProviderSpec(List.generate(
-                10, (index) => TickSpec(index + 1, label: '${index + 1}'))),
-            showAxisLine: true),
-        domainAxis: NumericAxisSpec(
-            tickProviderSpec: StaticNumericTickProviderSpec(List.generate(
-                score.length,
-                    (index) => TickSpec(index + 1, label: '${index + 1}')))),
-        animate: true,
-      ),
+    return LineChart(
+      widget.seriesList,
+      defaultRenderer:
+          LineRendererConfig(includeLine: true, includePoints: true),
+      behaviors: [
+        SeriesLegend(
+          position: BehaviorPosition.inside,
+          insideJustification: InsideJustification.topEnd,
+        ),
+      ],
+      primaryMeasureAxis: new NumericAxisSpec(
+          tickProviderSpec: new StaticNumericTickProviderSpec(List.generate(
+              10, (index) => TickSpec(index + 1, label: '${index + 1}'))),
+          showAxisLine: true),
+      domainAxis: NumericAxisSpec(
+          tickProviderSpec: StaticNumericTickProviderSpec(List.generate(
+              widget.score.length,
+              (index) => TickSpec(index + 1, label: '${index + 1}')))),
+      animate: true,
     );
   }
 }

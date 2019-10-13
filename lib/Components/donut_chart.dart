@@ -174,6 +174,7 @@ class DonutChartBuild extends StatelessWidget {
     var series = [
       charts.Series<CourseAttendance, dynamic>(
         id: 'attendance',
+        displayName: "sdsdd",
         domainFn: (CourseAttendance courseAttendance, _) =>
             courseAttendance.courseName,
         labelAccessorFn: (CourseAttendance courseAttendance, _) {

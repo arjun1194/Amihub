@@ -74,7 +74,7 @@ class _HomeState extends State<Home> {
         ),
       ),
       frontLayer: Padding(
-        padding: const EdgeInsets.fromLTRB(3, 8, 3, 8),
+        padding: const EdgeInsets.fromLTRB(3, 8, 3, 4),
         child: homeWidget,
       ),
       iconPosition: BackdropIconPosition.leading,
@@ -114,7 +114,7 @@ class _BackDropButtonsState extends State<BackDropButtons> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         BackDropButton(Icons.home, "Home", widget.selected == 0, () {
           setState(() {

@@ -32,9 +32,6 @@ class TestWidget extends StatefulWidget {
 class _TestWidgetState extends State<TestWidget> {
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
-
     var startHour = int.tryParse(widget.startTime
         .substring(widget.startTime.length - 11, widget.startTime.length - 9));
     var startMinute = int.tryParse(widget.startTime

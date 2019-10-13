@@ -50,7 +50,7 @@ class _HomeTodayClassShimmerState extends State<HomeTodayClassShimmer>
     double height = MediaQuery.of(context).size.height;
 
     return Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 23),
         child: Material(
           shadowColor: Colors.grey.shade200,
           elevation: 10,
