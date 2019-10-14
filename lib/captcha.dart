@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'package:amihub/Login/login-button.dart';
-import 'package:amihub/Theme/theme.dart';
-import 'package:amihub/Components/appbar.dart';
-import 'package:amihub/ViewModels/login_model.dart';
-import 'package:amihub/load.dart';
+import 'package:amihub/theme/theme.dart';
+import 'package:amihub/viewModels/captcha_model.dart';
+import 'package:amihub/viewModels/login_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
-import 'ViewModels/captcha_model.dart';
 
 class CaptchaPage extends StatefulWidget {
   @override

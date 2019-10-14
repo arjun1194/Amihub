@@ -1,4 +1,4 @@
-import 'package:amihub/Components/appbar.dart';
+import 'package:amihub/components/appbar.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPassword extends StatefulWidget {

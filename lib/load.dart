@@ -1,10 +1,10 @@
-import 'package:amihub/Repository/amizone_repository.dart';
-import 'package:amihub/Theme/theme.dart';
+import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
+import 'package:amihub/viewModels/login_model.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'ViewModels/login_model.dart';
 
 class LoadApi extends StatefulWidget {
   @override
@@ -98,6 +98,7 @@ class _LoadApiState extends State<LoadApi> {
 
   @override
   void initState() {
+    super.initState();
     _amizoneRepository = AmizoneRepository();
   }
 

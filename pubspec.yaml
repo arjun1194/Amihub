@@ -37,6 +37,8 @@ dependencies:
   path_provider:
   sqflite:
   charts_flutter:
+  flutter_slidable:
+
 
 
 

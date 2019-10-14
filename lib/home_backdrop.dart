@@ -1,15 +1,15 @@
-import 'package:amihub/Components/backdrop_buttons.dart';
-import 'package:amihub/Home/Body/home_body.dart';
-import 'package:amihub/Home/Body/my_courses.dart';
-import 'package:amihub/Repository/amizone_repository.dart';
-import 'package:amihub/Theme/theme.dart';
-import 'package:backdrop/backdrop.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
-import 'Home/Body/my_profile.dart';
-import 'Home/Body/results.dart';
-import 'Home/Body/todays_classes.dart';
+
+import 'package:amihub/components/backdrop_buttons.dart';
+import 'package:amihub/home/body/home_body.dart';
+import 'package:amihub/home/body/my_courses.dart';
+import 'package:amihub/home/body/my_profile.dart';
+import 'package:amihub/home/body/results.dart';
+import 'package:amihub/home/body/todays_classes.dart';
+import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
+import 'package:backdrop/backdrop.dart';
+import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -67,16 +67,14 @@ class _HomeState extends State<Home> {
         ),
       ),
       backLayerColor: Color(0xff171C1F),
+      headerHeight: 40,
       backLayer: Center(
         child: BackDropButtons(
           selected: selected,
           changeSelected: changeSelected,
         ),
       ),
-      frontLayer: Padding(
-        padding: const EdgeInsets.fromLTRB(3, 8, 3, 4),
-        child: homeWidget,
-      ),
+      frontLayer: homeWidget,
       iconPosition: BackdropIconPosition.leading,
       actions: <Widget>[
         FlatButton(

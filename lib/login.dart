@@ -1,6 +1,7 @@
-import 'package:amihub/Components/textfield.dart';
-import 'package:amihub/Login/login-inputs.dart';
-import 'package:amihub/ViewModels/login_model.dart';
+
+import 'package:amihub/components/textfield.dart';
+import 'package:amihub/login/login-inputs.dart';
+import 'package:amihub/viewModels/login_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
