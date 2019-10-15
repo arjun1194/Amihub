@@ -28,7 +28,6 @@ dependencies:
   webview_flutter:
   shared_preferences: ^0.5.3+4
   http_interceptor: ^0.0.3
-  backdrop: ^0.1.8
   random_color:
   intl: ^0.16.0
   flutter_datetime_picker: ^1.2.6
