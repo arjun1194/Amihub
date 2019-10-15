@@ -1,9 +1,12 @@
 import 'package:amihub/components/donut_chart.dart';
 import 'package:amihub/components/horizontal_chart.dart';
 import 'package:amihub/components/page_heading.dart';
+import 'package:amihub/components/refresh_button.dart';
 import 'package:amihub/home/body/home/home_future_builder.dart';
+import 'package:amihub/repository/refresh_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HomeBody extends StatefulWidget {
   @override
@@ -11,26 +14,36 @@ class HomeBody extends StatefulWidget {
 }
 
 class _HomeBodyState extends State<HomeBody> {
+  RefreshRepository refreshRepository = RefreshRepository();
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.height;
 
-    return ListView(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      padding: EdgeInsets.only(bottom: 15),
-      physics: BouncingScrollPhysics(),
-      children: <Widget>[
-        PageHeader("Today's Class"),
-        buildContainer(height, width, HomeTodayClassBuilder()),
-        PageHeader("Attendance Summary"),
-        // TODO : Change The Pie Chart
-        buildContainer(height, width, DonutChartFutureBuilder()),
-        PageHeader("Score Summary"),
-        buildContainer(height, width, HorizontalChartBuilder()),
-      ],
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: ListView(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        padding: EdgeInsets.only(bottom: 15),
+        physics: BouncingScrollPhysics(),
+        children: <Widget>[
+          PageHeader("Today's Class"),
+          buildContainer(height, width, HomeTodayClassBuilder()),
+          PageHeader("Attendance Summary"),
+          // TODO : Change The Pie Chart
+          buildContainer(height, width, DonutChartFutureBuilder()),
+          PageHeader("Score Summary"),
+          buildContainer(height, width, HorizontalChartBuilder()),
+        ],
+      ),
+      floatingActionButton: RefreshButton(onPressed: onRefresh,),
     );
+  }
+
+  onRefresh(){
+    refreshRepository.refreshTodayClass(DateFormat("MM/dd/yyyy").format(DateTime.now()));
+    setState(() {});
   }
 
   Container buildContainer(double height, double width, Widget child) {
@@ -38,3 +51,4 @@ class _HomeBodyState extends State<HomeBody> {
   }
 
 }
+

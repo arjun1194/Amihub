@@ -18,4 +18,11 @@ class Score {
     data['sgpa'] = this.sgpa;
     return data;
   }
+
+  @override
+  String toString() {
+    return 'Score{semester: $semester, cgpa: $cgpa, sgpa: $sgpa}';
+  }
+
+
 }

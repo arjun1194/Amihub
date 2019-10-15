@@ -30,7 +30,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
     });
   }
 
-  Future<void> onRefresh() {
+  refresh() {
     setState(() {});
     return DatabaseHelper.db.deleteTodayClassesWithDate(
         "${selectDate.month}/${selectDate.day}/${selectDate.year}");
@@ -38,59 +38,70 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: onRefresh,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          PageHeader("Classes"),
-          Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.arrow_back_ios),
-                  iconSize: 20,
-                  color: Colors.grey.shade700,
-                  onPressed: () {
-                    changeState(selectDate.subtract(Duration(days: 1)));
-                  },
-                ),
-                FlatButton(
-                  shape: StadiumBorder(),
-                  onPressed: () {
-                    DatePicker.showDatePicker(context,
-                        showTitleActions: true,
-                        minTime: DateTime(2018, 3, 5),
-                        maxTime: DateTime(DateTime.now().year,
-                                DateTime.now().month, DateTime.now().day)
-                            .add(Duration(days: 10)), onConfirm: (date) {
-                      setState(() {
-                        selectDate = date;
-                      });
-                      changeState(selectDate);
-                    }, currentTime: selectDate, locale: LocaleType.en);
-                  },
-                  child: Text(
-                    dateFormat(selectDate),
-                    style: TextStyle(color: Colors.blue.shade700, fontSize: 15),
+    var height = MediaQuery.of(context).size.width;
+    return Stack(
+      children: <Widget>[
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            PageHeader("Classes"),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, right: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.arrow_back_ios),
+                    iconSize: 20,
+                    color: Colors.grey.shade700,
+                    onPressed: () {
+                      changeState(selectDate.subtract(Duration(days: 1)));
+                    },
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.arrow_forward_ios),
-                  iconSize: 20,
-                  color: Colors.grey.shade700,
-                  onPressed: () {
-                    changeState(selectDate.add(Duration(days: 1)));
-                  },
-                ),
-              ],
+                  FlatButton(
+                    shape: StadiumBorder(),
+                    onPressed: () {
+                      DatePicker.showDatePicker(context,
+                          showTitleActions: true,
+                          minTime: DateTime(2018, 3, 5),
+                          maxTime: DateTime(DateTime.now().year,
+                                  DateTime.now().month, DateTime.now().day)
+                              .add(Duration(days: 10)), onConfirm: (date) {
+                        setState(() {
+                          selectDate = date;
+                        });
+                        changeState(selectDate);
+                      }, currentTime: selectDate, locale: LocaleType.en);
+                    },
+                    child: Text(
+                      dateFormat(selectDate),
+                      style: TextStyle(color: Colors.blue.shade700, fontSize: 15),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.arrow_forward_ios),
+                    iconSize: 20,
+                    color: Colors.grey.shade700,
+                    onPressed: () {
+                      changeState(selectDate.add(Duration(days: 1)));
+                    },
+                  ),
+                ],
+              ),
             ),
+            buildFutureBuilder()
+          ],
+        ),
+        Positioned(
+          right: height * 0.08,
+          bottom: height * 0.08,
+          child: FloatingActionButton(
+            tooltip: "Refresh",
+            onPressed: refresh,
+            child: Icon(Icons.refresh),
           ),
-          buildFutureBuilder()
-        ],
-      ),
+        )
+      ],
     );
   }
 

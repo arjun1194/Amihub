@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:amihub/models/course.dart';
+import 'package:amihub/models/course_attendance_type.dart';
+import 'package:amihub/models/score.dart';
 import 'package:amihub/models/today_class.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -69,8 +72,35 @@ class DatabaseHelper {
            semester INTEGER NOT NULL
           )''');
 
+      await db.execute('''
+         CREATE TABLE gpa(
+           semester INTEGER PRIMARY KEY,
+           cgpa REAL NOT NULL,
+           sgpa REAL NOT NULL
+         )''');
+
+      await db.execute('''
+         CREATE TABLE courseAttendance(
+           attendanceType TEXT PRIMARY KEY,
+           noOfCourses INTEGER
+         )''');
+
       await db.rawQuery("PRAGMA table_info(course);");
     });
+  }
+
+  addCourseAttendance(CourseAttendanceType courseAttendanceType) async {
+    final db = await database;
+    var raw = await db.insert("courseAttendance", courseAttendanceType.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return raw;
+  }
+
+  addGpa(Score score) async {
+    final db = await database;
+    var raw = await db.insert("gpa", score.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return raw;
   }
 
   addTodayClass(TodayClass todayClass) async {
@@ -93,18 +123,40 @@ class DatabaseHelper {
     return raw;
   }
 
+  Future<List<Score>> getScore() async {
+    final db = await database;
+    String sql = "SELECT * FROM gpa";
+    var response = await db.rawQuery(sql);
+    List<Score> list = response.map((c) => Score.fromJson(c)).toList();
+    return list;
+  }
+
   Future deleteTodayClassesWithDate(String date) async {
     final db = await database;
     String sql = "DELETE FROM todayClass WHERE start LIKE '$date%'";
     var response = await db.rawQuery(sql);
-    print(response);
+    return response;
+  }
+
+  Future deleteGpa() async{
+    final db = await database;
+    String sql = "DELETE * FROM gpa";
+    var response = await db.rawQuery(sql);
+    return response;
+  }
+
+  Future deleteCourseAttendance() async{
+    final db = await database;
+    String sql = "DELETE * FROM courseAttendance";
+    var response = db.rawQuery(sql);
+    return response;
   }
 
   Future deleteCourseWithSemester(int semester) async {
     final db = await database;
     String sql = "DELETE FROM course WHERE semester = $semester";
     var response = await db.rawQuery(sql);
-    print(response.toString());
+    return response;
   }
 
   Future<List<TodayClass>> getTodayClassesWithDate(String date) async {
@@ -121,6 +173,14 @@ class DatabaseHelper {
     String sql = "SELECT * FROM course WHERE semester = $semester";
     var response = await db.rawQuery(sql);
     List<Course> list = response.map((c) => Course.fromJson(c)).toList();
+    return list;
+  }
+
+  Future<List<CourseAttendanceType>> getCourseType() async{
+    final db = await database;
+    String sql = "SELECT * FROM courseAttendance";
+    var response = await db.rawQuery(sql);
+    List<CourseAttendanceType> list = response.map((c) => CourseAttendanceType.fromJson(c)).toList();
     return list;
   }
 

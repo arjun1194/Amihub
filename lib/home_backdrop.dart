@@ -1,5 +1,6 @@
 
 
+import 'package:amihub/components/backdrop.dart';
 import 'package:amihub/components/backdrop_buttons.dart';
 import 'package:amihub/home/body/home_body.dart';
 import 'package:amihub/home/body/my_courses.dart';
@@ -8,7 +9,6 @@ import 'package:amihub/home/body/results.dart';
 import 'package:amihub/home/body/todays_classes.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
-import 'package:backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {

@@ -1,4 +1,5 @@
 import 'package:amihub/models/course_attendance.dart';
+import 'package:amihub/models/course_attendance_type.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/cupertino.dart';
@@ -17,7 +18,7 @@ class _DonutChartFutureBuilderState extends State<DonutChartFutureBuilder> {
       future: AmizoneRepository().fetchCurrentAttendance(),
       // a previously-obtained Future<String> or null
       builder: (BuildContext context,
-          AsyncSnapshot<List<CourseAttendance>> snapshot) {
+          AsyncSnapshot<List<CourseAttendanceType>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
             return Text('');
@@ -82,7 +83,6 @@ class _DonutChartShimmerState extends State<DonutChartShimmer>
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    String grey = "#afafaf";
 
     var series = [
       charts.Series<CourseAttendance, dynamic>(
@@ -159,7 +159,7 @@ class _DonutChartShimmerState extends State<DonutChartShimmer>
 }
 
 class DonutChartBuild extends StatelessWidget {
-  final List<CourseAttendance> courses;
+  final List<CourseAttendanceType> courses;
   final String color1;
   final String color2;
   final String color3;
@@ -172,23 +172,23 @@ class DonutChartBuild extends StatelessWidget {
     var width = MediaQuery.of(context).size.width;
 
     var series = [
-      charts.Series<CourseAttendance, dynamic>(
+      charts.Series<CourseAttendanceType, dynamic>(
         id: 'attendance',
         displayName: "sdsdd",
-        domainFn: (CourseAttendance courseAttendance, _) =>
-            courseAttendance.courseName,
-        labelAccessorFn: (CourseAttendance courseAttendance, _) {
-          if (courseAttendance.attendance.round() != 0)
-            return '${courseAttendance.attendance.round()}';
+        domainFn: (CourseAttendanceType courseAttendance, _) =>
+            courseAttendance.attendanceType,
+        labelAccessorFn: (CourseAttendanceType courseAttendance, _) {
+          if (courseAttendance.noOfCourses.round() != 0)
+            return '${courseAttendance.noOfCourses.round()}';
           else
             return "";
         },
-        measureFn: (CourseAttendance courseAttendance, _) =>
-            courseAttendance.attendance,
-        colorFn: (CourseAttendance courseAttendance, _) {
-          if (courseAttendance.courseName == "2")
+        measureFn: (CourseAttendanceType courseAttendance, _) =>
+            courseAttendance.noOfCourses,
+        colorFn: (CourseAttendanceType courseAttendance, _) {
+          if (courseAttendance.attendanceType == "ABOVE_85")
             return charts.Color.fromHex(code: color1);
-          else if (courseAttendance.courseName == "1")
+          else if (courseAttendance.attendanceType == "BETWEEN_75_TO_85")
             return charts.Color.fromHex(code: color2);
           else
             return charts.Color.fromHex(code: color3);
@@ -276,7 +276,7 @@ class DonutChart extends StatelessWidget {
       animationDuration: Duration(milliseconds: 500),
       defaultRenderer: new charts.ArcRendererConfig(
           arcWidth: 40,
-          strokeWidthPx: 3,
+          strokeWidthPx: 0,
           arcRendererDecorators: [new charts.ArcLabelDecorator()]),
     );
   }

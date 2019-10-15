@@ -1,9 +1,11 @@
 import 'dart:math' as math;
 
+import 'package:amihub/models/course_attendance_type.dart';
 import 'package:amihub/models/today_class.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'home_today_class_card.dart';
@@ -73,6 +75,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
             duration: Duration(milliseconds: 500), curve: Curves.decelerate);
       },
       scrollDirection: Axis.horizontal,
+      physics: BouncingScrollPhysics(),
       children: List.generate(snapshot.data.length, (index) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
