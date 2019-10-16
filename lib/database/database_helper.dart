@@ -188,7 +188,12 @@ class DatabaseHelper {
     final db = await database;
     String sql = "DELETE FROM course";
     String sql2 = "DELETE FROM todayClass";
+    String sql3 = "DELETE FROM gpa";
+    String sql4 = "DELETE FROM courseAttendance";
+
     await db.rawQuery(sql);
     await db.rawQuery(sql2);
+    await db.rawQuery(sql3);
+    await db.rawQuery(sql4);
   }
 }

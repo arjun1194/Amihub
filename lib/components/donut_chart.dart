@@ -1,3 +1,7 @@
+import 'package:amihub/components/custom_appbar.dart';
+import 'package:amihub/home/body/course/my_courses_future_builder.dart';
+import 'package:amihub/home/body/my_courses.dart';
+import 'package:amihub/home/home_appbar.dart';
 import 'package:amihub/models/course_attendance.dart';
 import 'package:amihub/models/course_attendance_type.dart';
 import 'package:amihub/repository/amizone_repository.dart';
@@ -235,8 +239,17 @@ class DonutChartBuild extends StatelessWidget {
                       ChartAnnotations("75 to 85", Color(0xffECA24D)),
                       ChartAnnotations("Below 75", Color(0xffFF5479)),
                       FlatButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).push(CupertinoPageRoute(
+                              builder: (context) => Scaffold(
+                                    body: HomeMyCourses(),
+                                    appBar: CustomAppbar("My Courses"),
+                                  )));
+                        },
+                        shape: StadiumBorder(),
+                        color: Colors.grey.shade100.withOpacity(0.8),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Text(
                               "SEE ALL",
