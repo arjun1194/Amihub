@@ -1,5 +1,6 @@
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -11,9 +12,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration(seconds: 2));
     SharedPreferences.getInstance().then((sharedPreferences) {
       if (sharedPreferences.containsKey('Authorization') && checkAuthValid()) {
-        print('<---JWt is valid : logging you in --->\n\n\n');
+        print('<---JWt is valid : logging you in --->');
         Navigator.pushNamedAndRemoveUntil(
             context, '/home', (Route<dynamic> route) => false);
       } else {
@@ -28,19 +30,34 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarIconBrightness: Brightness.dark,
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.dark,
+    ));
     return Scaffold(
       body: Container(
-        color: greenMain,
+        color: Colors.grey.shade200,
         height: double.infinity,
         width: double.infinity,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Amihub', style: TextStyle(color: Colors.white,
-                fontSize: 40,
-                fontWeight: FontWeight.bold),),
-            Text('attendance tracking system for Amity University',
-              style: TextStyle(color: Colors.white, fontSize: 20),)
+            Image.asset(
+              "assets/amihub.png",
+              height: 90,
+              width: 90,
+            ),
+            SizedBox(height: 25,),
+            Text(
+              appTitle,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "OpenSans",
+                  fontSize: 28,
+                  ),
+            ),
           ],
         ),
       ),

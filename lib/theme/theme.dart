@@ -12,14 +12,13 @@ const greyMain = Color(0xFFA3B9A6);
 const lightGreen = Color(0xFF203782);
 const lighterGreen = Color(0xFFa1d1ba);
 
-
-List<Color>lightColors = [
+List<Color> lightColors = [
   Color(0xff19ddd3),
   Color(0xfffe914e),
   Color(0xfff72e50),
   Color(0xff6975d8)
 ];
-List<Color>darkColors = [
+List<Color> darkColors = [
   Color(0xff15c4f3),
   Color(0xffff5e50),
   Color(0xfffb3067),
@@ -27,7 +26,6 @@ List<Color>darkColors = [
 ];
 
 const appTitle = 'Amihub';
-
 
 const fontSplashScreen = 'Roboto';
 
@@ -52,38 +50,37 @@ var js_setWebviewCenter =
 var js_getCaptchaResponse =
     "document.getElementById('g-recaptcha-response').value;";
 
-
 List<BottomNavigationBarItem> list = [
-    BottomNavItem(
-        "Home",
-        Icon(
+  BottomNavItem(
+          "Home",
+          Icon(
             Icons.home,
-        ),
-        greenMain,
-        "Home")
-        .bottomNavItem,
-    BottomNavItem(
-        "Academics",
-        Icon(
+          ),
+          greenMain,
+          "Home")
+      .bottomNavItem,
+  BottomNavItem(
+          "Academics",
+          Icon(
             Icons.school,
-        ),
-        greenMain,
-        "Home")
-        .bottomNavItem,
-    BottomNavItem(
-        "Chat",
-        Icon(
+          ),
+          greenMain,
+          "Home")
+      .bottomNavItem,
+  BottomNavItem(
+          "Chat",
+          Icon(
             Icons.question_answer,
-        ),
-        greenMain,
-        "Home")
-        .bottomNavItem,
-    BottomNavItem(
-        "Profile",
-        Icon(
+          ),
+          greenMain,
+          "Home")
+      .bottomNavItem,
+  BottomNavItem(
+          "Profile",
+          Icon(
             Icons.person,
-        ),
-        greenMain,
-        "Home")
-        .bottomNavItem,
+          ),
+          greenMain,
+          "Home")
+      .bottomNavItem,
 ];

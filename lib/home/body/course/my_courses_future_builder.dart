@@ -1,11 +1,12 @@
 import 'package:amihub/components/page_heading.dart';
+import 'package:amihub/components/refresh_button.dart';
 import 'package:amihub/database/database_helper.dart';
+import 'package:amihub/home/body/course/my_course_seamer.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'my_course_seamer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyCourseBuilder extends StatefulWidget {
   @override
@@ -14,17 +15,25 @@ class MyCourseBuilder extends StatefulWidget {
 
 class _MyCourseBuilderState extends State<MyCourseBuilder> {
   AmizoneRepository amizoneRepository = AmizoneRepository();
-  static const int currentSemester = 7;
   String dropdownValue = '';
   Future<List> myFuture;
   static const semesterPadding = 10.0;
   List<String> semesterList;
-  int semester;
+  int semester = 2;
+
+  setSemester() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      semester = prefs.getInt("semester");
+      dropdownValue = semesterList.elementAt(semester - 1);
+      myFuture = amizoneRepository.fetchMyCoursesWithSemester(semester);
+    });
+
+  }
 
   @override
   void initState() {
     super.initState();
-    semester = currentSemester;
     semesterList = [
       'One',
       'Two',
@@ -33,10 +42,11 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
       'Five',
       'Six',
       'Seven',
-      'Eight'
+      'Eight',
+      'Nine',
+      'Ten'
     ];
-    dropdownValue = semesterList.elementAt(currentSemester - 1);
-    myFuture = amizoneRepository.fetchMyCoursesWithSemester(semester);
+    setSemester();
   }
 
   refresh() {
@@ -49,13 +59,15 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
     var height = MediaQuery.of(context).size.width;
     return Stack(
       children: <Widget>[
-        ListView(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             PageHeader("My Courses"),
             Padding(
               padding: const EdgeInsets.only(left: 32, right: 32),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
                     "Semester",
@@ -63,41 +75,57 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: semesterPadding),
-                    child: DropdownButton<String>(
-                      value: dropdownValue,
-                      onChanged: (String newValue) {
-                        setState(() {
-                          dropdownValue = newValue;
-                          semester = semesterList.indexOf(dropdownValue) + 1;
+                    child: Material(
+                      shape: StadiumBorder(
+                          side: BorderSide(
+                              width: 1, color: Colors.grey.shade200)),
+                      elevation: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 12.0, right: 8.0),
+                        child: DropdownButton<String>(
+                          underline: Container(),
+                          value: dropdownValue,
+                          isExpanded: false,
+                          isDense: true,
+                          onChanged: (String newValue) {
+                            setState(() {
+                              dropdownValue = newValue;
+                              semester =
+                                  semesterList.indexOf(dropdownValue) + 1;
 
-                          myFuture = amizoneRepository
-                              .fetchMyCoursesWithSemester(semester);
-                        });
-                      },
-                      items: semesterList
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
+                              myFuture = amizoneRepository
+                                  .fetchMyCoursesWithSemester(semester);
+                            });
+                          },
+                          items: semesterList
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            CourseFutureBuilder(
-              myFuture: myFuture,
+            SizedBox(
+              height: 8,
+            ),
+            Expanded(
+              child: CourseFutureBuilder(
+                myFuture: myFuture,
+              ),
             ),
           ],
         ),
         Positioned(
-          right: height * 0.08,
-          bottom: height * 0.08,
-          child: FloatingActionButton(
-            tooltip: "Refresh",
+          right: height * 0.03,
+          bottom: height * 0.03,
+          child: RefreshButton(
             onPressed: refresh,
-            child: Icon(Icons.refresh),
           ),
         )
       ],
@@ -117,15 +145,14 @@ class CourseBuild extends StatefulWidget {
 class _CourseBuildState extends State<CourseBuild> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(10),
-      child: Column(
+    return ListView(
+        physics: BouncingScrollPhysics(),
+        padding: EdgeInsets.all(10),
         children: List<Widget>.generate(
           widget.snapshot.data.length,
           (int index) {
             var percentage = double.tryParse(
-                    "${widget.snapshot.data.elementAt(index).percentage}")
-                .roundToDouble();
+                "${widget.snapshot.data.elementAt(index).percentage}");
             return Column(
               children: <Widget>[
                 ListTile(
@@ -140,9 +167,9 @@ class _CourseBuildState extends State<CourseBuild> {
                   ),
                   subtitle: Text(widget.snapshot.data[index].courseCode),
                   leading: Container(
-                    color: (percentage < 75)
+                    color: (percentage < 75.00)
                         ? Colors.red
-                        : (percentage >= 75 && percentage < 85)
+                        : (percentage >= 75.00 && percentage < 85.00)
                             ? Colors.yellow
                             : Colors.green,
                     width: 8,
@@ -152,7 +179,7 @@ class _CourseBuildState extends State<CourseBuild> {
                     children: <Widget>[
                       Text(
                           "${widget.snapshot.data[index].present}/${widget.snapshot.data[index].total} "),
-                      Text("(" + percentage.toString() + ")",
+                      Text("(" + percentage.toStringAsFixed(2) + ")",
                           style: TextStyle(color: Colors.black45))
                     ],
                   ),
@@ -171,52 +198,48 @@ class _CourseBuildState extends State<CourseBuild> {
               ],
             );
           },
-        ),
-      ),
-    );
+        ));
   }
 }
 
 class CourseError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 32),
-      child: Container(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(32),
-                child: Icon(
-                  Icons.cloud_off,
-                  color: Colors.white,
-                  size: 108,
-                ),
-                decoration: BoxDecoration(
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.circular(999)),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(20),
+              child: Icon(
+                Icons.cloud_off,
+                color: Colors.white,
+                size: 50,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  'Could not fetch Courses',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
+              decoration: BoxDecoration(
+                  color: Colors.grey[400], shape: BoxShape.circle),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                'Could not fetch Courses',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  'Please Check Your internet and try again',
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                'Please Check Your internet and try again',
               ),
-            ],
-          ),
+            ),
+            Expanded(child: Container())
+          ],
         ),
       ),
     );

@@ -12,13 +12,10 @@ class HorizontalChartBuilder extends StatefulWidget {
 }
 
 class _HorizontalChartBuilderState extends State<HorizontalChartBuilder> {
-
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: AmizoneRepository().fetchCurrentScore(),
-      // a previously-obtained Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<List<Score>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -41,46 +38,35 @@ class HorizontalChartShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
 
-    var series = [
-      Series<Score, String>(
-        id: 'cgpa',
-        domainFn: (Score score, _) => score.semester.toString(),
-        measureFn: (Score score, _) => score.cgpa,
-        data: score,
-      ),
-      Series<Score, String>(
-        id: 'sgpa',
-        domainFn: (Score score, _) => score.semester.toString(),
-        measureFn: (Score score, _) => score.sgpa,
-        data: score,
-      ),
-    ];
-
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Material(
-        color: Colors.transparent,
-        shadowColor: ui.Color(0xffd6d6d6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-        elevation: 10,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(13),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Colors.white.withOpacity(0.9), Colors.white],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: HorizontalChart(score: score),
+    return score.length != 0
+        ? Padding(
+          padding: EdgeInsets.all(8),
+          child: Material(
+            color: Colors.transparent,
+            shadowColor: ui.Color(0xffd6d6d6),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(13)),
+            elevation: 10,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(13),
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [
+                          Colors.white.withOpacity(0.9),
+                          Colors.white
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter),
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: HorizontalChart(score: score),
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        )
+        : Container();
   }
 }
 
@@ -91,28 +77,34 @@ class HorizontalChartBuild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Material(
-        color: Colors.transparent,
-        shadowColor: ui.Color(0xffd6d6d6),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-        elevation: 10,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(13),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Colors.white.withOpacity(0.9), Colors.white],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
-            child: HorizontalChart(score: score),
+    return score.length != 0
+        ? Padding(
+          padding: EdgeInsets.all(8),
+          child: Material(
+            color: Colors.transparent,
+            shadowColor: ui.Color(0xffd6d6d6),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(13)),
+            elevation: 10,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(13),
+              child: Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [
+                          Colors.white.withOpacity(0.9),
+                          Colors.white
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter),
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: HorizontalChart(score: score),
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        )
+        : Container();
   }
 }
 

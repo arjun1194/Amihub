@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TestWidget extends StatefulWidget {
   final String courseName;
@@ -10,18 +11,19 @@ class TestWidget extends StatefulWidget {
   final String attendanceColor;
   final String roomNo;
   final String courseCode;
-  final String startTime;
-  final String endTime;
+  final DateTime start;
+  final DateTime end;
   final Color topColor;
   final Color bottomColor;
 
-  TestWidget(this.courseName,
+  TestWidget(
+      this.courseName,
       this.facultyName,
       this.attendanceColor,
       this.roomNo,
       this.courseCode,
-      this.startTime,
-      this.endTime,
+      this.start,
+      this.end,
       this.topColor,
       this.bottomColor);
 
@@ -32,34 +34,12 @@ class TestWidget extends StatefulWidget {
 class _TestWidgetState extends State<TestWidget> {
   @override
   Widget build(BuildContext context) {
-    var startHour = int.tryParse(widget.startTime
-        .substring(widget.startTime.length - 11, widget.startTime.length - 9));
-    var startMinute = int.tryParse(widget.startTime
-        .substring(widget.startTime.length - 8, widget.startTime.length - 6));
-    var startDate = DateTime
-        .now()
-        .day;
-    var startDateTime = DateTime(DateTime
-        .now()
-        .year, DateTime
-        .now()
-        .month,
-        startDate, startHour, startMinute);
-
-    var endHour = int.tryParse(widget.endTime
-        .substring(widget.endTime.length - 11, widget.endTime.length - 9));
-    var endMinute = int.tryParse(widget.endTime
-        .substring(widget.endTime.length - 8, widget.endTime.length - 6));
-    var endDate = int.tryParse(widget.endTime.substring(2, 4));
-    var endDateTime = DateTime
-        .now()
-        .day;
     int attendanceState = 1;
     (widget.attendanceColor == "#4FCC4F")
         ? attendanceState = 1
         : (widget.attendanceColor == "#f00")
-        ? attendanceState = 2
-        : attendanceState = 0;
+            ? attendanceState = 2
+            : attendanceState = 0;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
@@ -124,8 +104,8 @@ class _TestWidgetState extends State<TestWidget> {
                           SizedBox(
                             width: 5,
                           ),
-//                              (DateTime.now().isAfter(endDateTime))? Text("Class Completed",style: TextStyle(color: Colors.white),) :
-                          Text("$startHour:$startMinute - $endHour:$endMinute",
+                          Text(
+                              "${DateFormat.jm().format(widget.start)} - ${DateFormat.jm().format(widget.end)}",
                               style: TextStyle(color: Colors.white))
                         ],
                       ),
@@ -170,28 +150,28 @@ class _TestWidgetState extends State<TestWidget> {
                             children: <Widget>[
                               (attendanceState == 1)
                                   ? Icon(
-                                Icons.check_circle,
-                                color: Colors.white,
-                                size: 28,
-                              )
+                                      Icons.check_circle,
+                                      color: Colors.white,
+                                      size: 28,
+                                    )
                                   : (attendanceState == 2)
-                                  ? Icon(
-                                Icons.block,
-                                color: Colors.white,
-                                size: 28,
-                              )
-                                  : Icon(Icons.home,
-                                  color: Colors.transparent),
+                                      ? Icon(
+                                          Icons.block,
+                                          color: Colors.white,
+                                          size: 28,
+                                        )
+                                      : Icon(Icons.home,
+                                          color: Colors.transparent),
                               Padding(
                                 padding: const EdgeInsets.only(left: 5),
                                 child: Text(
                                   (attendanceState == 0)
                                       ? ""
                                       : (attendanceState == 1)
-                                      ? "Present"
-                                      : (attendanceState == 2)
-                                      ? "absent"
-                                      : "error",
+                                          ? "Present"
+                                          : (attendanceState == 2)
+                                              ? "Absent"
+                                              : "error",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: attendanceState == 2
@@ -257,10 +237,10 @@ class QuarterCirclePainter extends CustomPainter {
     final offset = circleAlignment == CircleAlignment.topLeft
         ? Offset(.0, .0)
         : circleAlignment == CircleAlignment.topRight
-        ? Offset(size.width, .0)
-        : circleAlignment == CircleAlignment.bottomLeft
-        ? Offset(.0, size.height)
-        : Offset(size.width, size.height);
+            ? Offset(size.width, .0)
+            : circleAlignment == CircleAlignment.bottomLeft
+                ? Offset(.0, size.height)
+                : Offset(size.width, size.height);
     canvas.drawCircle(offset, radius, Paint()..color = color);
   }
 

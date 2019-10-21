@@ -9,7 +9,9 @@ import 'package:amihub/home/body/results.dart';
 import 'package:amihub/home/body/todays_classes.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -31,7 +33,6 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-
     void changeSelected(int val) {
       setState(() {
         selected = val;
@@ -40,31 +41,26 @@ class _HomeState extends State<Home> {
     }
 
     return BackdropScaffold(
-      title: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 32),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/amihub.png',
-                height: 32,
-                width: 32,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 8),
-                child: Text(
-                  appTitle,
-                  style: TextStyle(
-                    color: Colors.grey.shade200.withOpacity(0.7),
-                    fontWeight: FontWeight.bold,
-                    fontFamily: "Raleway",
-                  ),
-                ),
-              )
-            ],
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            'assets/amihub.png',
+            height: 32,
+            width: 32,
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Text(
+              appTitle,
+              style: TextStyle(
+                color: Colors.grey.shade200.withOpacity(0.7),
+                fontWeight: FontWeight.bold,
+                fontFamily: "Raleway",
+              ),
+            ),
+          )
+        ],
       ),
       backLayerColor: Color(0xff171C1F),
       headerHeight: 40,
@@ -79,7 +75,7 @@ class _HomeState extends State<Home> {
       actions: <Widget>[
         FlatButton(
           child: Text(""),
-          onPressed: () {},
+          onPressed: null,
         )
       ],
     );

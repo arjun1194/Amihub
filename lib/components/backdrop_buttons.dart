@@ -20,6 +20,7 @@ class _BackDropButtonState extends State<BackDropButton> {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
+      shape: StadiumBorder(),
       onPressed: widget.onPressed,
       child: Row(
         mainAxisSize: MainAxisSize.min,

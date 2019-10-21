@@ -1,15 +1,14 @@
 import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:amihub/models/course_attendance_type.dart';
+import 'package:amihub/home/body/home/home_today_class_card.dart';
+import 'package:amihub/home/body/home/home_today_class_seamer.dart';
 import 'package:amihub/models/today_class.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
-import 'home_today_class_card.dart';
-import 'home_today_class_seamer.dart';
+import 'package:intl/intl.dart';
 
 class HomeTodayClassBuilder extends StatefulWidget {
   @override
@@ -20,6 +19,12 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   AmizoneRepository amizoneRepository = AmizoneRepository();
   int currentPage;
   PageController pageController;
+
+  changePage(int page) {
+    setState(() {
+      pageController.jumpToPage(page);
+    });
+  }
 
   @override
   void initState() {
@@ -34,7 +39,8 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
     double height = MediaQuery.of(context).size.height;
     return FutureBuilder<List<TodayClass>>(
       future: amizoneRepository.fetchTodayClass(),
-      builder: (BuildContext context, AsyncSnapshot<List<TodayClass>> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<List<TodayClass>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return HomeTodayClassShimmer();
@@ -77,19 +83,24 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
       scrollDirection: Axis.horizontal,
       physics: BouncingScrollPhysics(),
       children: List.generate(snapshot.data.length, (index) {
+        TodayClass todayClass = snapshot.data.elementAt(index);
+        DateTime end =
+            DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.end);
+        DateTime start =
+            DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: TestWidget(
-              snapshot.data[index].title,
-              snapshot.data[index].facultyName.toString().substring(0,
-                  snapshot.data[index].facultyName.toString().indexOf('[')),
-              snapshot.data[index].color,
-              snapshot.data[index].roomNo,
-              snapshot.data[index].courseCode,
-              snapshot.data[index].start,
-              snapshot.data[index].end,
-              lightColors[math.min(index, index % lightColors.length)],
-              darkColors[math.min(index, index % lightColors.length)]),
+            todayClass.title,
+            todayClass.facultyName.split(",")[0].split("[")[0],
+            todayClass.color,
+            todayClass.roomNo,
+            todayClass.courseCode,
+            start,
+            end,
+            lightColors[math.min(index, index % lightColors.length)],
+            darkColors[math.min(index, index % lightColors.length)],
+          ),
         );
       }),
       pageSnapping: true,
@@ -98,6 +109,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   }
 
   Padding noClassBuilder(double height, double width) {
+    int randomColor = Random().nextInt(lightColors.length);
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 23),
       child: Material(
@@ -106,27 +118,43 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
         color: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.white.withOpacity(0.9), Colors.white],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight),
+              gradient: LinearGradient(colors: [
+                lightColors.elementAt(randomColor),
+                darkColors.elementAt(randomColor)
+              ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
               borderRadius: BorderRadius.all(Radius.circular(13))),
-          child: Center(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
             children: <Widget>[
-              Icon(
-                Icons.hotel,
-                size: 30,
+              QuarterCircle(
+                circleAlignment: CircleAlignment.topRight,
+                color: Colors.white.withOpacity(0.1),
               ),
-              Text(
-                "No Class Today",
-                style: TextStyle(
-                  fontSize: 25,
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 15, 20, 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "No Class Today",
+                        style: TextStyle(fontSize: 22, color: Colors.white),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Sit back and relax !",
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white.withOpacity(0.95)),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
-          )),
+          ),
         ),
       ),
     );

@@ -22,19 +22,28 @@ class _HomeBodyState extends State<HomeBody> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        padding: EdgeInsets.only(bottom: 15),
-        physics: BouncingScrollPhysics(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           PageHeader("Today's Class"),
-          buildContainer(height, width, HomeTodayClassBuilder()),
-          PageHeader("Attendance Summary"),
-          // TODO : Change The Pie Chart
-          buildContainer(height, width, DonutChartFutureBuilder()),
-          PageHeader("Score Summary"),
-          buildContainer(height, width, HorizontalChartBuilder()),
+          SizedBox(height: 5,),
+          Expanded(
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              padding: EdgeInsets.only(bottom: 15),
+              physics: BouncingScrollPhysics(),
+              children: <Widget>[
+                buildContainer(height, width, HomeTodayClassBuilder()),
+                PageHeader("Attendance Summary"),
+                // TODO : Change The Pie Chart
+                buildContainer(height, width, DonutChartFutureBuilder()),
+                // TODO : Remove this for 1st semester
+                PageHeader("Score Summary"),
+                buildContainer(height, width, HorizontalChartBuilder()),
+              ],
+            ),
+          ),
         ],
       ),
       floatingActionButton: RefreshButton(onPressed: onRefresh,),

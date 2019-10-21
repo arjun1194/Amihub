@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AcademicDetails extends StatelessWidget {
-  String enrollmentNumber;
-  String program;
-  String batch;
-  String semester;
+  final String enrollmentNumber;
+  final String program;
+  final String batch;
+  final String semester;
 
   AcademicDetails(
       {Key key,
@@ -21,7 +21,7 @@ class AcademicDetails extends StatelessWidget {
       children: <Widget>[
         Text(
           "Academic Details",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         AcademicDetail(
           icon: Icons.calendar_today,
@@ -41,17 +41,17 @@ class AcademicDetails extends StatelessWidget {
         AcademicDetail(
           icon: Icons.mail,
           title: "Semester",
-          subtitle: "$semester Semester",
-        ),Divider(),
+          subtitle: "$semester",
+        ),
       ],
     );
   }
 }
 
 class AcademicDetail extends StatelessWidget {
-  IconData icon;
-  String title;
-  String subtitle;
+  final IconData icon;
+  final String title;
+  final String subtitle;
 
   AcademicDetail(
       {Key key,
@@ -64,54 +64,22 @@ class AcademicDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Divider(),
         ListTile(
             leading: Container(
               padding: EdgeInsets.all(8),
               child: Icon(
                 icon,
-                color: Color(0xff22419A),
+                color: Color(0xff22419A).withOpacity(0.8),
               ),
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(999),
-                  color: Color(0xff0FCAED)),
+                  shape: BoxShape.circle,
+                  color: Colors.grey.shade200),
             ),
             title: Text(title),
             subtitle: Text(subtitle)),
+        Divider(),
 
       ],
     );
   }
 }
-
-//Padding(
-//      padding: const EdgeInsets.all(8.0),
-//      child: Row(
-//        children: <Widget>[
-//          Container(
-//            padding: EdgeInsets.all(8),
-//            child: Icon(
-//              icon,
-//              color: Color(0xff22419A),
-//            ),
-//            decoration: BoxDecoration(
-//                borderRadius: BorderRadius.circular(999),
-//                color: Color(0xff0FCAED)),
-//          ),
-//          Padding(
-//            padding: const EdgeInsets.only(left: 8.0),
-//            child: Column(
-//              crossAxisAlignment: CrossAxisAlignment.start,
-//              mainAxisAlignment: MainAxisAlignment.center,
-//              children: <Widget>[
-//                Text(title,style: TextStyle(color: Color(0xff72777B))),
-//                Text(
-//                  subtitle,
-//                  style: TextStyle(fontSize: 20,color: Colors.grey),
-//                )
-//              ],
-//            ),
-//          )
-//        ],
-//      ),
-//    );

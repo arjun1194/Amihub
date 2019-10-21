@@ -6,7 +6,8 @@ class ProfileIcon extends StatelessWidget {
   final String imageLink;
   final String name;
 
-  ProfileIcon({Key key, @required this.imageLink,@required this.name}) : super(key: key);
+  ProfileIcon({Key key, @required this.imageLink, @required this.name})
+      : super(key: key);
 
   Future<void> _ackAlert(BuildContext context) {
     AmizoneRepository amizoneRepository = AmizoneRepository();
@@ -14,12 +15,32 @@ class ProfileIcon extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Log out',style: TextStyle(fontWeight: FontWeight.bold,color: Colors.teal,),),
+          elevation: 8,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Text(
+            'Log out',
+            style: TextStyle(
+              color: Colors.blueGrey.shade700,
+            ),
+          ),
           content: const Text('Really wanna go? '),
           actions: <Widget>[
             FlatButton(
-              child: Text('LOGOUT', style: TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.teal,),),
+              child: Text(
+                "Cancel",
+                style: TextStyle(color: Colors.blueGrey.shade800),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            FlatButton(
+              child: Text(
+                'Logout',
+                style: TextStyle(
+                  color: Colors.blueGrey.shade800,
+                ),
+              ),
               onPressed: () {
                 amizoneRepository.logout(context);
               },
@@ -32,11 +53,55 @@ class ProfileIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(imageLink);
-    return ListTile(
-        leading: Container(width: 54.0, height: 54.0, decoration: new BoxDecoration(shape: BoxShape.circle, image: new DecorationImage(fit: BoxFit.fill, image: new NetworkImage(imageLink.toString())))),
-        title: Text("Logged in as"),
-        subtitle: Text(name,style: TextStyle(fontSize: 20),),
-        trailing:IconButton(icon:Icon(Icons.exit_to_app),onPressed: (){_ackAlert(context);},));
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(45),
+            child: Image.network(
+              imageLink,
+              loadingBuilder: (BuildContext context,
+                  Widget child,
+                  ImageChunkEvent loadingProgress,) {
+                if (loadingProgress == null)
+                  return child;
+                return Center(
+                  child: Icon(Icons.perm_identity)
+                );
+              },
+              fit: BoxFit.fitWidth,
+              height: 90,
+              width: 90,
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "Logged in as..",
+                style: TextStyle(fontSize: 15),
+              ),
+              Text(
+                name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+          IconButton(
+            tooltip: "Logout",
+            icon: Icon(Icons.exit_to_app),
+            color: Colors.blueGrey.shade700,
+            onPressed: () {
+              _ackAlert(context);
+            },
+          )
+        ],
+      ),
+    );
   }
 }

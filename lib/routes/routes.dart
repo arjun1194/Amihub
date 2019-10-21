@@ -12,7 +12,7 @@ import '../captcha_page.dart';
 Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => SplashScreen(),
   '/home': (BuildContext context) => Home(),
-  '/captcha': (BuildContext context) => CaptchaPageNew(),
+//  '/captcha': (BuildContext context) => CaptchaPageNew(),
   '/forgotPassword': (BuildContext context) => ForgotPassword(),
   '/load': (BuildContext context) => LoadApi(),
   '/login': (BuildContext context) => LoginPage(),

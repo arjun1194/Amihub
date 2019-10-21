@@ -126,9 +126,7 @@ class _BackdropScaffoldState extends State<BackdropScaffold>
         behavior: HitTestBehavior.opaque,
         child: SizedBox.expand(
           child: Container(
-            decoration: BoxDecoration(
-              color: Colors.transparent
-            ),
+            decoration: BoxDecoration(color: Colors.transparent),
           ),
         ),
       ),
@@ -167,8 +165,10 @@ class _BackdropScaffoldState extends State<BackdropScaffold>
     return WillPopScope(
       onWillPop: () => _willPopCallback(context),
       child: Scaffold(
+        backgroundColor: Colors.transparent,
         key: scaffoldKey,
         appBar: AppBar(
+          centerTitle: true,
           title: widget.title,
           backgroundColor: widget.backLayerColor,
           actions: widget.iconPosition == BackdropIconPosition.action

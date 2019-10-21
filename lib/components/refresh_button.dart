@@ -8,6 +8,7 @@ class RefreshButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      backgroundColor: Colors.blueAccent,
       child: Icon(Icons.refresh),
       onPressed: onPressed,
     );

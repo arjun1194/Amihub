@@ -65,6 +65,9 @@ class AmizoneRepository {
           HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
       var response = await http.get('$amihubUrl/metadata');
       var jsonResponse = convert.jsonDecode(response.body);
+      SharedPreferences.getInstance().then((sp){
+        sp.setInt("semester", jsonResponse['semester']);
+      });
       List<Score> courseAttendance = [];
       for (var element in jsonResponse['results']) {
         Score score = Score.fromJson(element);

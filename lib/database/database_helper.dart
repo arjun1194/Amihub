@@ -5,7 +5,6 @@ import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_attendance_type.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/models/today_class.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -21,24 +20,6 @@ class DatabaseHelper {
     _database = await getDatabaseInstance();
     return _database;
   }
-
-//  "color": "#4FCC4F",
-//  "courseCode": "CSE402",
-//  "facultyName": "Dr Rishi Dutt Sharma[302096],Dr Saurabh Agarwal[301757],Dr Stephan Thompson[302210]",
-//  "roomNo": "E3-214A",
-//  "start": "8/28/2019 9:15:00 AM",
-//  "end": "8/28/2019 10:10:00 AM",
-//  "title": "Digital Image Processing and Computer Vision"
-
-//    "courseCode": "CHEM101",
-//    "courseName": "Applied Chemistry",
-//    "type": "Compulsory",
-//    "syllabus": "https://amizone.net/AdminAmizone/WebForms/Academics/NewSyllabus/1559201651270984.doc",
-//    "courseId": 299327,
-//    "present": 63,
-//    "total": 78,
-//    "percentage": 80.76923076923077,
-//    "internalAssessment": "21.75[19.75+2.00]/30.00"
 
   Future<Database> getDatabaseInstance() async {
     Directory directory = await getApplicationDocumentsDirectory();

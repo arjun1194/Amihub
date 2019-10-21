@@ -14,7 +14,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: true,
       backgroundColor: Color(0xff171C1F),
-      elevation: 0,
+      elevation: 4,
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: (){
