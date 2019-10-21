@@ -113,7 +113,6 @@ class AmizoneRepository {
   }
 
   Future<List<Course>> fetchMyCoursesWithSemester(int semester) async {
-    print("Network");
     List<Course> dbResponse = await dbHelper.getCourseWithSemester(semester);
     List<Course> courses = [];
     if (dbResponse.isEmpty) {
@@ -129,9 +128,10 @@ class AmizoneRepository {
         courses.add(course);
         dbHelper.addCourse(course);
       }
+      print('from network');
       return courses;
     }
-
+    print('from db');
     return dbResponse;
   }
 

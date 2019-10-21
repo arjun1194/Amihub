@@ -143,6 +143,7 @@ class _BackdropScaffoldState extends State<BackdropScaffold>
   Widget _buildFrontPanel(BuildContext context) {
     return Material(
       elevation: 12.0,
+      clipBehavior: Clip.antiAlias,
       borderRadius: widget.frontLayerBorderRadius,
       child: Stack(
         children: <Widget>[
@@ -165,7 +166,7 @@ class _BackdropScaffoldState extends State<BackdropScaffold>
     return WillPopScope(
       onWillPop: () => _willPopCallback(context),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: widget.backLayerColor,
         key: scaffoldKey,
         appBar: AppBar(
           centerTitle: true,

@@ -1,5 +1,3 @@
-
-
 import 'package:amihub/components/backdrop.dart';
 import 'package:amihub/components/backdrop_buttons.dart';
 import 'package:amihub/home/body/home_body.dart';
@@ -24,7 +22,7 @@ class _HomeState extends State<Home> {
   List<Widget> homeWidgets = [
     HomeBody(),
     HomeTodayClass(),
-    HomeMyCourses(),
+    HomeMyCourses(isHeader: true,),
     HomeResults(),
     HomeMyProfile()
   ];
@@ -62,7 +60,9 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      backLayerColor: Color(0xff171C1F),
+      backLayerColor: Theme.of(context).brightness == Brightness.light
+          ? Color(0xff171C1F)
+          : Color(0xff232831),
       headerHeight: 40,
       backLayer: Center(
         child: BackDropButtons(
@@ -73,10 +73,7 @@ class _HomeState extends State<Home> {
       frontLayer: homeWidget,
       iconPosition: BackdropIconPosition.leading,
       actions: <Widget>[
-        FlatButton(
-          child: Text(""),
-          onPressed: null,
-        )
+        IconButton(icon: Icon(Icons.info_outline), onPressed: () {})
       ],
     );
   }

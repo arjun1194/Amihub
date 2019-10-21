@@ -40,82 +40,101 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.width;
-    return Stack(
-      children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            PageHeader("Classes"),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.arrow_back_ios),
-                    iconSize: 20,
-                    color: Colors.grey.shade700,
-                    onPressed: () {
-                      changeState(selectDate.subtract(Duration(days: 1)));
-                    },
-                  ),
-                  FlatButton(
-                    shape: StadiumBorder(),
-                    onPressed: () {
-                      DatePicker.showDatePicker(context,
-                          showTitleActions: true,
-                          minTime: DateTime(2018, 3, 5),
-                          maxTime: DateTime(DateTime.now().year,
-                                  DateTime.now().month, DateTime.now().day)
-                              .add(Duration(days: 30)), onConfirm: (date) {
-                        setState(() {
-                          selectDate = date;
-                        });
-                        changeState(selectDate);
-                      }, currentTime: selectDate, locale: LocaleType.en);
-                    },
-                    child: Text(
-                      dateFormat(selectDate),
-                      style:
-                          TextStyle(color: Colors.blue.shade700, fontSize: 15),
+    return Container(
+      color: Theme.of(context).brightness == Brightness.light
+          ? Colors.white
+          : Colors.black,
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              PageHeader("Classes"),
+              Padding(
+                padding: const EdgeInsets.only(left: 10, right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.arrow_back_ios),
+                      iconSize: 20,
+                      color: Colors.grey.shade700,
+                      onPressed: () {
+                        changeState(selectDate.subtract(Duration(days: 1)));
+                      },
                     ),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.arrow_forward_ios),
-                    iconSize: 20,
-                    color: Colors.grey.shade700,
-                    onPressed: () {
-                      changeState(selectDate.add(Duration(days: 1)));
-                    },
-                  ),
-                ],
-              ),
-            ),
-            !isSameDay(DateTime.now(), selectDate)
-                ? Container(
-                    margin: EdgeInsets.only(top: 5, bottom: 5),
-                    child: Center(
-                      child: OutlineButton(
-                        shape: StadiumBorder(),
-                        child: Text("Back to today"),
-                        onPressed: () {
-                          changeState(DateTime.now());
-                        },
+                    FlatButton(
+                      shape: StadiumBorder(),
+                      onPressed: () {
+                        DatePicker.showDatePicker(context,
+                            theme: DatePickerTheme(
+                              backgroundColor: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.white
+                                  : Colors.black,
+                              itemStyle: TextStyle(
+                                  fontFamily: "OpenSans", fontSize: 19),
+                              cancelStyle: TextStyle(
+                                  fontFamily: "OpenSans",
+                                  fontSize: 17,
+                                  color: Colors.red),
+                              doneStyle: TextStyle(
+                                  fontFamily: "OpenSans", fontSize: 17),
+                            ),
+                            showTitleActions: true,
+                            minTime: DateTime(2018, 3, 5),
+                            maxTime: DateTime(DateTime.now().year,
+                                    DateTime.now().month, DateTime.now().day)
+                                .add(Duration(days: 30)), onConfirm: (date) {
+                          setState(() {
+                            selectDate = date;
+                          });
+                          changeState(selectDate);
+                        }, currentTime: selectDate, locale: LocaleType.en);
+                      },
+                      child: Text(
+                        dateFormat(selectDate),
+                        style: TextStyle(
+                            color: Colors.blue.shade700, fontSize: 15),
                       ),
                     ),
-                  )
-                : Container(),
-            Expanded(child: buildFutureBuilder())
-          ],
-        ),
-        Positioned(
-          right: height * 0.03,
-          bottom: height * 0.03,
-          child: RefreshButton(
-            onPressed: refresh,
+                    IconButton(
+                      icon: Icon(Icons.arrow_forward_ios),
+                      iconSize: 20,
+                      color: Colors.grey.shade700,
+                      onPressed: () {
+                        changeState(selectDate.add(Duration(days: 1)));
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              !isSameDay(DateTime.now(), selectDate)
+                  ? Container(
+                      margin: EdgeInsets.only(top: 5, bottom: 5),
+                      child: Center(
+                        child: OutlineButton(
+                          shape: StadiumBorder(),
+                          child: Text("Back to today"),
+                          onPressed: () {
+                            changeState(DateTime.now());
+                          },
+                        ),
+                      ),
+                    )
+                  : Container(),
+              Expanded(child: buildFutureBuilder())
+            ],
           ),
-        )
-      ],
+          Positioned(
+            right: height * 0.03,
+            bottom: height * 0.03,
+            child: RefreshButton(
+              onPressed: refresh,
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -262,11 +281,11 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
         return Column(
           children: <Widget>[
             ListTile(
-              onLongPress: () {
+              onLongPress: (){
                 todayClassBottomSheet(todayClass);
               },
               title: Text(
-                widget.snapshot.data[index].title,
+                todayClass.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -292,7 +311,9 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
               ),
               contentPadding: EdgeInsets.only(left: 0, right: 8),
             ),
-            Divider(),
+            Divider(
+              color: Colors.grey.shade600.withOpacity(0.4),
+            ),
           ],
         );
       }),
@@ -308,124 +329,125 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
               DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.end);
           DateTime start =
               DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
-          return Container(
-              decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+          return Material(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Scrollbar(
+              child: ListView(
+                physics: BouncingScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
+                children: <Widget>[
+                  stack(
+                    Text(
+                      "Course",
+                      style: TextStyle(fontSize: 15, color: Colors.white),
+                    ),
+                    Text(
+                      todayClass.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  stack(
+                    Text(
+                      "Time",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      '${DateFormat.jm().format(start)} to ${DateFormat.jm().format(end)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  stack(
+                    Text('Date',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        )),
+                    Text(
+                      '${DateFormat.yMMMMEEEEd().format(start)}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  stack(
+                    Text("Room no",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        )),
+                    Text(
+                      todayClass.roomNo,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  stack(
+                    Text("Code",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.white,
+                        )),
+                    Text(
+                      todayClass.courseCode,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  stack(
+                    Text(
+                      faculties.length == 1 ? "Faculty" : "Faculties",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      faculties.join("\n"),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
               ),
-              child: Scrollbar(
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
-                  children: <Widget>[
-                    stack(
-                      Text(
-                        "Course",
-                        style: TextStyle(fontSize: 15, color: Colors.white),
-                      ),
-                      Text(
-                        todayClass.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text(
-                        "Time",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        '${DateFormat.jm().format(start)} to ${DateFormat.jm().format(end)}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text('Date',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                          )),
-                      Text(
-                        '${DateFormat.yMMMMEEEEd().format(start)}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text("Room no",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                          )),
-                      Text(
-                        todayClass.roomNo,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text("Code",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                          )),
-                      Text(
-                        todayClass.courseCode,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text(
-                        faculties.length == 1 ? "Faculty" : "Faculties",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        faculties.join("\n"),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ));
+            ),
+          );
         });
   }
 

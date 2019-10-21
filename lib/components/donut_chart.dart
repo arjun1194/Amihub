@@ -6,6 +6,7 @@ import 'package:amihub/home/home_appbar.dart';
 import 'package:amihub/models/course_attendance.dart';
 import 'package:amihub/models/course_attendance_type.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -60,8 +61,8 @@ class _DonutChartShimmerState extends State<DonutChartShimmer>
     );
 
     animation = new ColorTween(
-      begin: Colors.grey.shade200,
-      end: Colors.grey.shade400,
+      begin: Colors.grey.shade100,
+      end: Colors.grey.shade700,
     ).animate(animationController)
       ..addListener(() {
         setState(() {});
@@ -109,17 +110,21 @@ class _DonutChartShimmerState extends State<DonutChartShimmer>
       padding: EdgeInsets.all(8),
       child: Material(
         color: Colors.transparent,
-        shadowColor: Color(0xffd6d6d6),
+        shadowColor: Colors.grey.withOpacity(0.6),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-        elevation: 10,
+        elevation: 8,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(13),
           child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.white70, Colors.white],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
+            decoration: ShapeDecoration(
+                color: blackOrWhite(context),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(13)),
+                    side: BorderSide(
+                      width: 0.3,
+                      color: Colors.grey.shade400,
+                    )
+                )
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -128,6 +133,7 @@ class _DonutChartShimmerState extends State<DonutChartShimmer>
                 Container(
                   height: 0.35 * height,
                   width: 0.6 * width,
+                  color: blackOrWhite(context),
                   child: DonutChart(seriesList: series, animate: false),
                 ),
                 Padding(
@@ -139,17 +145,14 @@ class _DonutChartShimmerState extends State<DonutChartShimmer>
                       ChartAnnotations(
                         "Above 75",
                         animation.value,
-                        textColor: Colors.grey,
                       ),
                       ChartAnnotations(
                         "75 to 85",
                         animation.value,
-                        textColor: Colors.grey,
                       ),
                       ChartAnnotations(
                         "Below 75",
                         animation.value,
-                        textColor: Colors.grey,
                       ),
                     ],
                   ),
@@ -206,18 +209,22 @@ class DonutChartBuild extends StatelessWidget {
       padding: EdgeInsets.all(8),
       child: Material(
         color: Colors.transparent,
-        shadowColor: Color(0xffd6d6d6),
+        shadowColor: Colors.grey.withOpacity(0.6),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-        elevation: 10,
+        elevation: 8,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(13),
           child: Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [Colors.white, Colors.white],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
-                borderRadius: BorderRadius.all(Radius.circular(10))),
+            decoration: ShapeDecoration(
+                color: blackOrWhite(context),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(13)),
+                    side: BorderSide(
+                      width: 0.3,
+                      color: Colors.grey.shade400,
+                    )
+                )
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,23 +246,22 @@ class DonutChartBuild extends StatelessWidget {
                       ChartAnnotations("Above 85", Color(0xff56CD93)),
                       ChartAnnotations("75 to 85", Color(0xffECA24D)),
                       ChartAnnotations("Below 75", Color(0xffFF5479)),
-                      FlatButton(
+                      OutlineButton(
                         onPressed: () {
                           CustomPageRoute.pushPage(
                               context: context,
                               child: Scaffold(
-                                body: HomeMyCourses(),
-                                appBar: CustomAppbar("My Courses"),
-                              ));
+                                  body: HomeMyCourses(
+                                    isHeader: false,
+                                  ),
+                                  appBar: CustomAppbar('My Courses')));
                         },
                         shape: StadiumBorder(),
-                        color: Colors.grey.shade100.withOpacity(0.8),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Text(
                               "SEE ALL",
-                              style: TextStyle(color: Colors.lightBlue),
                             ),
                             Icon(
                               Icons.arrow_forward,
@@ -300,9 +306,8 @@ class DonutChart extends StatelessWidget {
 class ChartAnnotations extends StatelessWidget {
   final String text;
   final Color color;
-  final Color textColor;
 
-  ChartAnnotations(this.text, this.color, {this.textColor});
+  ChartAnnotations(this.text, this.color);
 
   @override
   Widget build(BuildContext context) {
@@ -319,11 +324,7 @@ class ChartAnnotations extends StatelessWidget {
             height: 16,
           ),
         ),
-        Text(
-          text,
-          style:
-              TextStyle(color: (textColor != null) ? textColor : Colors.black),
-        ),
+        Text(text),
       ],
     );
   }

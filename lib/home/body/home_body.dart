@@ -21,7 +21,9 @@ class _HomeBodyState extends State<HomeBody> {
     var width = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? Colors.white
+          : Colors.black,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

@@ -47,7 +47,7 @@ class _LoadApiState extends State<LoadApi> {
                     ), Text("Some error has occured")]),
               );
             }
-            if (snapshot.data.body == "Maybe userId or Password is Wrong") {
+            if (snapshot.data.statusCode == 401) {
               return Scaffold(
                 appBar: AppBar(
                   backgroundColor: greenMain, title: Text("Login Failed"),),
@@ -68,6 +68,7 @@ class _LoadApiState extends State<LoadApi> {
                 sharedPreferences.setString(
                     "Authorization", snapshot.data.headers['authorization'])
                     .then((saved) {
+                      Future.delayed(Duration(seconds: 2));
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/home', (Route<dynamic> route) => false);
                 });
@@ -76,6 +77,7 @@ class _LoadApiState extends State<LoadApi> {
             return Scaffold(
               body: Column(mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
+                    SizedBox(height: 20,),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Image.asset('assets/authentication.png'),

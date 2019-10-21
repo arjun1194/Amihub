@@ -24,9 +24,11 @@ List<Color> darkColors = [
   Color(0xfffb3067),
   Color(0xff6c69d0)
 ];
-
+blackOrWhite(context) => Theme.of(context).brightness == Brightness.light
+    ? Colors.white
+    : Colors.black;
 const appTitle = 'Amihub';
-
+const appIcon = 'assets/logo.png';
 const fontSplashScreen = 'Roboto';
 
 //text styles

@@ -45,7 +45,7 @@ class _TestWidgetState extends State<TestWidget> {
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
       child: Material(
         shadowColor: widget.topColor,
-        elevation: 10,
+        elevation: 8,
         color: Colors.transparent,
         child: Container(
             decoration: BoxDecoration(

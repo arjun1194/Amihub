@@ -8,8 +8,11 @@ class RefreshButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      backgroundColor: Colors.blueAccent,
-      child: Icon(Icons.refresh),
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? Color(0xff3655B5)
+          : Color(0xff364042),
+      child: Icon(Icons.refresh,
+      color: Colors.white,),
       onPressed: onPressed,
     );
   }

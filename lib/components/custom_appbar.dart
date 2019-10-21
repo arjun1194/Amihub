@@ -1,3 +1,4 @@
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
@@ -8,20 +9,24 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      brightness: Theme.of(context).brightness,
       title: Text(
         title,
-        style: TextStyle(),
+        style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.black
+                : Colors.white),
       ),
-      centerTitle: true,
-      backgroundColor: Color(0xff171C1F),
-      elevation: 4,
+      backgroundColor: blackOrWhite(context),
+      elevation: 0,
       leading: IconButton(
-        icon: Icon(Icons.arrow_back),
-        onPressed: (){
-          Navigator.of(context).pop();
-        }
-      ),
-
+          icon: Icon(Icons.arrow_back),
+          color: Theme.of(context).brightness == Brightness.light
+              ? Colors.black
+              : Colors.white,
+          onPressed: () {
+            Navigator.of(context).pop();
+          }),
     );
   }
 

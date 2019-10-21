@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:amihub/models/score.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
 import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,34 +39,33 @@ class HorizontalChartShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return score.length != 0
         ? Padding(
-          padding: EdgeInsets.all(8),
-          child: Material(
-            color: Colors.transparent,
-            shadowColor: ui.Color(0xffd6d6d6),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(13)),
-            elevation: 10,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(13),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withOpacity(0.9),
-                          Colors.white
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: HorizontalChart(score: score),
+            padding: EdgeInsets.all(8),
+            child: Material(
+              color: Colors.transparent,
+              shadowColor: Colors.grey.withOpacity(0.6),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13)),
+              elevation: 8,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(13),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: ShapeDecoration(
+                      color: blackOrWhite(context),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(13)),
+                          side: BorderSide(
+                            width: 0.3,
+                            color: Colors.grey.shade400,
+                          )
+                      )),
+                  child: HorizontalChart(score: score),
+                ),
               ),
             ),
-          ),
-        )
+          )
         : Container();
   }
 }
@@ -79,31 +79,31 @@ class HorizontalChartBuild extends StatelessWidget {
   Widget build(BuildContext context) {
     return score.length != 0
         ? Padding(
-          padding: EdgeInsets.all(8),
-          child: Material(
-            color: Colors.transparent,
-            shadowColor: ui.Color(0xffd6d6d6),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(13)),
-            elevation: 10,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(13),
-              child: Container(
-                padding: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withOpacity(0.9),
-                          Colors.white
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: HorizontalChart(score: score),
+            padding: EdgeInsets.all(8),
+            child: Material(
+              color: Colors.transparent,
+              shadowColor: Colors.grey.withOpacity(0.6),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(13)),
+              elevation: 8,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(13),
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: ShapeDecoration(
+                      color: blackOrWhite(context),
+                      shape: RoundedRectangleBorder(
+                         borderRadius: BorderRadius.all(Radius.circular(13)),
+                        side: BorderSide(
+                          width: 0.3,
+                          color: Colors.grey.shade400,
+                        )
+                      )),
+                  child: HorizontalChart(score: score),
+                ),
               ),
             ),
-          ),
-        )
+          )
         : Container();
   }
 }
@@ -154,12 +154,23 @@ class _HorizontalChartState extends State<HorizontalChart> {
       ],
       primaryMeasureAxis: new NumericAxisSpec(
           tickProviderSpec: new StaticNumericTickProviderSpec(List.generate(
-              10, (index) => TickSpec(index + 1, label: '${index + 1}'))),
+              10,
+              (index) => TickSpec(index + 1,
+                  label: '${index + 1}',
+                  style: TextStyleSpec(
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Color.black
+                          : Color.white)))),
           showAxisLine: true),
       domainAxis: NumericAxisSpec(
           tickProviderSpec: StaticNumericTickProviderSpec(List.generate(
               widget.score.length,
-              (index) => TickSpec(index + 1, label: '${index + 1}')))),
+              (index) => TickSpec(index + 1,
+                  label: '${index + 1}',
+                  style: TextStyleSpec(
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Color.black
+                          : Color.white))))),
       animate: true,
     );
   }

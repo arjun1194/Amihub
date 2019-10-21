@@ -1,14 +1,21 @@
 import 'package:amihub/components/page_heading.dart';
+import 'package:amihub/components/page_route.dart';
 import 'package:amihub/components/refresh_button.dart';
 import 'package:amihub/database/database_helper.dart';
+import 'package:amihub/home/body/course/course_detail.dart';
 import 'package:amihub/home/body/course/my_course_seamer.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyCourseBuilder extends StatefulWidget {
+  final bool isHeader;
+
+  const MyCourseBuilder({Key key, this.isHeader}) : super(key: key);
+
   @override
   _MyCourseBuilderState createState() => _MyCourseBuilderState();
 }
@@ -19,16 +26,15 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
   Future<List> myFuture;
   static const semesterPadding = 10.0;
   List<String> semesterList;
+  int userSemester;
   int semester = 2;
+  bool isLoading = true;
 
   setSemester() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      semester = prefs.getInt("semester");
-      dropdownValue = semesterList.elementAt(semester - 1);
-      myFuture = amizoneRepository.fetchMyCoursesWithSemester(semester);
-    });
-
+    semester = userSemester = prefs.getInt("semester");
+    dropdownValue = semesterList.elementAt(semester - 1);
+    myFuture = amizoneRepository.fetchMyCoursesWithSemester(semester);
   }
 
   @override
@@ -46,89 +52,111 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
       'Nine',
       'Ten'
     ];
-    setSemester();
+    setSemester().then((val) {
+      setState(() {
+        isLoading = false;
+      });
+    });
   }
 
   refresh() {
-    DatabaseHelper.db.deleteCourseWithSemester(semester);
-    setState(() {});
+    DatabaseHelper.db.deleteCourseWithSemester(semester).then((value) {
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.width;
-    return Stack(
-      children: <Widget>[
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            PageHeader("My Courses"),
-            Padding(
-              padding: const EdgeInsets.only(left: 32, right: 32),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+    return Container(
+      color: Theme.of(context).brightness == Brightness.light
+          ? Colors.white
+          : Colors.black,
+      child: Center(
+        child: isLoading
+            ? CircularProgressIndicator()
+            : Stack(
                 children: <Widget>[
-                  Text(
-                    "Semester",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: semesterPadding),
-                    child: Material(
-                      shape: StadiumBorder(
-                          side: BorderSide(
-                              width: 1, color: Colors.grey.shade200)),
-                      elevation: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 12.0, right: 8.0),
-                        child: DropdownButton<String>(
-                          underline: Container(),
-                          value: dropdownValue,
-                          isExpanded: false,
-                          isDense: true,
-                          onChanged: (String newValue) {
-                            setState(() {
-                              dropdownValue = newValue;
-                              semester =
-                                  semesterList.indexOf(dropdownValue) + 1;
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      widget.isHeader ? PageHeader("My Courses") : Container(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 32, right: 32),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "Semester",
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: semesterPadding),
+                              child: Material(
+                                shape: StadiumBorder(
+                                    side: BorderSide(
+                                        width: 1, color: Colors.grey.shade200)),
+                                elevation: 1,
+                                child: Container(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  color: blackOrWhite(context),
+                                  child: DropdownButton<String>(
+                                    underline: Container(),
+                                    value: dropdownValue,
+                                    isExpanded: false,
+                                    isDense: true,
+                                    onChanged: (String newValue) {
+                                      setState(() {
+                                        dropdownValue = newValue;
+                                        semester = semesterList
+                                                .indexOf(dropdownValue) +
+                                            1;
 
-                              myFuture = amizoneRepository
-                                  .fetchMyCoursesWithSemester(semester);
-                            });
-                          },
-                          items: semesterList
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+                                        myFuture = amizoneRepository
+                                            .fetchMyCoursesWithSemester(
+                                                semester);
+                                      });
+                                    },
+                                    items: semesterList
+                                        .sublist(0, userSemester)
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Expanded(
+                        child: CourseFutureBuilder(
+                            myFuture: myFuture, semester: semester),
+                      ),
+                    ],
                   ),
+                  Positioned(
+                    right: height * 0.03,
+                    bottom: height * 0.03,
+                    child: RefreshButton(
+                      onPressed: refresh,
+                    ),
+                  )
                 ],
               ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Expanded(
-              child: CourseFutureBuilder(
-                myFuture: myFuture,
-              ),
-            ),
-          ],
-        ),
-        Positioned(
-          right: height * 0.03,
-          bottom: height * 0.03,
-          child: RefreshButton(
-            onPressed: refresh,
-          ),
-        )
-      ],
+      ),
     );
   }
 }
@@ -136,7 +164,9 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
 class CourseBuild extends StatefulWidget {
   final AsyncSnapshot<List<Course>> snapshot;
 
-  CourseBuild({this.snapshot});
+  final int semester;
+
+  CourseBuild({this.snapshot, this.semester});
 
   @override
   _CourseBuildState createState() => _CourseBuildState();
@@ -151,8 +181,8 @@ class _CourseBuildState extends State<CourseBuild> {
         children: List<Widget>.generate(
           widget.snapshot.data.length,
           (int index) {
-            var percentage = double.tryParse(
-                "${widget.snapshot.data.elementAt(index).percentage}");
+            Course course = widget.snapshot.data.elementAt(index);
+            var percentage = double.tryParse("${course.percentage}");
             return Column(
               children: <Widget>[
                 ListTile(
@@ -161,11 +191,11 @@ class _CourseBuildState extends State<CourseBuild> {
                     right: 8,
                   ),
                   title: Text(
-                    widget.snapshot.data[index].courseName,
+                    course.courseName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  subtitle: Text(widget.snapshot.data[index].courseCode),
+                  subtitle: Text(course.courseCode),
                   leading: Container(
                     color: (percentage < 75.00)
                         ? Colors.red
@@ -177,15 +207,21 @@ class _CourseBuildState extends State<CourseBuild> {
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text(
-                          "${widget.snapshot.data[index].present}/${widget.snapshot.data[index].total} "),
-                      Text("(" + percentage.toStringAsFixed(2) + ")",
-                          style: TextStyle(color: Colors.black45))
+                      Text("${course.present}/${course.total} "),
+                      !percentage.isNaN
+                          ? Text("(" + percentage.toStringAsFixed(2) + ")",
+                              style: TextStyle(fontSize: 12))
+                          : Text('(0)')
                     ],
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    CustomPageRoute.pushPage(
+                        context: context, child: CoursePage(course: course));
+                  },
                 ),
-                Divider(),
+                Divider(
+                  color: Colors.grey.shade600.withOpacity(0.4),
+                ),
                 (index == widget.snapshot.data.length - 1)
                     ? Padding(
                         padding: EdgeInsets.all(16),
@@ -249,7 +285,9 @@ class CourseError extends StatelessWidget {
 class CourseFutureBuilder extends StatelessWidget {
   final Future<List> myFuture;
 
-  CourseFutureBuilder({this.myFuture});
+  final int semester;
+
+  CourseFutureBuilder({this.myFuture, this.semester});
 
   @override
   Widget build(BuildContext context) {
@@ -262,9 +300,7 @@ class CourseFutureBuilder extends StatelessWidget {
           case ConnectionState.done:
             return (snapshot.hasError || snapshot.data == null)
                 ? CourseError()
-                : CourseBuild(
-                    snapshot: snapshot,
-                  );
+                : CourseBuild(snapshot: snapshot, semester: semester);
           case ConnectionState.none:
             break;
           case ConnectionState.active:

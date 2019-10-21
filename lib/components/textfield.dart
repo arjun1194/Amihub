@@ -1,3 +1,4 @@
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -36,19 +37,28 @@ class _MyTextFieldState extends State<MyTextField> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return TextField(
+      keyboardAppearance: Theme.of(context).brightness,
       keyboardType: widget.keyboardType,
       autofocus: false,
       obscureText: passwordVisible,
       cursorColor: Colors.blueGrey.shade800,
       decoration: InputDecoration(
-          fillColor: Colors.white,
+          fillColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : Colors.grey.shade900,
           filled: true,
           focusColor: Color(0xff656C8C),
           labelText: widget.hintText,
           labelStyle: TextStyle(
-            color: Colors.blueGrey.shade800,),
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.blueGrey.shade800
+                : Colors.white,
+          ),
           focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Color(0xff656C8C)),
+              borderSide: BorderSide(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Color(0xff656C8C)
+                      : Colors.grey),
               borderRadius: BorderRadius.circular(30)),
           contentPadding:
               EdgeInsets.only(left: 22, top: 18, bottom: 18, right: 22),
@@ -65,9 +75,16 @@ class _MyTextFieldState extends State<MyTextField> {
                   child: passwordVisible
                       ? Icon(
                           Icons.remove_red_eye,
-                          color: Color(0xff3A4577),
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? Color(0xff3A4577)
+                                  : Colors.grey.shade700,
                         )
-                      : Icon(Icons.visibility_off, color: Color(0xff3A4577)))
+                      : Icon(Icons.visibility_off,
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? Color(0xff3A4577)
+                                  : Colors.grey.shade700))
               : null),
       controller: widget.textEditingController,
     );

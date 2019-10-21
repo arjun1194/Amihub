@@ -1,3 +1,4 @@
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -37,8 +38,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          systemNavigationBarIconBrightness: Brightness.dark,
-          systemNavigationBarColor: Colors.white));
+          systemNavigationBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.dark,
+          systemNavigationBarColor: blackOrWhite(context)));
     } else if (state == AppLifecycleState.inactive) {
       // app is inactive
     } else if (state == AppLifecycleState.paused) {
