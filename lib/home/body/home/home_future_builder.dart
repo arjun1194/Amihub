@@ -98,8 +98,12 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
             todayClass.courseCode,
             start,
             end,
-            lightColors[math.min(index, index % lightColors.length)],
-            darkColors[math.min(index, index % lightColors.length)],
+            Theme.of(context).brightness == Brightness.light
+                ? lightColors[math.min(index, index % lightColors.length)]
+                : Colors.blueGrey.shade900,
+            Theme.of(context).brightness == Brightness.light
+                ? darkColors[math.min(index, index % lightColors.length)]
+                : Colors.black,
           ),
         );
       }),

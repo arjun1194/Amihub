@@ -1,5 +1,5 @@
 import 'package:amihub/components/page_heading.dart';
-import 'package:amihub/components/page_route.dart';
+import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/components/refresh_button.dart';
 import 'package:amihub/database/database_helper.dart';
 import 'package:amihub/home/body/course/course_detail.dart';
@@ -86,56 +86,44 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 32, right: 32),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Semester",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: semesterPadding),
-                              child: Material(
-                                shape: StadiumBorder(
-                                    side: BorderSide(
-                                        width: 1, color: Colors.grey.shade200)),
-                                elevation: 1,
-                                child: Container(
-                                  padding: EdgeInsets.only(left: 10, right: 10),
-                                  color: blackOrWhite(context),
-                                  child: DropdownButton<String>(
-                                    underline: Container(),
-                                    value: dropdownValue,
-                                    isExpanded: false,
-                                    isDense: true,
-                                    onChanged: (String newValue) {
-                                      setState(() {
-                                        dropdownValue = newValue;
-                                        semester = semesterList
-                                                .indexOf(dropdownValue) +
-                                            1;
+                        child: Center(
+                          child: Material(
+                            shape: StadiumBorder(
+                                side: BorderSide(
+                                    width: 1, color: Colors.grey.shade200)),
+                            elevation: 1,
+                            child: Container(
+                              padding: EdgeInsets.only(left: 10, right: 10),
+                              color: blackOrWhite(context),
+                              child: DropdownButton<String>(
+                                underline: Container(),
+                                value: dropdownValue,
+                                isExpanded: false,
+                                isDense: true,
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    dropdownValue = newValue;
+                                    semester = semesterList
+                                            .indexOf(dropdownValue) +
+                                        1;
 
-                                        myFuture = amizoneRepository
-                                            .fetchMyCoursesWithSemester(
-                                                semester);
-                                      });
-                                    },
-                                    items: semesterList
-                                        .sublist(0, userSemester)
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
+                                    myFuture = amizoneRepository
+                                        .fetchMyCoursesWithSemester(
+                                            semester);
+                                  });
+                                },
+                                items: semesterList
+                                    .sublist(0, userSemester)
+                                    .map<DropdownMenuItem<String>>(
+                                        (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                       SizedBox(

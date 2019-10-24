@@ -39,6 +39,8 @@ const buttonTextStyle = TextStyle(color: Colors.white, fontFamily: 'Raleway');
 //api end point
 var amihubUrl = 'http://api.avirias.me:8080';
 
+String facultyImage(String code) => "https://amizone.net/AdminAmizone/images/StaffImages/${code}_p.png";
+
 //Webview url
 var webViewUrl = 'https://student.amizone.net';
 

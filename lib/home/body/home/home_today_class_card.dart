@@ -51,8 +51,11 @@ class _TestWidgetState extends State<TestWidget> {
             decoration: BoxDecoration(
                 gradient: LinearGradient(
                     colors: [widget.topColor, widget.bottomColor],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
+                border: Border.all(
+                  width: 0.3,
+                  color: Colors.grey.shade400,                ),
                 borderRadius: BorderRadius.all(Radius.circular(13))),
             child: Stack(
               children: <Widget>[

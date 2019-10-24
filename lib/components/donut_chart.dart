@@ -1,5 +1,5 @@
 import 'package:amihub/components/custom_appbar.dart';
-import 'package:amihub/components/page_route.dart';
+import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/course/my_courses_future_builder.dart';
 import 'package:amihub/home/body/my_courses.dart';
 import 'package:amihub/home/home_appbar.dart';

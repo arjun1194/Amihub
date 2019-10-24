@@ -329,12 +329,13 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
               DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.end);
           DateTime start =
               DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
-          return Material(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+          return Container(
+            decoration: ShapeDecoration(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+              ),
             ),
-            clipBehavior: Clip.antiAlias,
             child: Scrollbar(
               child: ListView(
                 physics: BouncingScrollPhysics(),

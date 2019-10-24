@@ -1,3 +1,4 @@
+import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: blackOrWhite(context),
       elevation: 0,
       leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(backButton()),
           color: Theme.of(context).brightness == Brightness.light
               ? Colors.black
               : Colors.white,

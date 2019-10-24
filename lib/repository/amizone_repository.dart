@@ -1,6 +1,7 @@
 import 'dart:convert' as convert;
 
 import 'package:amihub/database/database_helper.dart';
+import 'package:amihub/home/body/course/course_detail.dart';
 import 'package:amihub/interceptors/amizone_http_interceptor.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_attendance.dart';
@@ -133,6 +134,18 @@ class AmizoneRepository {
     }
     print('from db');
     return dbResponse;
+  }
+  
+  Future<List<Faculty>> fetchMyFaculty() async {
+    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    var response = await http.get('$amihubUrl/faculty');
+    var jsonResponse = convert.jsonDecode(response.body);
+    List<Faculty> faculties = [];
+    for (var item in jsonResponse) {
+      Faculty faculty = Faculty.fromJson(item);
+      faculties.add(faculty);
+    }
+    return faculties;
   }
 
   Future<dynamic> fetchMyProfile() async {

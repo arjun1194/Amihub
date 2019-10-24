@@ -115,7 +115,6 @@ class ResultBuild extends StatelessWidget {
 class ResultNotFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Text("Result hasnt been uploaded yet");
   }
 }
@@ -123,7 +122,6 @@ class ResultNotFound extends StatelessWidget {
 class ResultsError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Center(
       child: Text('Error Occured'),
     );
@@ -133,7 +131,6 @@ class ResultsError extends StatelessWidget {
 class ResultsSeamer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Center(child: CircularProgressIndicator());
   }
 }

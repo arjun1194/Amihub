@@ -11,3 +11,9 @@ class CustomPageRoute {
             .push(MaterialPageRoute(builder: (context) => child));
   }
 }
+
+IconData backButton(){
+  return Platform.isIOS
+      ? CupertinoIcons.back
+      : Icons.arrow_back;
+}
