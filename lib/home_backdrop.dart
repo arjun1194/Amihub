@@ -22,7 +22,9 @@ class _HomeState extends State<Home> {
   List<Widget> homeWidgets = [
     HomeBody(),
     HomeTodayClass(),
-    HomeMyCourses(isHeader: true,),
+    HomeMyCourses(
+      isHeader: true,
+    ),
     HomeResults(),
     HomeMyProfile()
   ];
@@ -38,43 +40,48 @@ class _HomeState extends State<Home> {
       });
     }
 
-    return BackdropScaffold(
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/amihub.png',
-            height: 32,
-            width: 32,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8),
-            child: Text(
-              appTitle,
-              style: TextStyle(
-                color: Colors.grey.shade200.withOpacity(0.7),
-                fontWeight: FontWeight.bold,
-                fontFamily: "Raleway",
-              ),
+    return SafeArea(
+      top: false,
+      right: false,
+      left: false,
+      child: BackdropScaffold(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'assets/amihub.png',
+              height: 32,
+              width: 32,
             ),
-          )
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Text(
+                appTitle,
+                style: TextStyle(
+                  color: Colors.grey.shade200.withOpacity(0.7),
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Raleway",
+                ),
+              ),
+            )
+          ],
+        ),
+        backLayerColor: Theme.of(context).brightness == Brightness.light
+            ? Color(0xff171C1F)
+            : Color(0xff232831),
+        headerHeight: 40,
+        backLayer: Center(
+          child: BackDropButtons(
+            selected: selected,
+            changeSelected: changeSelected,
+          ),
+        ),
+        frontLayer: homeWidget,
+        iconPosition: BackdropIconPosition.leading,
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.info_outline), onPressed: () {})
         ],
       ),
-      backLayerColor: Theme.of(context).brightness == Brightness.light
-          ? Color(0xff171C1F)
-          : Color(0xff232831),
-      headerHeight: 40,
-      backLayer: Center(
-        child: BackDropButtons(
-          selected: selected,
-          changeSelected: changeSelected,
-        ),
-      ),
-      frontLayer: homeWidget,
-      iconPosition: BackdropIconPosition.leading,
-      actions: <Widget>[
-        IconButton(icon: Icon(Icons.info_outline), onPressed: () {})
-      ],
     );
   }
 

@@ -44,7 +44,9 @@ class _TestWidgetState extends State<TestWidget> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
       child: Material(
-        shadowColor: widget.topColor,
+        shadowColor: Theme.of(context).brightness == Brightness.light
+            ? widget.topColor
+            : Colors.grey,
         elevation: 8,
         color: Colors.transparent,
         child: Container(
@@ -55,13 +57,14 @@ class _TestWidgetState extends State<TestWidget> {
                     end: Alignment.bottomRight),
                 border: Border.all(
                   width: 0.3,
-                  color: Colors.grey.shade400,                ),
+                  color: Colors.grey.shade400,
+                ),
                 borderRadius: BorderRadius.all(Radius.circular(13))),
             child: Stack(
               children: <Widget>[
                 QuarterCircle(
                   circleAlignment: CircleAlignment.topRight,
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withOpacity(0.2),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -74,6 +77,7 @@ class _TestWidgetState extends State<TestWidget> {
                         child: Text(
                           widget.courseName,
                           overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                           style: TextStyle(fontSize: 22, color: Colors.white),
                         ),
                       ),
