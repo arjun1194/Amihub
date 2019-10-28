@@ -12,6 +12,6 @@ class _HomeTodayClassState extends State<HomeTodayClass> {
 
   @override
   Widget build(BuildContext context) {
-    return TodayClassBuilder();
+    return TodayClassBuilder(isHeader: true,);
   }
 }

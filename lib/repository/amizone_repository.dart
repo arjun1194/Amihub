@@ -3,6 +3,7 @@ import 'dart:convert' as convert;
 import 'package:amihub/database/database_helper.dart';
 import 'package:amihub/home/body/course/course_detail.dart';
 import 'package:amihub/interceptors/amizone_http_interceptor.dart';
+import 'package:amihub/models/attendance.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_attendance.dart';
 import 'package:amihub/models/course_attendance_type.dart';
@@ -147,6 +148,19 @@ class AmizoneRepository {
     }
     return faculties;
   }
+
+  Future<List<Attendance>> fetchCourseAttendance({@required int courseId}) async{
+    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(
+      interceptors: [AmizoneInterceptor()]);
+    List<Attendance> attendances = [];
+    var response = await http.get('$amihubUrl/myCourses/attendance/$courseId');
+    var jsonResponse = convert.jsonDecode(response.body);
+    for( var item in jsonResponse){
+      attendances.add(Attendance.fromJson(item));
+    }
+    return attendances;
+  }
+
 
   Future<dynamic> fetchMyProfile() async {
     HttpWithInterceptor http =

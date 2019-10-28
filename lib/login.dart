@@ -109,12 +109,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: Icon(
                   Icons.arrow_forward,
                   color: Colors.white,
-                  size: 30.0,
+                  size: 28.0,
                 ),
                 color: Theme.of(context).brightness == Brightness.light
                     ? Color(0xff3655B5)
                     : Color(0xff364042),
-                padding: EdgeInsets.all(24.0),
+                padding: EdgeInsets.all(20.0),
                 onPressed: () {
                   if (usernameController.text.length == 0 ||
                       passwordController.text.length == 0) {

@@ -7,10 +7,8 @@ class AmizoneInterceptor extends InterceptorContract {
   @override
   Future<RequestData> interceptRequest({RequestData data}) async {
     try {
-      //TODO:test this internet checker
-
       SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
+          await SharedPreferences.getInstance();
       final jwtToken = sharedPreferences.get('Authorization');
       data.headers["Authorization"] = jwtToken;
     } catch (e) {

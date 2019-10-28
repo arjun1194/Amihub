@@ -20,25 +20,29 @@ class ProfileIcon extends StatelessWidget {
           title: Text(
             'Log out',
             style: TextStyle(
-              color: Colors.blueGrey.shade700,
+              color: Theme.of(context).brightness == Brightness.light ? Colors.blueGrey.shade700 : Colors.white,
             ),
           ),
           content: const Text('Really wanna go? '),
           actions: <Widget>[
             FlatButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               child: Text(
                 "Cancel",
-                style: TextStyle(color: Colors.blueGrey.shade800),
+                style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.light ? Colors.blueGrey.shade800 : Colors.white,
+                ),
               ),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             FlatButton(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               child: Text(
                 'Logout',
                 style: TextStyle(
-                  color: Colors.blueGrey.shade800,
+                  color: Theme.of(context).brightness == Brightness.light ? Colors.blueGrey.shade800 : Colors.white,
                 ),
               ),
               onPressed: () {
@@ -53,49 +57,55 @@ class ProfileIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(
+        left: 4,
+        right: 4
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           ClipRRect(
-            borderRadius: BorderRadius.circular(45),
+            borderRadius: BorderRadius.circular(100),
             child: Image.network(
               imageLink,
-              loadingBuilder: (BuildContext context,
-                  Widget child,
-                  ImageChunkEvent loadingProgress,) {
-                if (loadingProgress == null)
-                  return child;
-                return Center(
-                  child: Icon(Icons.perm_identity)
-                );
+              loadingBuilder: (
+                BuildContext context,
+                Widget child,
+                ImageChunkEvent loadingProgress,
+              ) {
+                if (loadingProgress == null) return child;
+                return Center(child: Icon(Icons.perm_identity));
               },
               fit: BoxFit.fitWidth,
-              height: 90,
-              width: 90,
+              height: width * 0.25,
+              width: width * 0.25,
             ),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                "Logged in as..",
-                style: TextStyle(fontSize: 15),
-              ),
-              Text(
-                name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
-              )
-            ],
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "Logged in as..",
+                  style: TextStyle(fontSize: 14),
+                ),
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
           ),
           IconButton(
             tooltip: "Logout",
             icon: Icon(Icons.exit_to_app),
-            color: Colors.blueGrey.shade700,
+            color: Colors.blueGrey,
             onPressed: () {
               _ackAlert(context);
             },

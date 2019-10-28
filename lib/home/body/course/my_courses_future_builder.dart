@@ -176,7 +176,7 @@ class _CourseBuildState extends State<CourseBuild> {
                 ListTile(
                   contentPadding: EdgeInsets.only(
                     left: 0,
-                    right: 8,
+                    right: 5,
                   ),
                   title: Text(
                     course.courseName,
@@ -199,7 +199,7 @@ class _CourseBuildState extends State<CourseBuild> {
                       !percentage.isNaN
                           ? Text("(" + percentage.toStringAsFixed(2) + ")",
                               style: TextStyle(fontSize: 12))
-                          : Text('(0)')
+                          : Text('')
                     ],
                   ),
                   onTap: () {

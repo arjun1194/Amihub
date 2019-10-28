@@ -4,6 +4,7 @@ import 'package:amihub/home/body/home_body.dart';
 import 'package:amihub/home/body/my_courses.dart';
 import 'package:amihub/home/body/my_profile.dart';
 import 'package:amihub/home/body/results.dart';
+import 'package:amihub/home/body/settings/settings.dart';
 import 'package:amihub/home/body/todays_classes.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
@@ -22,17 +23,14 @@ class _HomeState extends State<Home> {
   List<Widget> homeWidgets = [
     HomeBody(),
     HomeTodayClass(),
-    HomeMyCourses(
-      isHeader: true,
-    ),
+    HomeMyCourses(),
     HomeResults(),
-    HomeMyProfile()
+    HomeMyProfile(),
+    Settings()
   ];
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
     void changeSelected(int val) {
       setState(() {
         selected = val;
@@ -60,7 +58,6 @@ class _HomeState extends State<Home> {
                 style: TextStyle(
                   color: Colors.grey.shade200.withOpacity(0.7),
                   fontWeight: FontWeight.bold,
-                  fontFamily: "Raleway",
                 ),
               ),
             )
@@ -146,6 +143,12 @@ class _BackDropButtonsState extends State<BackDropButtons> {
             widget.changeSelected(4);
           });
         }),
+        BackDropButton(Icons.settings, "Settings", widget.selected == 5, () {
+          setState(() {
+            Backdrop.of(context).fling();
+            widget.changeSelected(5);
+          });
+        })
       ],
     );
   }

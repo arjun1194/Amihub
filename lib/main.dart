@@ -5,12 +5,12 @@ import 'package:flutter/services.dart';
 import 'routes/routes.dart';
 
 void main() {
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarIconBrightness: Brightness.dark,
-      statusBarColor: Colors.transparent,
-      statusBarBrightness: Brightness.dark,
-      systemNavigationBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.white));
+//  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+//      statusBarIconBrightness: Brightness.dark,
+//      statusBarColor: Colors.transparent,
+//      statusBarBrightness: Brightness.dark,
+//      systemNavigationBarIconBrightness: Brightness.dark,
+//      systemNavigationBarColor: Colors.white));
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) => runApp(MyApp()));
 }
@@ -21,7 +21,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
-
   @override
   void initState() {
     super.initState();
@@ -37,9 +36,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          systemNavigationBarIconBrightness: Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.dark,
-          systemNavigationBarColor: blackOrWhite(context)));
+//      if (Theme.of(context).brightness == Brightness.light)
+//      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+//          systemNavigationBarIconBrightness: Brightness.dark,
+//          systemNavigationBarColor: Colors.white));
     } else if (state == AppLifecycleState.inactive) {
       // app is inactive
     } else if (state == AppLifecycleState.paused) {
@@ -55,11 +55,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       debugShowCheckedModeBanner: false,
       title: 'Application 1',
       routes: routes,
-      theme: ThemeData(fontFamily: "OpenSans",
-      brightness: Brightness.light),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark
-      ),
+      theme: lightTheme,
+      darkTheme: dataTheme,
     );
   }
 }

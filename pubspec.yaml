@@ -32,6 +32,8 @@ dependencies:
   path_provider:
   sqflite:
   charts_flutter:
+  draggable_scrollbar: ^0.0.4
+
 
 
 
@@ -63,32 +65,22 @@ flutter:
     - assets/logo.png
     - assets/authentication.png
   fonts:
-    - family: Raleway
-      fonts:
-        - asset: fonts/Raleway-Black.ttf
-        - asset: fonts/Raleway-BlackItalic.ttf
-        - asset: fonts/Raleway-Bold.ttf
-        - asset: fonts/Raleway-BoldItalic.ttf
-        - asset: fonts/Raleway-Light.ttf
-        - asset: fonts/Raleway-LightItalic.ttf
-        - asset: fonts/Raleway-Medium.ttf
-        - asset: fonts/Raleway-MediumItalic.ttf
-        - asset: fonts/Raleway-Regular.ttf
-        - asset: fonts/Raleway-Thin.ttf
-        - asset: fonts/Raleway-ThinItalic.ttf
-          style: italic
     - family: Playfair
       fonts:
         - asset: fonts/PlayFair/PlayfairDisplay-Regular.ttf
-        - asset: fonts/PlayFair/PlayfairDisplay-RegularItalic.ttf
-          style: italic
-        - asset: fonts/PlayFair/PlayfairDisplay-Bold.ttf
-          weight: 700
-        - asset: fonts/PlayFair/PlayfairDisplay-Black.ttf
-          weight: 900
     - family: OpenSans
       fonts:
-        - asset: fonts/OpenSans-Regular.ttf
+        - asset: fonts/OpenSans/OpenSans-Regular.ttf
+    - family: GoogleSans
+      fonts:
+        - asset: fonts/Google-Sans-Font/GoogleSans-Bold.ttf
+          weight: 900
+        - asset: fonts/Google-Sans-Font/GoogleSans-Italic.ttf
+          style: italic
+        - asset: fonts/Google-Sans-Font/GoogleSans-Medium.ttf
+          weight: 700
+        - asset: fonts/Google-Sans-Font/GoogleSans-Regular.ttf
+          style: normal
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

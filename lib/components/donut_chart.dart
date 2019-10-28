@@ -123,9 +123,7 @@ class _DonutChartShimmerState extends State<DonutChartShimmer>
                     side: BorderSide(
                       width: 0.3,
                       color: Colors.grey.shade400,
-                    )
-                )
-            ),
+                    ))),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,57 +220,59 @@ class DonutChartBuild extends StatelessWidget {
                     side: BorderSide(
                       width: 0.3,
                       color: Colors.grey.shade400,
-                    )
-                )
-            ),
+                    ))),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
                   height: 0.35 * height,
-                  width: 0.6 * width,
+                  width: 0.55 * width,
                   child: DonutChart(
                     seriesList: series,
                     animate: true,
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: width * 0.07),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      ChartAnnotations("Above 85", Color(0xff56CD93)),
-                      ChartAnnotations("75 to 85", Color(0xffECA24D)),
-                      ChartAnnotations("Below 75", Color(0xffFF5479)),
-                      OutlineButton(
-                        onPressed: () {
-                          CustomPageRoute.pushPage(
-                              context: context,
-                              child: Scaffold(
-                                  body: HomeMyCourses(
-                                    isHeader: false,
-                                  ),
-                                  appBar: CustomAppbar('My Courses')));
-                        },
-                        shape: StadiumBorder(),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "SEE ALL",
-                            ),
-                            Icon(
-                              Icons.arrow_forward,
-                              size: 20,
-                              color: Colors.lightBlue,
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        ChartAnnotations("Above 85", Color(0xff56CD93)),
+                        ChartAnnotations("75 to 85", Color(0xffECA24D)),
+                        ChartAnnotations("Below 75", Color(0xffFF5479)),
+                      ],
+                    ),
+                    OutlineButton(
+                      onPressed: () {
+                        CustomPageRoute.pushPage(
+                            context: context,
+                            child: Scaffold(
+                                body: MyCourseBuilder(
+                                  isHeader: false,
+                                ),
+                                appBar: CustomAppbar('My Courses')));
+                      },
+                      shape: StadiumBorder(),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "SEE ALL",
+                          ),
+                          Icon(
+                            Icons.arrow_forward,
+                            size: 20,
+                            color: Colors.lightBlue,
+                          )
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ],
             ),
@@ -291,13 +291,13 @@ class DonutChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
     return charts.PieChart(
       seriesList,
       animate: animate,
       animationDuration: Duration(milliseconds: 500),
       defaultRenderer: new charts.ArcRendererConfig(
-          arcWidth: 40,
-          strokeWidthPx: 0,
+          arcWidth: width >= 350 ? 40 : 30,
           arcRendererDecorators: [new charts.ArcLabelDecorator()]),
     );
   }

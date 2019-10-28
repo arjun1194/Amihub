@@ -24,22 +24,46 @@ List<Color> darkColors = [
   Color(0xfffb3067),
   Color(0xff6c69d0)
 ];
+
+var dataTheme = ThemeData(
+  brightness: Brightness.dark,
+  fontFamily: "GoogleSans",
+  bottomSheetTheme: BottomSheetThemeData(
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+    elevation: 8,
+  ),
+  scaffoldBackgroundColor: Colors.black,
+  backgroundColor: Colors.black,
+  colorScheme: ColorScheme.dark(),
+);
+var lightTheme = ThemeData(
+    fontFamily: "GoogleSans",
+    brightness: Brightness.light,
+    bottomSheetTheme: BottomSheetThemeData(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15), topLeft: Radius.circular(15))),
+        elevation: 8,
+        backgroundColor: Colors.white),
+    scaffoldBackgroundColor: Colors.white,
+    backgroundColor: Colors.white,
+    colorScheme: ColorScheme.dark());
+
 blackOrWhite(context) => Theme.of(context).brightness == Brightness.light
     ? Colors.white
     : Colors.black;
 const appTitle = 'Amihub';
 const appIcon = 'assets/logo.png';
-const fontSplashScreen = 'Roboto';
 
-//text styles
-const headingStyle =
-    TextStyle(fontSize: 40, fontFamily: 'Raleway', fontWeight: FontWeight.bold);
-const buttonTextStyle = TextStyle(color: Colors.white, fontFamily: 'Raleway');
+
 
 //api end point
 var amihubUrl = 'http://api.avirias.me:8080';
 
-String facultyImage(String code) => "https://amizone.net/AdminAmizone/images/StaffImages/${code}_p.png";
+String facultyImage(String code) =>
+    "https://amizone.net/AdminAmizone/images/StaffImages/${code}_p.png";
 
 //Webview url
 var webViewUrl = 'https://student.amizone.net';

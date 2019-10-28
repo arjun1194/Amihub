@@ -1,10 +1,12 @@
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/platform_specific.dart';
+import 'package:amihub/home/body/course/course_attendance_detail.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CoursePage extends StatefulWidget {
   final Course course;
@@ -17,6 +19,21 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage> {
   AmizoneRepository amizoneRepository = AmizoneRepository();
+
+  int semester;
+
+  getSemester() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    semester = prefs.getInt("semester");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getSemester().then((val) {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,28 +68,45 @@ class _CoursePageState extends State<CoursePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            SizedBox(
+              height: 10,
+            ),
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: getColor()),
-                    child: Center(
-                        child: Text(
-                      getPercentage(),
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    )),
-                  ),
+                  Center(
+                      child: Text(
+                    getPercentage(),
+                    style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.black
+                            : Colors.white,
+                        fontSize: 35),
+                  )),
                   OutlineButton(
-                    child: Text('Attendance detail'),
-                    onPressed: () {},
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade300
+                    ),
+                    child: Text('Attendance detail',
+                    style: TextStyle(color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white),),
+                    onPressed: semester == widget.course.semester
+                        ? () {
+                            CustomPageRoute.pushPage(
+                                context: context,
+                                child: CourseAttendanceDetail(
+                                    course: widget.course));
+                          }
+                        : null,
                     shape: StadiumBorder(),
                   )
                 ],
               ),
+            ),
+            SizedBox(
+              height: 5,
             ),
             PageHeader('Faculties'),
             fetchFaculty()
@@ -94,9 +128,12 @@ class _CoursePageState extends State<CoursePage> {
           case ConnectionState.active:
             break;
           case ConnectionState.done:
-            List<Faculty> faculties = snapshot.data.where((faculty) => faculty.courseName == widget.course.courseName).toList();
+            List<Faculty> faculties = snapshot.data
+                .where(
+                    (faculty) => faculty.courseName == widget.course.courseName)
+                .toList();
             return (snapshot.hasError || snapshot.data == null)
-                ? Text('erorrr')
+                ? Text('error')
                 : Container(
                     height: 140,
                     child: ListView.builder(
@@ -107,17 +144,53 @@ class _CoursePageState extends State<CoursePage> {
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         Faculty faculty = faculties.elementAt(index);
-                        return Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              side: BorderSide(color: Colors.grey, width: 0.5)),
-                          child: Container(
-                              width: 180,
-                              padding: EdgeInsets.all(8),
-                              child: faculty.facultyImage != null
-                                  ? Image.network(faculty.facultyImage)
-                                  : Container()),
-                        );
+                        return faculty.facultyImage != null
+                            ? Padding(
+                                padding: EdgeInsets.only(left: 5, right: 5),
+                                child: Container(
+                                  child: Stack(
+                                    children: <Widget>[
+                                      Align(
+                                        alignment: Alignment.topCenter,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 25),
+                                          child: CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                              faculty.facultyImage,
+                                            ),
+                                            radius: 50,
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Container(
+                                          width: 150,
+                                          padding:
+                                              EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                          decoration: ShapeDecoration(
+                                              shape: StadiumBorder(),
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.light
+                                                  ? Colors.blueGrey.shade800
+                                                  : Colors.white),
+                                          child: Text(
+                                            faculty.facultyName,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: blackOrWhite(context)),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : Container();
                       },
                     ),
                   );
@@ -147,7 +220,7 @@ class _CoursePageState extends State<CoursePage> {
       child: ListView.builder(
         itemCount: 3,
         scrollDirection: Axis.horizontal,
-        itemBuilder: (context,index){
+        itemBuilder: (context, index) {
           return Card(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),

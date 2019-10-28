@@ -11,6 +11,14 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 class TodayClassBuilder extends StatefulWidget {
+  
+  final DateTime date;
+
+  final bool isHeader;
+
+
+  TodayClassBuilder({this.date,this.isHeader});
+
   @override
   _TodayClassBuilderState createState() => _TodayClassBuilderState();
 }
@@ -22,7 +30,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
   @override
   void initState() {
     super.initState();
-    selectDate = DateTime.now();
+    selectDate = widget.date == null ? DateTime.now() : widget.date;
   }
 
   changeState(changedDate) {
@@ -49,65 +57,62 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              PageHeader("Classes"),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.arrow_back_ios),
-                      iconSize: 20,
-                      color: Colors.grey.shade700,
-                      onPressed: () {
-                        changeState(selectDate.subtract(Duration(days: 1)));
-                      },
+              widget.isHeader ? PageHeader("Classes") : Container(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.arrow_back_ios),
+                    iconSize: 20,
+                    color: Colors.grey.shade700,
+                    onPressed: () {
+                      changeState(selectDate.subtract(Duration(days: 1)));
+                    },
+                  ),
+                  OutlineButton(
+                    shape: StadiumBorder(),
+                    onPressed: () {
+                      DatePicker.showDatePicker(context,
+                          theme: DatePickerTheme(
+                            backgroundColor: Theme.of(context).brightness ==
+                                    Brightness.light
+                                ? Colors.white
+                                : Colors.black,
+                            itemStyle: TextStyle(
+                                fontFamily: "OpenSans", fontSize: 19),
+                            cancelStyle: TextStyle(
+                                fontFamily: "OpenSans",
+                                fontSize: 17,
+                                color: Colors.red),
+                            doneStyle: TextStyle(
+                                fontFamily: "OpenSans", fontSize: 17),
+                          ),
+                          showTitleActions: true,
+                          minTime: DateTime(2018, 3, 5),
+                          maxTime: DateTime(DateTime.now().year,
+                                  DateTime.now().month, DateTime.now().day)
+                              .add(Duration(days: 30)), onConfirm: (date) {
+                        setState(() {
+                          selectDate = date;
+                        });
+                        changeState(selectDate);
+                      }, currentTime: selectDate, locale: LocaleType.en);
+                    },
+                    child: Text(
+                      dateFormat(selectDate),
+                      style: TextStyle(
+                          color: Colors.blue.shade700, fontSize: 15),
                     ),
-                    FlatButton(
-                      shape: StadiumBorder(),
-                      onPressed: () {
-                        DatePicker.showDatePicker(context,
-                            theme: DatePickerTheme(
-                              backgroundColor: Theme.of(context).brightness ==
-                                      Brightness.light
-                                  ? Colors.white
-                                  : Colors.black,
-                              itemStyle: TextStyle(
-                                  fontFamily: "OpenSans", fontSize: 19),
-                              cancelStyle: TextStyle(
-                                  fontFamily: "OpenSans",
-                                  fontSize: 17,
-                                  color: Colors.red),
-                              doneStyle: TextStyle(
-                                  fontFamily: "OpenSans", fontSize: 17),
-                            ),
-                            showTitleActions: true,
-                            minTime: DateTime(2018, 3, 5),
-                            maxTime: DateTime(DateTime.now().year,
-                                    DateTime.now().month, DateTime.now().day)
-                                .add(Duration(days: 30)), onConfirm: (date) {
-                          setState(() {
-                            selectDate = date;
-                          });
-                          changeState(selectDate);
-                        }, currentTime: selectDate, locale: LocaleType.en);
-                      },
-                      child: Text(
-                        dateFormat(selectDate),
-                        style: TextStyle(
-                            color: Colors.blue.shade700, fontSize: 15),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.arrow_forward_ios),
-                      iconSize: 20,
-                      color: Colors.grey.shade700,
-                      onPressed: () {
-                        changeState(selectDate.add(Duration(days: 1)));
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.arrow_forward_ios),
+                    iconSize: 20,
+                    color: Colors.grey.shade700,
+                    onPressed: () {
+                      changeState(selectDate.add(Duration(days: 1)));
+                    },
+                  ),
+                ],
               ),
               !isSameDay(DateTime.now(), selectDate)
                   ? Container(
@@ -312,7 +317,7 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
               contentPadding: EdgeInsets.only(left: 0, right: 8),
             ),
             Divider(
-              color: Colors.grey.shade600.withOpacity(0.4),
+              color: Colors.grey.shade600.withOpacity(0.3),
             ),
           ],
         );
@@ -484,7 +489,7 @@ String dateFormat(DateTime time) {
     return 'Tomorrow, ${DateFormat.MMMd("en_US").format(time)}';
   else if (isSameDay(time, todayDate))
     return 'Today, ${DateFormat.MMMd("en_US").format(time)}';
-  return '${DateFormat.yMMMMEEEEd("en_US").format(time)}';
+  return '${DateFormat('EEEE, MMM d').format(time)}';
 }
 
 bool isSameDay(DateTime time1, DateTime time2) {

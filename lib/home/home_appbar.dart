@@ -22,8 +22,7 @@ class HomePageAppbar {
               appTitle,
               style: TextStyle(
                   color: Colors.black54,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "Raleway"),
+                  fontWeight: FontWeight.bold),
             ),
           )
         ],
