@@ -113,18 +113,19 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   }
 
   Padding noClassBuilder(double height, double width) {
-    int randomColor = Random().nextInt(lightColors.length);
+    int randomInt = Random().nextInt(lightColors.length);
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 23),
       child: Material(
         shadowColor: Colors.grey.shade300,
         elevation: 10,
+        clipBehavior: Clip.antiAlias,
         color: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-                lightColors.elementAt(randomColor),
-                darkColors.elementAt(randomColor)
+                lightColors.elementAt(randomInt),
+                darkColors.elementAt(randomInt)
               ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
               borderRadius: BorderRadius.all(Radius.circular(13))),
           child: Stack(

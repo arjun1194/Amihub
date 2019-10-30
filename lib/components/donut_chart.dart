@@ -110,9 +110,9 @@ class _DonutChartShimmerState extends State<DonutChartShimmer>
       padding: EdgeInsets.all(8),
       child: Material(
         color: Colors.transparent,
-        shadowColor: Colors.grey.withOpacity(0.6),
+        shadowColor: Colors.grey,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-        elevation: 8,
+        elevation: 5,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(13),
           child: Container(
@@ -207,11 +207,13 @@ class DonutChartBuild extends StatelessWidget {
       padding: EdgeInsets.all(8),
       child: Material(
         color: Colors.transparent,
-        shadowColor: Colors.grey.withOpacity(0.6),
+        shadowColor: Colors.grey,
+        clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-        elevation: 8,
+        elevation: 5,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(13),
+          clipBehavior: Clip.antiAlias,
           child: Container(
             decoration: ShapeDecoration(
                 color: blackOrWhite(context),
@@ -263,6 +265,11 @@ class DonutChartBuild extends StatelessWidget {
                         children: <Widget>[
                           Text(
                             "SEE ALL",
+                            style: TextStyle(
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.grey.shade600
+                                    : Colors.white),
                           ),
                           Icon(
                             Icons.arrow_forward,

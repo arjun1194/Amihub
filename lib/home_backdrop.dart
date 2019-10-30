@@ -1,5 +1,6 @@
 import 'package:amihub/components/backdrop.dart';
 import 'package:amihub/components/backdrop_buttons.dart';
+import 'package:amihub/home/body/faculty/faculty.dart';
 import 'package:amihub/home/body/home_body.dart';
 import 'package:amihub/home/body/my_courses.dart';
 import 'package:amihub/home/body/my_profile.dart';
@@ -24,6 +25,7 @@ class _HomeState extends State<Home> {
     HomeBody(),
     HomeTodayClass(),
     HomeMyCourses(),
+    MyFaculty(),
     HomeResults(),
     HomeMyProfile(),
     Settings()
@@ -130,23 +132,30 @@ class _BackDropButtonsState extends State<BackDropButtons> {
             widget.changeSelected(2);
           });
         }),
-        BackDropButton(Icons.home, "Results", widget.selected == 3, () {
-          setState(() {
-            Backdrop.of(context).fling();
-            widget.changeSelected(3);
-          });
-        }),
-        BackDropButton(Icons.account_circle, "My Profile", widget.selected == 4,
-            () {
+        BackDropButton(Icons.library_books, "My Faculty", widget.selected == 3,
+                () {
+              setState(() {
+                Backdrop.of(context).fling();
+                widget.changeSelected(3);
+              });
+            }),
+        BackDropButton(Icons.home, "Results", widget.selected == 4, () {
           setState(() {
             Backdrop.of(context).fling();
             widget.changeSelected(4);
           });
         }),
-        BackDropButton(Icons.settings, "Settings", widget.selected == 5, () {
+        BackDropButton(Icons.account_circle, "My Profile", widget.selected == 5,
+            () {
           setState(() {
             Backdrop.of(context).fling();
             widget.changeSelected(5);
+          });
+        }),
+        BackDropButton(Icons.settings, "Settings", widget.selected == 6, () {
+          setState(() {
+            Backdrop.of(context).fling();
+            widget.changeSelected(6);
           });
         })
       ],

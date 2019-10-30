@@ -149,12 +149,20 @@ class DatabaseHelper {
     return list;
   }
 
-  Future<List<Course>> getCourseWithSemester(int semester) async {
+  Future<List<Course>> getCoursesWithSemester(int semester) async {
     final db = await database;
     String sql = "SELECT * FROM course WHERE semester = $semester";
     var response = await db.rawQuery(sql);
     List<Course> list = response.map((c) => Course.fromJson(c)).toList();
     return list;
+  }
+
+  Future<Course> getCourseWithCourseName(String courseName) async{
+    final db = await database;
+    String sql = "SELECT * FROM course WHERE courseName LIKE '$courseName'";
+    var response = await db.rawQuery(sql);
+    List<Course> courses = response.map((c) => Course.fromJson(c)).toList();
+    return courses.first;
   }
 
   Future<List<CourseAttendanceType>> getCourseType() async{

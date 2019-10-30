@@ -34,6 +34,7 @@ class TestWidget extends StatefulWidget {
 class _TestWidgetState extends State<TestWidget> {
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     int attendanceState = 1;
     (widget.attendanceColor == "#4FCC4F")
         ? attendanceState = 1
@@ -49,6 +50,10 @@ class _TestWidgetState extends State<TestWidget> {
             : Colors.grey,
         elevation: 8,
         color: Colors.transparent,
+        clipBehavior: Clip.antiAlias,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(13),
+        ),
         child: Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -59,7 +64,7 @@ class _TestWidgetState extends State<TestWidget> {
                   width: 0.3,
                   color: Colors.grey.shade400,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(13))),
+                borderRadius: BorderRadius.circular(13)),
             child: Stack(
               children: <Widget>[
                 QuarterCircle(
@@ -67,27 +72,25 @@ class _TestWidgetState extends State<TestWidget> {
                   color: Colors.white.withOpacity(0.2),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                  padding: EdgeInsets.fromLTRB(
+                      width * 0.05, width * 0.038, width * 0.05, width * 0.038),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          widget.courseName,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          style: TextStyle(fontSize: 22, color: Colors.white),
-                        ),
+                      Text(
+                        widget.courseName,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: width >= 350 ? 2 : 1,
+                        style: TextStyle(fontSize: 22, color: Colors.white),
                       ),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           Icon(
-                            CupertinoIcons.person_add_solid,
+                            Icons.person,
                             color: Colors.white,
-                            size: 28,
+                            size: 25,
                           ),
                           SizedBox(
                             width: 5,
@@ -106,7 +109,7 @@ class _TestWidgetState extends State<TestWidget> {
                           Icon(
                             Icons.timer,
                             color: Colors.white,
-                            size: 28,
+                            size: 25,
                           ),
                           SizedBox(
                             width: 5,
@@ -124,7 +127,7 @@ class _TestWidgetState extends State<TestWidget> {
                               Icon(
                                 Icons.account_balance,
                                 color: Colors.white,
-                                size: 28,
+                                size: 25,
                               ),
                               SizedBox(
                                 width: 5.0,
@@ -140,7 +143,7 @@ class _TestWidgetState extends State<TestWidget> {
                             children: <Widget>[
                               Icon(
                                 Icons.description,
-                                size: 28,
+                                size: 25,
                                 color: Colors.white,
                               ),
                               SizedBox(
@@ -159,13 +162,13 @@ class _TestWidgetState extends State<TestWidget> {
                                   ? Icon(
                                       Icons.check_circle,
                                       color: Colors.white,
-                                      size: 28,
+                                      size: 25,
                                     )
                                   : (attendanceState == 2)
                                       ? Icon(
                                           Icons.block,
                                           color: Colors.white,
-                                          size: 28,
+                                          size: 25,
                                         )
                                       : Icon(Icons.home,
                                           color: Colors.transparent),

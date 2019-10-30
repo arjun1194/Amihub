@@ -25,7 +25,7 @@ List<Color> darkColors = [
   Color(0xff6c69d0)
 ];
 
-var dataTheme = ThemeData(
+var darkTheme = ThemeData(
   brightness: Brightness.dark,
   fontFamily: "GoogleSans",
   bottomSheetTheme: BottomSheetThemeData(
@@ -49,7 +49,7 @@ var lightTheme = ThemeData(
         backgroundColor: Colors.white),
     scaffoldBackgroundColor: Colors.white,
     backgroundColor: Colors.white,
-    colorScheme: ColorScheme.dark());
+    colorScheme: ColorScheme.light());
 
 blackOrWhite(context) => Theme.of(context).brightness == Brightness.light
     ? Colors.white

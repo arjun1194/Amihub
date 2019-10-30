@@ -85,13 +85,15 @@ class _CoursePageState extends State<CoursePage> {
                         fontSize: 35),
                   )),
                   OutlineButton(
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade300
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                    child: Text(
+                      'Attendance detail',
+                      style: TextStyle(
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? Colors.black
+                                  : Colors.white),
                     ),
-                    child: Text('Attendance detail',
-                    style: TextStyle(color: Theme.of(context).brightness == Brightness.light
-                        ? Colors.black
-                        : Colors.white),),
                     onPressed: semester == widget.course.semester
                         ? () {
                             CustomPageRoute.pushPage(
@@ -108,12 +110,35 @@ class _CoursePageState extends State<CoursePage> {
             SizedBox(
               height: 5,
             ),
-            PageHeader('Faculties'),
-            fetchFaculty()
+            internalAssessmentBuild(),
+            fetchFaculty(),
           ],
         ),
       ),
     );
+  }
+
+  Widget internalAssessmentBuild() {
+    return widget.course.internalAssessment != null
+              ? Padding(
+                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  child: ExpansionTile(
+                    title: Text('Internal Assessment'),
+                    trailing:
+                        Text(widget.course.internalAssessment.split("[")[0]),
+                    leading: Icon(Icons.assignment),
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          widget.course.internalAssessment,
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              : Container();
   }
 
   Widget fetchFaculty() {
@@ -124,7 +149,7 @@ class _CoursePageState extends State<CoursePage> {
           case ConnectionState.none:
             break;
           case ConnectionState.waiting:
-            return facultyShimmer();
+            return Container();
           case ConnectionState.active:
             break;
           case ConnectionState.done:
@@ -134,66 +159,81 @@ class _CoursePageState extends State<CoursePage> {
                 .toList();
             return (snapshot.hasError || snapshot.data == null)
                 ? Text('error')
-                : Container(
-                    height: 140,
-                    child: ListView.builder(
-                      padding: EdgeInsets.all(8),
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: faculties.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        Faculty faculty = faculties.elementAt(index);
-                        return faculty.facultyImage != null
-                            ? Padding(
-                                padding: EdgeInsets.only(left: 5, right: 5),
-                                child: Container(
-                                  child: Stack(
-                                    children: <Widget>[
-                                      Align(
-                                        alignment: Alignment.topCenter,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 25),
-                                          child: CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                              faculty.facultyImage,
-                                            ),
-                                            radius: 50,
-                                          ),
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.bottomCenter,
+                : faculties.length != 0
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          PageHeader('Faculties'),
+                          Container(
+                            height: 140,
+                            child: ListView.builder(
+                              padding: EdgeInsets.all(8),
+                              shrinkWrap: true,
+                              physics: BouncingScrollPhysics(),
+                              itemCount: faculties.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                Faculty faculty = faculties.elementAt(index);
+                                return faculty.facultyImage != null
+                                    ? Padding(
+                                        padding:
+                                            EdgeInsets.only(left: 5, right: 5),
                                         child: Container(
-                                          width: 150,
-                                          padding:
-                                              EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                          decoration: ShapeDecoration(
-                                              shape: StadiumBorder(),
-                                              color: Theme.of(context)
-                                                          .brightness ==
-                                                      Brightness.light
-                                                  ? Colors.blueGrey.shade800
-                                                  : Colors.white),
-                                          child: Text(
-                                            faculty.facultyName,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: blackOrWhite(context)),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
+                                          child: Stack(
+                                            children: <Widget>[
+                                              Align(
+                                                alignment: Alignment.topCenter,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 25),
+                                                  child: CircleAvatar(
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                      faculty.facultyImage,
+                                                    ),
+                                                    radius: 50,
+                                                  ),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment:
+                                                    Alignment.bottomCenter,
+                                                child: Container(
+                                                  width: 150,
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      10, 5, 10, 5),
+                                                  decoration: ShapeDecoration(
+                                                      shape: StadiumBorder(),
+                                                      color: Theme.of(context)
+                                                                  .brightness ==
+                                                              Brightness.light
+                                                          ? Colors
+                                                              .blueGrey.shade800
+                                                          : Colors.white),
+                                                  child: Text(
+                                                    faculty.facultyName,
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: blackOrWhite(
+                                                            context)),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
                                           ),
                                         ),
                                       )
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : Container();
-                      },
-                    ),
-                  );
+                                    : Container();
+                              },
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container();
         }
         return Text('end');
       },
@@ -214,28 +254,28 @@ class _CoursePageState extends State<CoursePage> {
     return '${percentage.toStringAsFixed(2)}%';
   }
 
-  facultyShimmer() {
-    return Container(
-      height: 130,
-      child: ListView.builder(
-        itemCount: 3,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return Card(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-                side: BorderSide(color: Colors.grey, width: 0.5)),
-            child: Container(
-              width: 180,
-              child: Center(
-                child: Text('dsadsadasd'),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
+//  facultyShimmer() {
+//    return Container(
+//      height: 130,
+//      child: ListView.builder(
+//        itemCount: 3,
+//        scrollDirection: Axis.horizontal,
+//        itemBuilder: (context, index) {
+//          return Card(
+//            shape: RoundedRectangleBorder(
+//                borderRadius: BorderRadius.circular(15),
+//                side: BorderSide(color: Colors.grey, width: 0.5)),
+//            child: Container(
+//              width: 180,
+//              child: Center(
+//                child: Text('dsadsadasd'),
+//              ),
+//            ),
+//          );
+//        },
+//      ),
+//    );
+//  }
 }
 
 class Faculty {

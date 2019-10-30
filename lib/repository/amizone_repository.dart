@@ -114,24 +114,39 @@ class AmizoneRepository {
     return dbResponse;
   }
 
+  Future<Course> fetchCourseWithCourseName(String courseName) async {
+    Course dbResponse = await dbHelper.getCourseWithCourseName(courseName);
+    if (dbResponse == null) {
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      int semester = sharedPreferences.getInt('semester');
+      List<Course> courses = await fetchCourseAndSave(semester);
+      return courses.firstWhere((course) => course.courseName == courseName);
+    }
+    return dbResponse;
+  }
+
+  Future<List<Course>> fetchCourseAndSave(int semester)async{
+    List<Course> courses =[];
+    HttpWithInterceptor http =
+    HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    var response = await http.get('$amihubUrl/myCourses?semester=$semester');
+
+    var jsonResponse = convert.jsonDecode(response.body);
+
+    for (var item in jsonResponse) {
+      Course course = Course.fromJson(item);
+      course.semester = semester;
+      courses.add(course);
+      dbHelper.addCourse(course);
+    }
+    return courses;
+  }
+
+
   Future<List<Course>> fetchMyCoursesWithSemester(int semester) async {
-    List<Course> dbResponse = await dbHelper.getCourseWithSemester(semester);
-    List<Course> courses = [];
+    List<Course> dbResponse = await dbHelper.getCoursesWithSemester(semester);
     if (dbResponse.isEmpty) {
-      HttpWithInterceptor http =
-          HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-      var response = await http.get('$amihubUrl/myCourses?semester=$semester');
-
-      var jsonResponse = convert.jsonDecode(response.body);
-
-      for (var item in jsonResponse) {
-        Course course = Course.fromJson(item);
-        course.semester = semester;
-        courses.add(course);
-        dbHelper.addCourse(course);
-      }
-      print('from network');
-      return courses;
+     return await fetchCourseAndSave(semester);
     }
     print('from db');
     return dbResponse;

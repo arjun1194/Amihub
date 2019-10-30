@@ -12,14 +12,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 2));
     SharedPreferences.getInstance().then((sharedPreferences) {
-      if (sharedPreferences.containsKey('Authorization') && checkAuthValid()) {
-        print('<---JWt is valid : logging you in --->');
+      if (sharedPreferences.containsKey('Authorization')) {
         Navigator.pushNamedAndRemoveUntil(
             context, '/home', (Route<dynamic> route) => false);
       } else {
-        print("invalid JWT or JWT expired");
         if (sharedPreferences.containsKey('Authorization'))
           sharedPreferences.remove('Authorization');
         Navigator.pushNamedAndRemoveUntil(
@@ -35,32 +32,11 @@ class _SplashScreenState extends State<SplashScreen> {
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.dark,
     ));
-    return Scaffold(
-      body: Container(
-        color: Colors.grey.shade200,
-        height: double.infinity,
-        width: double.infinity,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              "assets/amihub.png",
-              height: 90,
-              width: 90,
-            ),
-            SizedBox(height: 25,),
-            Text(
-              appTitle,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "OpenSans",
-                  fontSize: 28,
-                  ),
-            ),
-          ],
-        ),
+    return Image(
+      image: AssetImage(
+        'assets/screen.png',
       ),
+      fit: BoxFit.cover,
     );
   }
 

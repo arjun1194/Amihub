@@ -44,10 +44,10 @@ class HorizontalChartShimmer extends StatelessWidget {
             padding: EdgeInsets.all(8),
             child: Material(
               color: Colors.transparent,
-              shadowColor: Colors.grey.withOpacity(0.6),
+              shadowColor: Colors.grey,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(13)),
-              elevation: 8,
+              elevation: 5,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(13),
                 child: Container(
@@ -59,8 +59,7 @@ class HorizontalChartShimmer extends StatelessWidget {
                           side: BorderSide(
                             width: 0.3,
                             color: Colors.grey.shade400,
-                          )
-                      )),
+                          ))),
                   child: HorizontalChart(score: score),
                 ),
               ),
@@ -82,10 +81,10 @@ class HorizontalChartBuild extends StatelessWidget {
             padding: EdgeInsets.all(8),
             child: Material(
               color: Colors.transparent,
-              shadowColor: Colors.grey.withOpacity(0.6),
+              shadowColor: Colors.grey,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(13)),
-              elevation: 8,
+              elevation: 5,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(13),
                 child: Container(
@@ -93,12 +92,11 @@ class HorizontalChartBuild extends StatelessWidget {
                   decoration: ShapeDecoration(
                       color: blackOrWhite(context),
                       shape: RoundedRectangleBorder(
-                         borderRadius: BorderRadius.all(Radius.circular(13)),
-                        side: BorderSide(
-                          width: 0.3,
-                          color: Colors.grey.shade400,
-                        )
-                      )),
+                          borderRadius: BorderRadius.all(Radius.circular(13)),
+                          side: BorderSide(
+                            width: 0.3,
+                            color: Colors.grey.shade400,
+                          ))),
                   child: HorizontalChart(score: score),
                 ),
               ),
@@ -156,7 +154,7 @@ class _HorizontalChartState extends State<HorizontalChart> {
           tickProviderSpec: new StaticNumericTickProviderSpec(List.generate(
               10,
               (index) => TickSpec(index + 1,
-                  label: '${index + 1}',
+                  label: index % 2 != 0 ? '${index + 1}' : '',
                   style: TextStyleSpec(
                       color: Theme.of(context).brightness == Brightness.light
                           ? Color.black
