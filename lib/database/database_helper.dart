@@ -104,6 +104,14 @@ class DatabaseHelper {
     return raw;
   }
 
+  Future<Score> getScoreWithSemester(int semester) async {
+    print(semester);
+    final db = await database;
+    String sql = "SELECT * FROM gpa WHERE semester=$semester";
+    var response = await db.rawQuery(sql);
+    return (response.isEmpty) ? null : Score.fromJson(response.elementAt(0));
+  }
+
   Future<List<Score>> getScore() async {
     final db = await database;
     String sql = "SELECT * FROM gpa";
@@ -119,14 +127,14 @@ class DatabaseHelper {
     return response;
   }
 
-  Future deleteGpa() async{
+  Future deleteGpa() async {
     final db = await database;
     String sql = "DELETE * FROM gpa";
     var response = await db.rawQuery(sql);
     return response;
   }
 
-  Future deleteCourseAttendance() async{
+  Future deleteCourseAttendance() async {
     final db = await database;
     String sql = "DELETE * FROM courseAttendance";
     var response = db.rawQuery(sql);
@@ -157,7 +165,7 @@ class DatabaseHelper {
     return list;
   }
 
-  Future<Course> getCourseWithCourseName(String courseName) async{
+  Future<Course> getCourseWithCourseName(String courseName) async {
     final db = await database;
     String sql = "SELECT * FROM course WHERE courseName LIKE '$courseName'";
     var response = await db.rawQuery(sql);
@@ -165,11 +173,12 @@ class DatabaseHelper {
     return courses.first;
   }
 
-  Future<List<CourseAttendanceType>> getCourseType() async{
+  Future<List<CourseAttendanceType>> getCourseType() async {
     final db = await database;
     String sql = "SELECT * FROM courseAttendance";
     var response = await db.rawQuery(sql);
-    List<CourseAttendanceType> list = response.map((c) => CourseAttendanceType.fromJson(c)).toList();
+    List<CourseAttendanceType> list =
+        response.map((c) => CourseAttendanceType.fromJson(c)).toList();
     return list;
   }
 

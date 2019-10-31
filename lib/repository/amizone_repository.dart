@@ -58,22 +58,49 @@ class AmizoneRepository {
 
   }
 
-
+  Future <Score> fetchCurrentScoreWithSemester(int semester) async {
+    Score dbResponse = await dbHelper.getScoreWithSemester(semester);
+    if (dbResponse == null) {
+      HttpWithInterceptor http = HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+      var response = await http.get('$amihubUrl/metadata');
+      var jsonResponse = convert.jsonDecode(response.body);
+      Score currentSemScore;
+      for (var element in jsonResponse['results']) {
+        Score score = Score.fromJson(element);
+        if (score.semester == semester)
+          currentSemScore = score;
+        int sc = await dbHelper.addGpa(score);
+      }
+      return currentSemScore;
+    }
+    return dbResponse;
+  }
 
   Future<List<Score>> fetchCurrentScore() async {
     List<Score> dbResponse = await dbHelper.getScore();
+    //if database response is empty
     if (dbResponse.isEmpty) {
+      //make a network call to the server
       HttpWithInterceptor http =
           HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+      //save the response
       var response = await http.get('$amihubUrl/metadata');
+      //convert response to json
       var jsonResponse = convert.jsonDecode(response.body);
+      //save the 'semester' key from jsonResponse in SharedPreferences
       SharedPreferences.getInstance().then((sp){
         sp.setInt("semester", jsonResponse['semester']);
       });
+      //we have to return a array of scores.so create an empty list of scores
       List<Score> courseAttendance = [];
+
       for (var element in jsonResponse['results']) {
+        // do this for every element in results[] of jsonResponse
+        //add the element results[0] from jsonResponse to fit 'Score' Dto
         Score score = Score.fromJson(element);
+        //add element to courseAttendance
         courseAttendance.add(score);
+        //add to database
         dbHelper.addGpa(score);
       }
       return courseAttendance;
@@ -151,7 +178,7 @@ class AmizoneRepository {
     print('from db');
     return dbResponse;
   }
-  
+
   Future<List<Faculty>> fetchMyFaculty() async {
     HttpClientWithInterceptor http = HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/faculty');
