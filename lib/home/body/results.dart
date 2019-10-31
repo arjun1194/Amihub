@@ -3,9 +3,13 @@ import 'dart:ui';
 import 'package:amihub/components/animation_test.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/under_development.dart';
+import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'dart:math' as math;
 
 import 'package:random_color/random_color.dart';
@@ -17,58 +21,137 @@ class HomeResults extends StatefulWidget {
 }
 
 class _HomeResultsState extends State<HomeResults> {
-  @override
-  Widget build(BuildContext context) {
-//    return ResultsBuilder();
-    return ResultsBuilder();
+  final AmizoneRepository amizoneRepository = AmizoneRepository();
+  int semester;
+  Score score;
+  String dropdownValue = '';
+  int userSemester;
+  Future<List> resultFuture;
+  bool isLoading = true;
+
+  openSharedPref() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    return userSemester = sharedPreferences.getInt('semester');
   }
-}
 
-class ResultsBuilder extends StatefulWidget {
+  Future<Score> getCurrentSemScore(int sem) async {
+    return await amizoneRepository.fetchCurrentScoreWithSemester(sem);
+  }
+
   @override
-  _ResultsBuilderState createState() => _ResultsBuilderState();
-}
+  void initState() {
+    super.initState();
+    openSharedPref().then((val) {
+      setState(() {
+        semester = val;
+        dropdownValue = semesterList.elementAt(semester - 1);
+        resultFuture = amizoneRepository.fetchResultsWithSemester(semester);
+        isLoading = false;
+      });
+      return val;
+    }).then((val) {
+      getCurrentSemScore(val).then((sc) {
+        score = sc;
+      });
+    });
+  }
 
-class _ResultsBuilderState extends State<ResultsBuilder> {
-  AmizoneRepository amizoneRepository = AmizoneRepository();
-  int semester = 6;
-
-  changeSemester(int sem) {
+  changeSemester(int sem) async {
+    score = await getCurrentSemScore(sem);
     setState(() {
       semester = sem;
+      resultFuture = amizoneRepository.fetchResultsWithSemester(semester);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-      future: amizoneRepository.fetchResultsWithSemester(semester),
-      builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return ResultsSeamer();
-          case ConnectionState.done:
-            if (snapshot.hasError) return ResultsError();
-            if (snapshot.data.elementAt(0) == "No Class")
-              return ResultNotFound();
-            return Container(child: ResultBuild(
-                snapshot: snapshot, onChange: changeSemester));
-          case ConnectionState.none:
-            break;
-          case ConnectionState.active:
-            break;
-        }
-        return Text(''); // unreachable
-      },
+    return Container(
+      color: Theme.of(context).brightness == Brightness.light
+          ? Colors.white
+          : Colors.black,
+      child: semester == null || isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                PageHeader('Results'),
+                Padding(
+                  padding: const EdgeInsets.only(left: 32, right: 32),
+                  child: Center(
+                    child: Material(
+                      shape: StadiumBorder(
+                          side:
+                              BorderSide(width: 1, color: Colors.grey.shade200)),
+                      elevation: 1,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        color: blackOrWhite(context),
+                        child: DropdownButton<String>(
+                          underline: Container(),
+                          value: dropdownValue,
+                          isExpanded: false,
+                          isDense: true,
+                          onChanged: (String newValue) {
+                            setState(() {
+                              dropdownValue = newValue;
+                              changeSemester(
+                                  semesterList.indexOf(dropdownValue) + 1);
+                            });
+                          },
+                          items:
+                              semesterList.sublist(0, userSemester).map((value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                Expanded(
+                  child: FutureBuilder<List<CourseResult>>(
+                    future: resultFuture,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<CourseResult>> snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return ResultsShimmer();
+                        case ConnectionState.done:
+                          if (snapshot.hasError) {
+                            return ResultsError();
+                          }
+                          if (snapshot.data.length == 0) return ResultNotFound();
+                          return Container(
+                              child: ResultBuild(
+                                  results: snapshot.data, score: score));
+                        case ConnectionState.none:
+                          break;
+                        case ConnectionState.active:
+                          break;
+                      }
+                      return Text(''); // unreachable
+                    },
+                  ),
+                )
+              ],
+            ),
     );
   }
 }
 
 class ResultBuild extends StatefulWidget {
-  final AsyncSnapshot<List<dynamic>> snapshot;
-  final Function(int) onChange;
+  final List<CourseResult> results;
+  final Score score;
 
-  ResultBuild({Key key, this.snapshot, this.onChange}) : super(key: key);
+  const ResultBuild({Key key, this.results, this.score}) : super(key: key);
 
   @override
   _ResultBuildState createState() => _ResultBuildState();
@@ -78,44 +161,16 @@ class _ResultBuildState extends State<ResultBuild>
     with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    print(getCurrentSemScore());
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        PageHeader('Results'),
-        Expanded(
-          child: FutureBuilder(
-            future: getCurrentSemScore(),
-            builder: (context, AsyncSnapshot<Score> snapshot) {
-              switch(snapshot.connectionState){
-
-                case ConnectionState.none:
-                  // TODO: Handle this case.
-                  break;
-                case ConnectionState.waiting:
-                  return Center(child: CircularProgressIndicator());
-                case ConnectionState.active:
-                  // TODO: Handle this case.
-                  break;
-                case ConnectionState.done:
-                  return (!snapshot.hasData || snapshot.data == null)
-                      ? ResultNotFound()
-                      : ListView(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    padding: EdgeInsets.only(bottom: 15),
-                    physics: BouncingScrollPhysics(),
-                    children: resultCardList(snapshot.data),
-                  );
-              }
-              return Text('end');
-            },
-          ),
-        ),
-      ],
+    return Scrollbar(
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        padding: EdgeInsets.only(bottom: 15),
+        physics: BouncingScrollPhysics(),
+        children: resultCardList(),
+      ),
     );
   }
-
 
   //Some utility functions
   Color cgpaColor(Color a, Color b, double cgpa) {
@@ -136,73 +191,65 @@ class _ResultBuildState extends State<ResultBuild>
     );
   }
 
-  Future<Score> getCurrentSemScore() async {
-    SharedPreferences sp = await SharedPreferences.getInstance();
-    AmizoneRepository amizoneRepository = AmizoneRepository();
-    var semester = sp.get('semester');
-    Score score = await amizoneRepository.fetchCurrentScoreWithSemester(semester-1);
-    //test to see if score prints correctly
-    return score;
-  }
-
   //Some util widgets
-  List<Widget> resultCardList(Score score) {
+  List<Widget> resultCardList() {
     List<Widget> l = [];
 
-    int n = widget.snapshot.data.length;
+    int n = widget.results.length;
     l.add(Padding(
-      padding: const EdgeInsets.only(top: 32.0, left: 32, right: 32),
+      padding: const EdgeInsets.only(top: 10.0, left: 12, right: 12),
       child: card(
           child: Container(
-            padding: EdgeInsets.all(16),
-            child: Column(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          children: <Widget>[
+            //gaugeMeters row
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                //gaugeMeters row
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    gaugeMeter(score.cgpa/10, "Cgpa"),
-                    gaugeMeter(score.sgpa/10, "Sgpa"),
-                  ],
-                ),
-//                summaryCardDetail("Rollno", "A2305216627"),
-                summaryCardDetail("Semester", score.semester.toString()),
-                summaryCardDetail("Courses", n.toString()),
+                gaugeMeter(widget.score.cgpa / 10, "CGPA"),
+                gaugeMeter(widget.score.sgpa / 10, "SGPA"),
               ],
             ),
-          )),));
+            summaryCardDetail("Semester", widget.score.semester.toString()),
+            summaryCardDetail("Courses", n.toString()),
+          ],
+        ),
+      )),
+    ));
     for (int i = 0; i < n; i++) {
+      CourseResult courseResult = widget.results.elementAt(i);
       Widget w = Padding(
-        padding: const EdgeInsets.only(left: 32, top: 32, right: 32),
-        child: resultCard(
-            widget.snapshot.data[i]['gradePoints'] / 10,
-            widget.snapshot.data[i]['gradeObtained'].toString(),
-            widget.snapshot.data[i]['courseTitle'],
-            widget.snapshot.data[i]['courseCode'],
-            widget.snapshot.data[i]['associatedCreditUnits'],
-            widget.snapshot.data[i]['gradePoints'],
-            widget.snapshot.data[i]['creditPoints']),
+        padding: const EdgeInsets.only(left: 12, top: 10, right: 12),
+        child: resultCard(courseResult),
       );
       l.add(w);
     }
     return l;
   }
 
-
   Widget card({@required Widget child}) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: Material(
         shadowColor: Colors.grey,
-        elevation: 8,
+        elevation: 6,
+        clipBehavior: Clip.antiAlias,
         color: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(13))),
         child: Container(
           decoration: BoxDecoration(
-              color: Colors.white,
               border: Border.all(
                 width: 0.3,
                 color: Colors.grey.shade400,
+              ),
+              gradient: LinearGradient(
+                colors: Theme.of(context).brightness == Brightness.light ? [
+                  Color(0xffe6f8f9),Colors.white
+                ]: [Color(0xff393e46),Color(0xff222831)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight
               ),
               borderRadius: BorderRadius.all(Radius.circular(13))),
           child: child,
@@ -211,10 +258,10 @@ class _ResultBuildState extends State<ResultBuild>
     );
   }
 
-  Widget gaugeMeter(double cgpa, String text) {
+  Widget gaugeMeter(double gpa, String text) {
     var p = math.pi;
     return Padding(
-      padding: const EdgeInsets.all(32.0),
+      padding: const EdgeInsets.fromLTRB(32, 30, 32,0),
       child: Column(
         children: <Widget>[
           Stack(
@@ -223,22 +270,22 @@ class _ResultBuildState extends State<ResultBuild>
               Transform.scale(
                 scale: 2.4,
                 child: Transform.rotate(
-                  angle: -2 * p * (cgpa / 2),
+                  angle: -2 * p * (gpa / 2),
                   child: Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation(Color(cgpaColor(
-                          Colors.redAccent,
-                          Colors.lightGreenAccent.shade400,
-                          cgpa)
+                              Colors.redAccent,
+                              Colors.lightGreenAccent.shade400,
+                              gpa)
                           .value)),
-                      value: cgpa,
+                      value: gpa,
                     ),
                   ),
                 ),
               ),
               Center(
                 child: Text(
-                  "${(cgpa * 10).toStringAsFixed(1)}",
+                  "${(gpa * 10).toStringAsFixed(1)}",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               )
@@ -253,13 +300,11 @@ class _ResultBuildState extends State<ResultBuild>
   Widget summaryCardDetail(String title, String body) {
     if (title == null) title = "";
     if (body == null) body = "";
-    RandomColor _randomColor = RandomColor();
-//    _randomColor.randomColor()
     return Container(
       color: Colors.transparent,
       padding: const EdgeInsets.only(top: 16),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           Text(
             title,
@@ -274,7 +319,7 @@ class _ResultBuildState extends State<ResultBuild>
     );
   }
 
-  Widget gradeIcon(double cgpa, String text) {
+  Widget gradeIcon(double gpa, String text) {
     var p = math.pi;
     return Padding(
       padding: const EdgeInsets.all(32.0),
@@ -288,9 +333,9 @@ class _ResultBuildState extends State<ResultBuild>
                 child: Center(
                   child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation(Color(cgpaColor(
-                        Colors.redAccent,
-                        Colors.lightGreenAccent.shade400,
-                        cgpa)
+                            Colors.redAccent,
+                            Colors.lightGreenAccent.shade400,
+                            gpa)
                         .value)),
                     value: 1,
                   ),
@@ -303,7 +348,7 @@ class _ResultBuildState extends State<ResultBuild>
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: cgpaColor(Colors.redAccent,
-                        Colors.lightGreenAccent.shade400, cgpa),
+                        Colors.lightGreenAccent.shade400, gpa),
                   ),
                 ),
               )
@@ -314,9 +359,10 @@ class _ResultBuildState extends State<ResultBuild>
     );
   }
 
-  Widget resultGridElement({@required IconData iconData,
-    @required String text,
-    @required String number}) {
+  Widget resultGridElement(
+      {@required IconData iconData,
+      @required String text,
+      @required String number}) {
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -325,85 +371,84 @@ class _ResultBuildState extends State<ResultBuild>
             number,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                iconData,
-                color: Colors.grey,
-              ),
-              Text(text)
-            ],
+          Center(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  iconData,
+                  color: Colors.grey,
+                  size: 18,
+                ),
+                SizedBox(width: 4,),
+                Text(text)
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget resultCard(double cgpa,
-      String text,
-      String courseName,
-      String courseCode,
-      int associatedCreditUnits,
-      int gradePoints,
-      int creditPoints) {
+  Widget resultCard(CourseResult courseResult) {
     return card(
         child: Column(
+      children: <Widget>[
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                gradeIcon(cgpa, text),
-                Flexible(
-                  child: Container(
-                    padding: EdgeInsets.only(top: 8, right: 8, bottom: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Wrap(children: <Widget>[
-                          Text(
-                            courseName,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          )
-                        ]),
-                        Text(courseCode),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-            GridView.count(
-                primary: false,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                crossAxisCount: 2,
-                padding: EdgeInsets.all(8),
-                childAspectRatio: 2,
-                shrinkWrap: true,
-                children: <Widget>[
-                  resultGridElement(
-                      iconData: Icons.assignment,
-                      text: "Subject Credits",
-                      number: associatedCreditUnits.toString()),
-                  resultGridElement(
-                      iconData: Icons.assessment,
-                      text: "Earned Points",
-                      number: gradePoints.toString()),
-                  resultGridElement(
-                      iconData: Icons.assessment,
-                      text: "Total Points",
-                      number: creditPoints.toString()),
-                  resultGridElement(
-                      iconData: Icons.star,
-                      text: "Subject Score",
-                      number: "$creditPoints/${associatedCreditUnits * 10}"),
-                ]),
+            gradeIcon(
+                courseResult.gradePoints / 10, courseResult.gradeObtained),
+            Flexible(
+              child: Container(
+                padding: EdgeInsets.only(top: 8, right: 8, bottom: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Wrap(children: <Widget>[
+                      Text(
+                        courseResult.courseTitle,
+                        maxLines: 2,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ]),
+                    Text(courseResult.courseCode),
+                  ],
+                ),
+              ),
+            )
           ],
-        ));
+        ),
+        GridView.count(
+            primary: false,
+            crossAxisCount: 2,
+            childAspectRatio: 2.8,
+            shrinkWrap: true,
+            children: <Widget>[
+              resultGridElement(
+                  iconData: Icons.assignment,
+                  text: "Subject Credits",
+                  number: courseResult.associatedCreditUnits.toString()),
+              resultGridElement(
+                  iconData: Icons.assessment,
+                  text: "Earned Points",
+                  number: courseResult.gradePoints.toString()),
+              resultGridElement(
+                  iconData: Icons.assessment,
+                  text: "Total Points",
+                  number: courseResult.creditPoints.toString()),
+              resultGridElement(
+                  iconData: Icons.star,
+                  text: "Subject Score",
+                  number:
+                      "${courseResult.creditPoints}/${courseResult.associatedCreditUnits * 10}"),
+            ]),
+      ],
+    ));
   }
 }
 
@@ -427,7 +472,7 @@ class ResultsError extends StatelessWidget {
   }
 }
 
-class ResultsSeamer extends StatelessWidget {
+class ResultsShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: CircularProgressIndicator());

@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class TestWidget extends StatefulWidget {
+class TodayClassCard extends StatefulWidget {
   final String courseName;
   final String facultyName;
   final String attendanceColor;
@@ -16,7 +16,7 @@ class TestWidget extends StatefulWidget {
   final Color topColor;
   final Color bottomColor;
 
-  TestWidget(
+  TodayClassCard(
       this.courseName,
       this.facultyName,
       this.attendanceColor,
@@ -28,10 +28,10 @@ class TestWidget extends StatefulWidget {
       this.bottomColor);
 
   @override
-  _TestWidgetState createState() => _TestWidgetState();
+  _TodayClassCardState createState() => _TodayClassCardState();
 }
 
-class _TestWidgetState extends State<TestWidget> {
+class _TodayClassCardState extends State<TodayClassCard> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;

@@ -90,7 +90,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
             DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: TestWidget(
+          child: TodayClassCard(
             todayClass.title,
             todayClass.facultyName.split(",")[0].split("[")[0],
             todayClass.color,

@@ -7,6 +7,7 @@ import 'package:amihub/models/attendance.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_attendance.dart';
 import 'package:amihub/models/course_attendance_type.dart';
+import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/models/today_class.dart';
 import 'package:amihub/theme/theme.dart';
@@ -108,12 +109,16 @@ class AmizoneRepository {
     return dbResponse;
   }
 
-  Future<List<dynamic>> fetchResultsWithSemester(int semester) async {
+  Future<List<CourseResult>> fetchResultsWithSemester(int semester) async {
+    List<CourseResult> results = [];
     HttpWithInterceptor http =
         HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/result?semester=$semester');
     var jsonResponse = convert.jsonDecode(response.body);
-    return jsonResponse;
+    for (var item in jsonResponse){
+      results.add(CourseResult.fromJson(item));
+    }
+    return results;
   }
 
   Future<List<TodayClass>> fetchTodayClass() async {

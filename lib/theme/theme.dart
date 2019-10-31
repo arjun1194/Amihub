@@ -25,6 +25,19 @@ List<Color> darkColors = [
   Color(0xff6c69d0)
 ];
 
+List semesterList = [
+'One',
+'Two',
+'Three',
+'Four',
+'Five',
+'Six',
+'Seven',
+'Eight',
+'Nine',
+'Ten'
+];
+
 var darkTheme = ThemeData(
   brightness: Brightness.dark,
   fontFamily: "GoogleSans",

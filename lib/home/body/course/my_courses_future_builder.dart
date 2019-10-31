@@ -25,7 +25,6 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
   String dropdownValue = '';
   Future<List> myFuture;
   static const semesterPadding = 10.0;
-  List<String> semesterList;
   int userSemester;
   int semester = 2;
   bool isLoading = true;
@@ -40,18 +39,6 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
   @override
   void initState() {
     super.initState();
-    semesterList = [
-      'One',
-      'Two',
-      'Three',
-      'Four',
-      'Five',
-      'Six',
-      'Seven',
-      'Eight',
-      'Nine',
-      'Ten'
-    ];
     setSemester().then((val) {
       setState(() {
         isLoading = false;
@@ -115,7 +102,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                                 items: semesterList
                                     .sublist(0, userSemester)
                                     .map<DropdownMenuItem<String>>(
-                                        (String value) {
+                                        ( value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),

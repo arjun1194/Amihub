@@ -105,7 +105,6 @@ class DatabaseHelper {
   }
 
   Future<Score> getScoreWithSemester(int semester) async {
-    print(semester);
     final db = await database;
     String sql = "SELECT * FROM gpa WHERE semester=$semester";
     var response = await db.rawQuery(sql);
