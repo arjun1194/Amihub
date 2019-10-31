@@ -68,6 +68,7 @@ flutter:
     - assets/logo.png
     - assets/screen.png
     - assets/authentication.png
+    - assets/error.png
   fonts:
     - family: Playfair
       fonts:

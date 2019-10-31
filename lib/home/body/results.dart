@@ -1,18 +1,15 @@
 import 'dart:ui';
 
-import 'package:amihub/components/animation_test.dart';
 import 'package:amihub/components/page_heading.dart';
-import 'package:amihub/components/under_development.dart';
 import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'dart:math' as math;
+import 'package:amihub/components/error.dart';
 
-import 'package:random_color/random_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeResults extends StatefulWidget {
@@ -126,7 +123,7 @@ class _HomeResultsState extends State<HomeResults> {
                           return ResultsShimmer();
                         case ConnectionState.done:
                           if (snapshot.hasError) {
-                            return ResultsError();
+                            return Error();
                           }
                           if (snapshot.data.length == 0) return ResultNotFound();
                           return Container(
@@ -460,15 +457,6 @@ class ResultNotFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: Text("Result hasnt been uploaded yet"));
-  }
-}
-
-class ResultsError extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Error Occured'),
-    );
   }
 }
 
