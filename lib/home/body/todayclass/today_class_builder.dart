@@ -1,3 +1,4 @@
+import 'package:amihub/components/error.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/refresh_button.dart';
 import 'package:amihub/database/database_helper.dart';
@@ -11,13 +12,11 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 
 class TodayClassBuilder extends StatefulWidget {
-  
   final DateTime date;
 
   final bool isHeader;
 
-
-  TodayClassBuilder({this.date,this.isHeader});
+  TodayClassBuilder({this.date, this.isHeader});
 
   @override
   _TodayClassBuilderState createState() => _TodayClassBuilderState();
@@ -74,18 +73,18 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                     onPressed: () {
                       DatePicker.showDatePicker(context,
                           theme: DatePickerTheme(
-                            backgroundColor: Theme.of(context).brightness ==
-                                    Brightness.light
-                                ? Colors.white
-                                : Colors.black,
-                            itemStyle: TextStyle(
-                                fontFamily: "OpenSans", fontSize: 19),
+                            backgroundColor:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.white
+                                    : Colors.black,
+                            itemStyle:
+                                TextStyle(fontFamily: "OpenSans", fontSize: 19),
                             cancelStyle: TextStyle(
                                 fontFamily: "OpenSans",
                                 fontSize: 17,
                                 color: Colors.red),
-                            doneStyle: TextStyle(
-                                fontFamily: "OpenSans", fontSize: 17),
+                            doneStyle:
+                                TextStyle(fontFamily: "OpenSans", fontSize: 17),
                           ),
                           showTitleActions: true,
                           minTime: DateTime(2018, 3, 5),
@@ -100,8 +99,8 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                     },
                     child: Text(
                       dateFormat(selectDate),
-                      style: TextStyle(
-                          color: Colors.blue.shade700, fontSize: 15),
+                      style:
+                          TextStyle(color: Colors.blue.shade700, fontSize: 15),
                     ),
                   ),
                   IconButton(
@@ -144,17 +143,16 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
   }
 
   FutureBuilder<List> buildFutureBuilder() {
+    String date = DateFormat("MM/dd/yyyy").format(selectDate);
     return FutureBuilder<List<TodayClass>>(
-      future: amizoneRepository.fetchTodayClassWithDate(
-          "${selectDate.month}/${selectDate.day}/${selectDate.year}",
-          "${selectDate.month}/${selectDate.day}/${selectDate.year}"),
+      future: amizoneRepository.fetchTodayClassWithDate(date, date),
       builder:
           (BuildContext context, AsyncSnapshot<List<TodayClass>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return TodayClassShimmer();
           case ConnectionState.done:
-            if (snapshot.hasError) return TodayClassError();
+            if (snapshot.hasError) return ErrorPage();
             // No Class check
             if (snapshot.data.elementAt(0).title == "") return NoClassToday();
             return Container(
@@ -172,92 +170,41 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
   }
 }
 
-class TodayClassError extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 32),
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(20),
-            child: Icon(
-              Icons.cloud_off,
-              color: Colors.white,
-              size: 50,
-            ),
-            decoration:
-                BoxDecoration(color: Colors.grey[400], shape: BoxShape.circle),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              'Could not fetch Class',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              'Please Check Your internet and try again',
-            ),
-          ),
-          Expanded(child: Container())
-        ],
-      ),
-    );
-  }
-}
-
 class NoClassToday extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            height: width * 0.1,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(height: 10,),
+        Image.asset(
+          "assets/chill.png",
+          width: width * 0.5,
+          height: width * 0.5,
+        ),
+        SizedBox(
+          height: 20,
+        ),
+        Text(
+          'All caught up!',
+          style: TextStyle(
+            fontSize: 35,
           ),
-          Container(
-            child: Center(
-              child: Icon(
-                Icons.assignment_turned_in,
-                color: Colors.white,
-                size: 60,
-              ),
-            ),
-            height: width * 0.3,
-            width: width * 0.3,
-            decoration: BoxDecoration(
-              color: Colors.grey[400],
-              shape: BoxShape.circle,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'All caught up!',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Sit back,Relax! You have no classes today',
-          ),
-          Expanded(child: Container())
-        ],
-      ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Text(
+          'Sit back,Relax! \nYou have no classes today',
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 16),
+        ),
+        Expanded(child: Container())
+      ],
     );
   }
 }
@@ -286,7 +233,7 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
         return Column(
           children: <Widget>[
             ListTile(
-              onLongPress: (){
+              onLongPress: () {
                 todayClassBottomSheet(todayClass);
               },
               title: Text(
@@ -299,7 +246,7 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                      '${DateFormat.Hm().format(start)} - ${DateFormat.Hm().format(end)}'),
+                      '${DateFormat("hh:mm").format(start)} - ${DateFormat("hh:mm").format(end)}'),
                   Padding(
                     padding: const EdgeInsets.only(right: 15),
                     child: Text(todayClass.roomNo),
@@ -338,7 +285,8 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
             decoration: ShapeDecoration(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15), topRight: Radius.circular(15)),
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15)),
               ),
             ),
             child: Scrollbar(

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
@@ -69,12 +70,13 @@ class _HomeResultsState extends State<HomeResults> {
           : Colors.black,
       child: semester == null || isLoading
           ? Center(
-              child: CircularProgressIndicator(),
+              child: Loader(),
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 PageHeader('Results'),
+                SizedBox(height: 10,),
                 Padding(
                   padding: const EdgeInsets.only(left: 32, right: 32),
                   child: Center(
@@ -111,7 +113,7 @@ class _HomeResultsState extends State<HomeResults> {
                   ),
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 8,
                 ),
                 Expanded(
                   child: FutureBuilder<List<CourseResult>>(
@@ -120,10 +122,10 @@ class _HomeResultsState extends State<HomeResults> {
                         AsyncSnapshot<List<CourseResult>> snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
-                          return ResultsShimmer();
+                          return Loader();
                         case ConnectionState.done:
                           if (snapshot.hasError) {
-                            return Error();
+                            return ErrorPage();
                           }
                           if (snapshot.data.length == 0) return ResultNotFound();
                           return Container(
@@ -457,12 +459,5 @@ class ResultNotFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(child: Text("Result hasnt been uploaded yet"));
-  }
-}
-
-class ResultsShimmer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: CircularProgressIndicator());
   }
 }

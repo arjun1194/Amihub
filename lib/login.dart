@@ -4,6 +4,7 @@ import 'package:amihub/theme/theme.dart';
 import 'package:amihub/viewModels/login_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -60,6 +61,12 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
+    if (Theme.of(context).brightness == Brightness.dark){
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent
+      ));
+    }
     return Scaffold(
       key: _scaffoldKey,
 //      backgroundColor: Theme.of(context).brightness == Brightness.light

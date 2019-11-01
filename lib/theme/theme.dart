@@ -26,16 +26,16 @@ List<Color> darkColors = [
 ];
 
 List semesterList = [
-'One',
-'Two',
-'Three',
-'Four',
-'Five',
-'Six',
-'Seven',
-'Eight',
-'Nine',
-'Ten'
+  'One',
+  'Two',
+  'Three',
+  'Four',
+  'Five',
+  'Six',
+  'Seven',
+  'Eight',
+  'Nine',
+  'Ten'
 ];
 
 var darkTheme = ThemeData(
@@ -69,8 +69,6 @@ blackOrWhite(context) => Theme.of(context).brightness == Brightness.light
     : Colors.black;
 const appTitle = 'Amihub';
 const appIcon = 'assets/logo.png';
-
-
 
 //api end point
 var amihubUrl = 'http://api.avirias.me:8080';
@@ -125,3 +123,4 @@ List<BottomNavigationBarItem> list = [
           "Home")
       .bottomNavItem,
 ];
+

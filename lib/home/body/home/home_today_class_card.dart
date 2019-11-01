@@ -115,7 +115,7 @@ class _TodayClassCardState extends State<TodayClassCard> {
                             width: 5,
                           ),
                           Text(
-                              "${DateFormat.jm().format(widget.start)} - ${DateFormat.jm().format(widget.end)}",
+                              "${DateFormat("hh:mm").format(widget.start)} - ${DateFormat("hh:mm").format(widget.end)}",
                               style: TextStyle(color: Colors.white))
                         ],
                       ),

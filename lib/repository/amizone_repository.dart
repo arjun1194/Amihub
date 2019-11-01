@@ -22,9 +22,9 @@ class AmizoneRepository {
 
   Future<List<CourseAttendanceType>> fetchCurrentAttendance() async {
     List<CourseAttendanceType> dbResponse = await dbHelper.getCourseType();
-    if (dbResponse.isEmpty){
+    if (dbResponse.isEmpty) {
       HttpWithInterceptor http =
-      HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+          HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
       var response = await http.get('$amihubUrl/metadata');
       var jsonResponse = convert.jsonDecode(response.body);
       List<CourseAttendance> courseAttendance = [];
@@ -35,12 +35,10 @@ class AmizoneRepository {
       }
 
       List<CourseAttendanceType> list = [
-        CourseAttendanceType(
-            attendanceType: "BELOW_75", noOfCourses: 0),
+        CourseAttendanceType(attendanceType: "BELOW_75", noOfCourses: 0),
         CourseAttendanceType(
             attendanceType: "BETWEEN_75_TO_85", noOfCourses: 0),
-        CourseAttendanceType(
-            attendanceType: "ABOVE_85", noOfCourses: 0)
+        CourseAttendanceType(attendanceType: "ABOVE_85", noOfCourses: 0)
       ];
 
       courseAttendance.forEach((course) {
@@ -56,20 +54,19 @@ class AmizoneRepository {
       return list;
     }
     return dbResponse;
-
   }
 
-  Future <Score> fetchCurrentScoreWithSemester(int semester) async {
+  Future<Score> fetchCurrentScoreWithSemester(int semester) async {
     Score dbResponse = await dbHelper.getScoreWithSemester(semester);
     if (dbResponse == null) {
-      HttpWithInterceptor http = HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+      HttpWithInterceptor http =
+          HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
       var response = await http.get('$amihubUrl/metadata');
       var jsonResponse = convert.jsonDecode(response.body);
       Score currentSemScore;
       for (var element in jsonResponse['results']) {
         Score score = Score.fromJson(element);
-        if (score.semester == semester)
-          currentSemScore = score;
+        if (score.semester == semester) currentSemScore = score;
         int sc = await dbHelper.addGpa(score);
       }
       return currentSemScore;
@@ -89,7 +86,7 @@ class AmizoneRepository {
       //convert response to json
       var jsonResponse = convert.jsonDecode(response.body);
       //save the 'semester' key from jsonResponse in SharedPreferences
-      SharedPreferences.getInstance().then((sp){
+      SharedPreferences.getInstance().then((sp) {
         sp.setInt("semester", jsonResponse['semester']);
       });
       //we have to return a array of scores.so create an empty list of scores
@@ -110,15 +107,23 @@ class AmizoneRepository {
   }
 
   Future<List<CourseResult>> fetchResultsWithSemester(int semester) async {
+    List<CourseResult> dbResponse =
+        await dbHelper.getResultWithSemester(semester);
     List<CourseResult> results = [];
-    HttpWithInterceptor http =
-        HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-    var response = await http.get('$amihubUrl/result?semester=$semester');
-    var jsonResponse = convert.jsonDecode(response.body);
-    for (var item in jsonResponse){
-      results.add(CourseResult.fromJson(item));
+    if (dbResponse.isEmpty) {
+      HttpWithInterceptor http =
+          HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+      var response = await http.get('$amihubUrl/result?semester=$semester');
+      var jsonResponse = convert.jsonDecode(response.body);
+      for (var item in jsonResponse) {
+        CourseResult courseResult = CourseResult.fromJson(item);
+        courseResult.semester = semester;
+        dbHelper.addCourseResult(courseResult);
+        results.add(courseResult);
+      }
+      return results;
     }
-    return results;
+    return dbResponse;
   }
 
   Future<List<TodayClass>> fetchTodayClass() async {
@@ -126,11 +131,14 @@ class AmizoneRepository {
     return fetchTodayClassWithDate(date, date);
   }
 
+  // TODO : Sort the cards
   Future<List<TodayClass>> fetchTodayClassWithDate(
       String start, String end) async {
     List<TodayClass> dbResponse = await dbHelper.getTodayClassesWithDate(start);
     List<TodayClass> todayClass = [];
     if (dbResponse.isEmpty) {
+      start = end = DateFormat("yyyy-MM-dd")
+          .format(DateFormat("MM/dd/yyyy").parse(start));
       HttpWithInterceptor http =
           HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
       var response =
@@ -149,7 +157,8 @@ class AmizoneRepository {
   Future<Course> fetchCourseWithCourseName(String courseName) async {
     Course dbResponse = await dbHelper.getCourseWithCourseName(courseName);
     if (dbResponse == null) {
-      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
       int semester = sharedPreferences.getInt('semester');
       List<Course> courses = await fetchCourseAndSave(semester);
       return courses.firstWhere((course) => course.courseName == courseName);
@@ -157,10 +166,10 @@ class AmizoneRepository {
     return dbResponse;
   }
 
-  Future<List<Course>> fetchCourseAndSave(int semester)async{
-    List<Course> courses =[];
+  Future<List<Course>> fetchCourseAndSave(int semester) async {
+    List<Course> courses = [];
     HttpWithInterceptor http =
-    HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+        HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/myCourses?semester=$semester');
 
     var jsonResponse = convert.jsonDecode(response.body);
@@ -174,18 +183,18 @@ class AmizoneRepository {
     return courses;
   }
 
-
   Future<List<Course>> fetchMyCoursesWithSemester(int semester) async {
     List<Course> dbResponse = await dbHelper.getCoursesWithSemester(semester);
     if (dbResponse.isEmpty) {
-     return await fetchCourseAndSave(semester);
+      return await fetchCourseAndSave(semester);
     }
     print('from db');
     return dbResponse;
   }
 
   Future<List<Faculty>> fetchMyFaculty() async {
-    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    HttpClientWithInterceptor http =
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/faculty');
     var jsonResponse = convert.jsonDecode(response.body);
     List<Faculty> faculties = [];
@@ -196,18 +205,18 @@ class AmizoneRepository {
     return faculties;
   }
 
-  Future<List<Attendance>> fetchCourseAttendance({@required int courseId}) async{
-    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(
-      interceptors: [AmizoneInterceptor()]);
+  Future<List<Attendance>> fetchCourseAttendance(
+      {@required int courseId}) async {
+    HttpClientWithInterceptor http =
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     List<Attendance> attendances = [];
     var response = await http.get('$amihubUrl/myCourses/attendance/$courseId');
     var jsonResponse = convert.jsonDecode(response.body);
-    for( var item in jsonResponse){
+    for (var item in jsonResponse) {
       attendances.add(Attendance.fromJson(item));
     }
     return attendances;
   }
-
 
   Future<dynamic> fetchMyProfile() async {
     HttpWithInterceptor http =

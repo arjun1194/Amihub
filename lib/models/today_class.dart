@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class TodayClass {
   String _color;
   String _courseCode;
@@ -53,13 +55,23 @@ class TodayClass {
   set title(String title) => _title = title;
 
   TodayClass.fromJson(Map<String, dynamic> json) {
+    _title = json['title'];
     _color = json['color'];
     _courseCode = json['courseCode'];
     _facultyName = json['facultyName'];
     _roomNo = json['roomNo'];
-    _start = json['start'];
-    _end = json['end'];
-    _title = json['title'];
+    _start = correctDate(json['start']);
+    _end = _title != "" ? correctDate(json['end']) : json['end'];
+  }
+
+  String correctDate(String before) {
+     List<String> as = before.toString().split("/");
+    bool lessThanTen =
+        as[1].length == 1;
+    if (lessThanTen){
+      as[1] = '0${as[1]}';
+    }
+    return as.join("/");
   }
 
   Map<String, dynamic> toJson() {

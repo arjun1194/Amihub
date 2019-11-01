@@ -1,3 +1,5 @@
+import 'package:amihub/components/error.dart';
+import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/home/body/myprofile/personal_details.dart';
 import 'package:amihub/home/body/myprofile/profile_Icon.dart';
@@ -27,12 +29,12 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
                       ? Colors.white
                       : Colors.black,
               child: Center(
-                child: CircularProgressIndicator(),
+                child: Loader(),
               ),
             );
           case ConnectionState.done:
             if (snapshot.hasError || snapshot.data == null)
-              return Center(child: Text('Could Not Fetch Your Profile'));
+              return ErrorPage();
 
             return Container(
               color: Theme.of(context).brightness == Brightness.light

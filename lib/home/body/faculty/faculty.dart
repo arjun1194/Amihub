@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:amihub/components/error.dart';
+import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/course/course_detail.dart';
@@ -39,7 +41,7 @@ class MyFaculty extends StatelessWidget {
                     break;
                   case ConnectionState.done:
                     return (snapshot.hasError || snapshot.data == null)
-                        ? Text('error')
+                        ? ErrorPage()
                         : FacultyBuild(faculties: snapshot.data);
                 }
                 return Text('end');
@@ -146,6 +148,6 @@ class FacultyShimmer extends StatefulWidget {
 class _FacultyShimmerState extends State<FacultyShimmer> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Loader();
   }
 }

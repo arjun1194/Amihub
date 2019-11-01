@@ -1,3 +1,4 @@
+import 'package:amihub/components/error.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/components/refresh_button.dart';
@@ -213,50 +214,6 @@ class _CourseBuildState extends State<CourseBuild> {
   }
 }
 
-class CourseError extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(20),
-              child: Icon(
-                Icons.cloud_off,
-                color: Colors.white,
-                size: 50,
-              ),
-              decoration: BoxDecoration(
-                  color: Colors.grey[400], shape: BoxShape.circle),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                'Could not fetch Courses',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(
-                'Please Check Your internet and try again',
-              ),
-            ),
-            Expanded(child: Container())
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class CourseFutureBuilder extends StatelessWidget {
   final Future<List> myFuture;
 
@@ -274,7 +231,7 @@ class CourseFutureBuilder extends StatelessWidget {
             return MyCourseShimmer();
           case ConnectionState.done:
             return (snapshot.hasError || snapshot.data == null)
-                ? CourseError()
+                ? ErrorPage()
                 : CourseBuild(snapshot: snapshot, semester: semester);
           case ConnectionState.none:
             break;

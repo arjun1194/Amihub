@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:amihub/components/backdrop.dart';
 import 'package:amihub/components/backdrop_buttons.dart';
 import 'package:amihub/home/body/faculty/faculty.dart';
@@ -67,7 +69,7 @@ class _HomeState extends State<Home> {
         ),
         backLayerColor: Theme.of(context).brightness == Brightness.light
             ? Color(0xff171C1F)
-            : Color(0xff232831),
+            : Color(0xff1a1d1e),
         headerHeight: 40,
         backLayer: Center(
           child: BackDropButtons(
@@ -78,7 +80,33 @@ class _HomeState extends State<Home> {
         frontLayer: homeWidget,
         iconPosition: BackdropIconPosition.leading,
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.info_outline), onPressed: () {})
+          IconButton(
+              icon: Icon(Icons.info_outline),
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      var width = MediaQuery.of(context).size.width;
+                      return Center(
+                          child: ClipRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                          child: Container(
+                            width: width * 0.8,
+                            height: width * 0.6,
+                            decoration: new BoxDecoration(
+                                color: Colors.grey.shade200.withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Center(
+                              child: Text('Under \nDevelopment',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.display2),
+                            ),
+                          ),
+                        ),
+                      ));
+                    });
+              })
         ],
       ),
     );
@@ -133,12 +161,12 @@ class _BackDropButtonsState extends State<BackDropButtons> {
           });
         }),
         BackDropButton(Icons.library_books, "My Faculty", widget.selected == 3,
-                () {
-              setState(() {
-                Backdrop.of(context).fling();
-                widget.changeSelected(3);
-              });
-            }),
+            () {
+          setState(() {
+            Backdrop.of(context).fling();
+            widget.changeSelected(3);
+          });
+        }),
         BackDropButton(Icons.home, "Results", widget.selected == 4, () {
           setState(() {
             Backdrop.of(context).fling();

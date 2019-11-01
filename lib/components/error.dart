@@ -1,7 +1,7 @@
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 
-class Error extends StatelessWidget {
+class ErrorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;

@@ -10,6 +10,7 @@ class CourseResult {
   int creditPoints;
   int earnedCreditUnits;
   String publishDate;
+  int semester;
 
   CourseResult({
     this.courseCode,
@@ -21,6 +22,7 @@ class CourseResult {
     this.creditPoints,
     this.earnedCreditUnits,
     this.publishDate,
+    this.semester,
   });
 
   factory CourseResult.fromJson(Map<String, dynamic> json) => CourseResult(
@@ -33,6 +35,7 @@ class CourseResult {
     creditPoints: json["creditPoints"],
     earnedCreditUnits: json["earnedCreditUnits"],
     publishDate: json["publishDate"],
+    semester: json["semester"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -45,5 +48,6 @@ class CourseResult {
     "creditPoints": creditPoints,
     "earnedCreditUnits": earnedCreditUnits,
     "publishDate": publishDate,
+    "semester": semester,
   };
 }

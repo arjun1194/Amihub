@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_attendance_type.dart';
+import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/models/today_class.dart';
 import 'package:path/path.dart';
@@ -54,6 +55,22 @@ class DatabaseHelper {
           )''');
 
       await db.execute('''
+      
+          CREATE TABLE courseResult(
+            courseCode TEXT NOT NULL PRIMARY KEY,
+            courseTitle TEXT NOT NULL,
+            maxMarks INTEGER,  
+            associatedCreditUnits INTEGER,  
+            gradeObtained TEXT, 
+            gradePoints INTEGER, 
+            creditPoints INTEGER,  
+            earnedCreditUnits INTEGER,
+            publishDate TEXT,
+            semester INTEGER NOT NULL
+
+          )''');
+
+      await db.execute('''
          CREATE TABLE gpa(
            semester INTEGER PRIMARY KEY,
            cgpa REAL NOT NULL,
@@ -73,6 +90,13 @@ class DatabaseHelper {
   addCourseAttendance(CourseAttendanceType courseAttendanceType) async {
     final db = await database;
     var raw = await db.insert("courseAttendance", courseAttendanceType.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return raw;
+  }
+
+  addCourseResult(CourseResult courseResult) async {
+    final db = await database;
+    var raw = await db.insert("courseResult", courseResult.toJson(),
         conflictAlgorithm: ConflictAlgorithm.replace);
     return raw;
   }
@@ -109,6 +133,13 @@ class DatabaseHelper {
     String sql = "SELECT * FROM gpa WHERE semester=$semester";
     var response = await db.rawQuery(sql);
     return (response.isEmpty) ? null : Score.fromJson(response.elementAt(0));
+  }
+
+  Future<List<CourseResult>> getResultWithSemester(int semester) async {
+    final db = await database;
+    String sql = "SELECT * FROM courseResult WHERE semester = $semester";
+    var response = await db.rawQuery(sql);
+    return response.map((cr) => CourseResult.fromJson(cr)).toList();
   }
 
   Future<List<Score>> getScore() async {
