@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert' as convert;
 
 import 'package:amihub/database/database_helper.dart';
@@ -23,87 +24,91 @@ class AmizoneRepository {
   Future<List<CourseAttendanceType>> fetchCurrentAttendance() async {
     List<CourseAttendanceType> dbResponse = await dbHelper.getCourseType();
     if (dbResponse.isEmpty) {
-      HttpWithInterceptor http =
-          HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-      var response = await http.get('$amihubUrl/metadata');
-      var jsonResponse = convert.jsonDecode(response.body);
-      List<CourseAttendance> courseAttendance = [];
-      for (var elements in jsonResponse['attendance']) {
-        String perc = elements['percentage'].toString();
-        courseAttendance.add(CourseAttendance(elements['courseName'],
-            double.tryParse(perc.substring(0, perc.indexOf("%")))));
-      }
-
-      List<CourseAttendanceType> list = [
-        CourseAttendanceType(attendanceType: "BELOW_75", noOfCourses: 0),
-        CourseAttendanceType(
-            attendanceType: "BETWEEN_75_TO_85", noOfCourses: 0),
-        CourseAttendanceType(attendanceType: "ABOVE_85", noOfCourses: 0)
-      ];
-
-      courseAttendance.forEach((course) {
-        if (course.attendance < 75) {
-          list.elementAt(0).noOfCourses += 1;
-        } else if (course.attendance >= 75 && course.attendance < 85) {
-          list.elementAt(1).noOfCourses += 1;
-        } else {
-          list.elementAt(2).noOfCourses += 1;
-        }
-      });
-      list.forEach((f) => dbHelper.addCourseAttendance(f));
-      return list;
+      Map data = await networkCallMetadata();
+      return data['attendance'];
     }
     return dbResponse;
   }
 
-  Future<Score> fetchCurrentScoreWithSemester(int semester) async {
+  Future<Score> fetchScoreWithSemester(int semester) async {
     Score dbResponse = await dbHelper.getScoreWithSemester(semester);
-    if (dbResponse == null) {
-      HttpWithInterceptor http =
-          HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-      var response = await http.get('$amihubUrl/metadata');
-      var jsonResponse = convert.jsonDecode(response.body);
-      Score currentSemScore;
-      for (var element in jsonResponse['results']) {
-        Score score = Score.fromJson(element);
-        if (score.semester == semester) currentSemScore = score;
-        int sc = await dbHelper.addGpa(score);
-      }
-      return currentSemScore;
+    Score dbResponseMinusOne;
+    if (dbResponse == null)
+      dbResponseMinusOne = await dbHelper.getScoreWithSemester(semester - 1);
+    if (dbResponse == null && dbResponseMinusOne == null) {
+      Map data = await networkCallMetadata();
+      List<Score> scores = data['score'];
+      return scores.firstWhere((score) => score.semester == semester);
     }
+    if (dbResponse == null && dbResponseMinusOne != null)
+      return Score(cgpa: 0.0, sgpa: 0.0);
+
     return dbResponse;
   }
 
   Future<List<Score>> fetchCurrentScore() async {
     List<Score> dbResponse = await dbHelper.getScore();
-    //if database response is empty
     if (dbResponse.isEmpty) {
-      //make a network call to the server
-      HttpWithInterceptor http =
-          HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-      //save the response
-      var response = await http.get('$amihubUrl/metadata');
-      //convert response to json
-      var jsonResponse = convert.jsonDecode(response.body);
-      //save the 'semester' key from jsonResponse in SharedPreferences
-      SharedPreferences.getInstance().then((sp) {
-        sp.setInt("semester", jsonResponse['semester']);
-      });
-      //we have to return a array of scores.so create an empty list of scores
-      List<Score> courseAttendance = [];
-
-      for (var element in jsonResponse['results']) {
-        // do this for every element in results[] of jsonResponse
-        //add the element results[0] from jsonResponse to fit 'Score' Dto
-        Score score = Score.fromJson(element);
-        //add element to courseAttendance
-        courseAttendance.add(score);
-        //add to database
-        dbHelper.addGpa(score);
-      }
-      return courseAttendance;
+      Map data = await networkCallMetadata();
+      return data['score'];
     }
     return dbResponse;
+  }
+
+  Future<Map> networkCallMetadata() async {
+
+    HttpWithInterceptor http =
+    HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    var response = await http.get('$amihubUrl/metadata');
+    var jsonResponse = convert.jsonDecode(response.body);
+
+    /// Saving semester and enrollNo in SharedPref
+    SharedPreferences.getInstance().then((sp) {
+      sp.setInt("semester", jsonResponse['semester']);
+      sp.setString("enrollNo", jsonResponse['enrollmentNumber']);
+    });
+
+    /// Parsing scores
+    List<Score> scores = [];
+    for (var item in jsonResponse['results']){
+      Score score = Score.fromJson(item);
+      scores.add(score);
+      dbHelper.addGpa(score);
+    }
+
+    /// Parsing attendance
+    List<CourseAttendance> courseAttendance = [];
+    for (var elements in jsonResponse['attendance']) {
+      String perc = elements['percentage'].toString();
+      courseAttendance.add(CourseAttendance(elements['courseName'],
+          double.tryParse(perc.substring(0, perc.indexOf("%")))));
+    }
+
+    List<CourseAttendanceType> list = [
+      CourseAttendanceType(attendanceType: "BELOW_75", noOfCourses: 0),
+      CourseAttendanceType(
+          attendanceType: "BETWEEN_75_TO_85", noOfCourses: 0),
+      CourseAttendanceType(attendanceType: "ABOVE_85", noOfCourses: 0)
+    ];
+
+    courseAttendance.forEach((course) {
+      if (course.attendance < 75) {
+        list.elementAt(0).noOfCourses += 1;
+      } else if (course.attendance >= 75 && course.attendance < 85) {
+        list.elementAt(1).noOfCourses += 1;
+      } else {
+        list.elementAt(2).noOfCourses += 1;
+      }
+    });
+    list.forEach((f) => dbHelper.addCourseAttendance(f));
+
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString("lastTimeMetadataUpdated", DateTime.now().toString());
+
+    Map data = Map();
+    data["score"] = scores;
+    data["attendance"] = list;
+    return data;
   }
 
   Future<List<CourseResult>> fetchResultsWithSemester(int semester) async {
@@ -115,6 +120,10 @@ class AmizoneRepository {
           HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
       var response = await http.get('$amihubUrl/result?semester=$semester');
       var jsonResponse = convert.jsonDecode(response.body);
+      if (jsonResponse.length == 1) {
+        CourseResult courseResult = CourseResult.fromJson(jsonResponse[0]);
+        if (courseResult.courseTitle == "") return [courseResult];
+      }
       for (var item in jsonResponse) {
         CourseResult courseResult = CourseResult.fromJson(item);
         courseResult.semester = semester;
@@ -131,27 +140,41 @@ class AmizoneRepository {
     return fetchTodayClassWithDate(date, date);
   }
 
-  // TODO : Sort the cards
   Future<List<TodayClass>> fetchTodayClassWithDate(
       String start, String end) async {
     List<TodayClass> dbResponse = await dbHelper.getTodayClassesWithDate(start);
-    List<TodayClass> todayClass = [];
     if (dbResponse.isEmpty) {
-      start = end = DateFormat("yyyy-MM-dd")
-          .format(DateFormat("MM/dd/yyyy").parse(start));
-      HttpWithInterceptor http =
-          HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-      var response =
-          await http.get('$amihubUrl/todayClass?start=$start&end=$end');
-      var jsonResponse = convert.jsonDecode(response.body);
-      for (var item in jsonResponse) {
-        TodayClass td = TodayClass.fromJson(item);
-        todayClass.add(td);
-        dbHelper.addTodayClass(td);
-      }
-      return todayClass;
+      return networkCallTodayClass(start);
     }
-    return dbResponse;
+    return sortTodayClass(dbResponse);
+  }
+
+  Future<List<TodayClass>> networkCallTodayClass(String start) async {
+    List<TodayClass> todayClass = [];
+    start =
+        DateFormat("yyyy-MM-dd").format(DateFormat("MM/dd/yyyy").parse(start));
+    HttpWithInterceptor http =
+        HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    var response =
+        await http.get('$amihubUrl/todayClass?start=$start&end=$start');
+    var jsonResponse = convert.jsonDecode(response.body);
+    for (var item in jsonResponse) {
+      TodayClass td = TodayClass.fromJson(item);
+      todayClass.add(td);
+      dbHelper.addTodayClass(td);
+    }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString("lastTimeTCUpdated", DateTime.now().toString());
+    return sortTodayClass(todayClass);
+  }
+
+  List<TodayClass> sortTodayClass(List<TodayClass> todayClass) {
+    todayClass.sort((a, b) {
+      DateTime date1 = DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(a.start);
+      DateTime date2 = DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(b.start);
+      return date1.isAfter(date2) ? 1 : -1;
+    });
+    return todayClass;
   }
 
   Future<Course> fetchCourseWithCourseName(String courseName) async {
@@ -160,13 +183,13 @@ class AmizoneRepository {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       int semester = sharedPreferences.getInt('semester');
-      List<Course> courses = await fetchCourseAndSave(semester);
+      List<Course> courses = await networkCallCourses(semester);
       return courses.firstWhere((course) => course.courseName == courseName);
     }
     return dbResponse;
   }
 
-  Future<List<Course>> fetchCourseAndSave(int semester) async {
+  Future<List<Course>> networkCallCourses(int semester) async {
     List<Course> courses = [];
     HttpWithInterceptor http =
         HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
@@ -180,15 +203,16 @@ class AmizoneRepository {
       courses.add(course);
       dbHelper.addCourse(course);
     }
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString("lastTimeMCUpdated", DateTime.now().toString());
     return courses;
   }
 
   Future<List<Course>> fetchMyCoursesWithSemester(int semester) async {
     List<Course> dbResponse = await dbHelper.getCoursesWithSemester(semester);
     if (dbResponse.isEmpty) {
-      return await fetchCourseAndSave(semester);
+      return networkCallCourses(semester);
     }
-    print('from db');
     return dbResponse;
   }
 
@@ -238,7 +262,6 @@ class AmizoneRepository {
   Future<Response> login(String username, String password) async {
     Client client = Client();
     String url = amihubUrl + "/login";
-    print("--->$username" + "---->$password");
     String requestBody = '{"username":$username, "password":"$password"}';
     var headers = {"content-type": "application/json"};
     Response resp = await client.post(url, headers: headers, body: requestBody);

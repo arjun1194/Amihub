@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final bool isBackEnabled;
 
-  CustomAppbar(this.title);
+  CustomAppbar(this.title,{this.isBackEnabled = true});
 
   @override
   Widget build(BuildContext context) {
@@ -14,20 +15,20 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       title: Text(
         title,
         style: TextStyle(
-            color: Theme.of(context).brightness == Brightness.light
+            color: isLight(context)
                 ? Colors.black
                 : Colors.white),
       ),
       backgroundColor: blackOrWhite(context),
       elevation: 0,
-      leading: IconButton(
+      leading: isBackEnabled ? IconButton(
           icon: Icon(backButton()),
-          color: Theme.of(context).brightness == Brightness.light
+          color: isLight(context)
               ? Colors.black
               : Colors.white,
           onPressed: () {
             Navigator.of(context).pop();
-          }),
+          }) : Container()
     );
   }
 

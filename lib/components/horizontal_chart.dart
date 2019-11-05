@@ -156,7 +156,7 @@ class _HorizontalChartState extends State<HorizontalChart> {
               (index) => TickSpec(index + 1,
                   label: index % 2 != 0 ? '${index + 1}' : '',
                   style: TextStyleSpec(
-                      color: Theme.of(context).brightness == Brightness.light
+                      color: isLight(context)
                           ? Color.black
                           : Color.white)))),
           showAxisLine: true),
@@ -166,7 +166,7 @@ class _HorizontalChartState extends State<HorizontalChart> {
               (index) => TickSpec(index + 1,
                   label: '${index + 1}',
                   style: TextStyleSpec(
-                      color: Theme.of(context).brightness == Brightness.light
+                      color: isLight(context)
                           ? Color.black
                           : Color.white))))),
       animate: true,

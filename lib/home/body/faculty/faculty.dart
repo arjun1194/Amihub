@@ -7,8 +7,8 @@ import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/course/course_detail.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class MyFaculty extends StatelessWidget {
   final AmizoneRepository amizoneRepository = AmizoneRepository();
@@ -16,7 +16,7 @@ class MyFaculty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).brightness == Brightness.light
+      color: isLight(context)
           ? Colors.white
           : Colors.black,
       child: Column(
@@ -86,7 +86,7 @@ class FacultyBuild extends StatelessWidget {
                         left: 70,
                         child: Container(
                           decoration: ShapeDecoration(
-                              shape: StadiumBorder(), color: Color(0xffc6cbef)),
+                              shape: StadiumBorder(), color: isLight(context)?  Color(0xffe6f8f9) : Color(0xff3c3d47)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(faculty.facultyName),

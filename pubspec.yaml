@@ -32,7 +32,6 @@ dependencies:
   path_provider:
   sqflite:
   charts_flutter:
-  draggable_scrollbar: ^0.0.4
   provider: ^3.1.0+1
 
 

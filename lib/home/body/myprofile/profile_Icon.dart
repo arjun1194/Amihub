@@ -1,4 +1,5 @@
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class ProfileIcon extends StatelessWidget {
           title: Text(
             'Log out',
             style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.light ? Colors.blueGrey.shade700 : Colors.white,
+              color: isLight(context) ? Colors.blueGrey.shade700 : Colors.white,
             ),
           ),
           content: const Text('Really wanna go? '),
@@ -30,7 +31,7 @@ class ProfileIcon extends StatelessWidget {
               child: Text(
                 "Cancel",
                 style: TextStyle(
-                    color: Theme.of(context).brightness == Brightness.light ? Colors.blueGrey.shade800 : Colors.white,
+                    color: isLight(context) ? Colors.blueGrey.shade800 : Colors.white,
                 ),
               ),
               onPressed: () {
@@ -42,7 +43,7 @@ class ProfileIcon extends StatelessWidget {
               child: Text(
                 'Logout',
                 style: TextStyle(
-                  color: Theme.of(context).brightness == Brightness.light ? Colors.blueGrey.shade800 : Colors.white,
+                  color: isLight(context) ? Colors.blueGrey.shade800 : Colors.white,
                 ),
               ),
               onPressed: () {
@@ -78,7 +79,8 @@ class ProfileIcon extends StatelessWidget {
                 ImageChunkEvent loadingProgress,
               ) {
                 if (loadingProgress == null) return child;
-                return Center(child: Icon(Icons.perm_identity));
+                return Center(child: Icon(Icons.perm_identity,
+                size: 30,));
               },
               fit: BoxFit.fitWidth,
               height: width * 0.25,

@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:math' as math;
 
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -45,7 +46,7 @@ class _TodayClassCardState extends State<TodayClassCard> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
       child: Material(
-        shadowColor: Theme.of(context).brightness == Brightness.light
+        shadowColor: isLight(context)
             ? widget.topColor
             : Colors.grey,
         elevation: 8,

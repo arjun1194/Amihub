@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-//      if (Theme.of(context).brightness == Brightness.light)
+//      if (isLight(context))
 //        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
 //            systemNavigationBarIconBrightness: Brightness.dark,
 //            systemNavigationBarColor: Colors.white));

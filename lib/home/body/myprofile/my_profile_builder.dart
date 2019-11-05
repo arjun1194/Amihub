@@ -1,13 +1,14 @@
 import 'package:amihub/components/error.dart';
 import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
+import 'package:amihub/home/body/myprofile/academic_details.dart';
 import 'package:amihub/home/body/myprofile/personal_details.dart';
 import 'package:amihub/home/body/myprofile/profile_Icon.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'academic_details.dart';
 
 class MyProfileBuilder extends StatefulWidget {
   @override
@@ -25,7 +26,7 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Container(
-              color: Theme.of(context).brightness == Brightness.light
+              color: isLight(context)
                       ? Colors.white
                       : Colors.black,
               child: Center(
@@ -37,7 +38,7 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
               return ErrorPage();
 
             return Container(
-              color: Theme.of(context).brightness == Brightness.light
+              color: isLight(context)
                   ? Colors.white
                   : Colors.black,
               child: Column(

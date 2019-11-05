@@ -2,11 +2,12 @@ import 'package:amihub/components/error.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/components/refresh_button.dart';
-import 'package:amihub/database/database_helper.dart';
+import 'package:amihub/components/utilities.dart';
 import 'package:amihub/home/body/course/course_detail.dart';
 import 'package:amihub/home/body/course/my_course_seamer.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/repository/refresh_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +24,14 @@ class MyCourseBuilder extends StatefulWidget {
 
 class _MyCourseBuilderState extends State<MyCourseBuilder> {
   AmizoneRepository amizoneRepository = AmizoneRepository();
+  RefreshRepository refreshRepository = RefreshRepository();
   String dropdownValue = '';
   Future<List> myFuture;
   static const semesterPadding = 10.0;
   int userSemester;
   int semester = 2;
+  final key = new GlobalKey<ScaffoldState>();
+  final refreshKey = GlobalKey<RefreshIndicatorState>();
   bool isLoading = true;
 
   setSemester() async {
@@ -47,25 +51,43 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
     });
   }
 
-  refresh() {
-    DatabaseHelper.db.deleteCourseWithSemester(semester).then((value) {
-      setState(() {});
+  Future<Null> refresh() async {
+    await Utility.checkInternet().then((onValue) async {
+      await refreshRepository.refreshCourses(semester).then((val) {
+        setState(() {});
+        key.currentState.showSnackBar(SnackBar(
+          content: Text('Updated...'),
+          duration: Duration(milliseconds: 500),
+        ));
+      });
+    }).catchError((onError) async {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String time = sharedPreferences.getString("lastTimeMCUpdated");
+      DateTime lastTime = DateTime.parse(time);
+      key.currentState.showSnackBar(SnackBar(
+        content: Text(
+          "Can't connect to internet.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
+        ),
+        duration: Duration(milliseconds: 1200),
+      ));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.width;
-    return Container(
-      color: Theme.of(context).brightness == Brightness.light
-          ? Colors.white
-          : Colors.black,
-      child: Center(
-        child: isLoading
-            ? CircularProgressIndicator()
-            : Stack(
-                children: <Widget>[
-                  Column(
+    return RefreshIndicator(
+      onRefresh: refresh,
+      key: refreshKey,
+      displacement: 70,
+      child: Scaffold(
+        key: key,
+        body: Container(
+          color: isLight(context) ? Colors.white : Colors.black,
+          child: Center(
+            child: isLoading
+                ? CircularProgressIndicator()
+                : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       widget.isHeader ? PageHeader("My Courses") : Container(),
@@ -91,19 +113,16 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                                 onChanged: (String newValue) {
                                   setState(() {
                                     dropdownValue = newValue;
-                                    semester = semesterList
-                                            .indexOf(dropdownValue) +
-                                        1;
+                                    semester =
+                                        semesterList.indexOf(dropdownValue) + 1;
 
                                     myFuture = amizoneRepository
-                                        .fetchMyCoursesWithSemester(
-                                            semester);
+                                        .fetchMyCoursesWithSemester(semester);
                                   });
                                 },
                                 items: semesterList
                                     .sublist(0, userSemester)
-                                    .map<DropdownMenuItem<String>>(
-                                        ( value) {
+                                    .map<DropdownMenuItem<String>>((value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
                                     child: Text(value),
@@ -123,15 +142,13 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                       ),
                     ],
                   ),
-                  Positioned(
-                    right: height * 0.03,
-                    bottom: height * 0.03,
-                    child: RefreshButton(
-                      onPressed: refresh,
-                    ),
-                  )
-                ],
-              ),
+          ),
+        ),
+        floatingActionButton: RefreshButton(
+          onPressed: () {
+            refreshKey.currentState?.show();
+          },
+        ),
       ),
     );
   }
@@ -152,7 +169,7 @@ class _CourseBuildState extends State<CourseBuild> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-        physics: BouncingScrollPhysics(),
+        physics: AlwaysScrollableScrollPhysics(),
         padding: EdgeInsets.all(10),
         children: List<Widget>.generate(
           widget.snapshot.data.length,

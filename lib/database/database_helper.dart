@@ -171,6 +171,13 @@ class DatabaseHelper {
     return response;
   }
 
+  Future deleteResult() async {
+    final db = await database;
+    String sql = "DELETE * FROM courseResult";
+    var response = db.rawQuery(sql);
+    return response;
+  }
+
   Future deleteCourseWithSemester(int semester) async {
     final db = await database;
     String sql = "DELETE FROM course WHERE semester = $semester";
@@ -218,10 +225,12 @@ class DatabaseHelper {
     String sql2 = "DELETE FROM todayClass";
     String sql3 = "DELETE FROM gpa";
     String sql4 = "DELETE FROM courseAttendance";
+    String sql5 = "DELETE FROM courseResult";
 
     await db.rawQuery(sql);
     await db.rawQuery(sql2);
     await db.rawQuery(sql3);
     await db.rawQuery(sql4);
+    await db.rawQuery(sql5);
   }
 }

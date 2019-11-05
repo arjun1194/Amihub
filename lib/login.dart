@@ -13,8 +13,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   LoginInputs inputs;
-  MyTextField username;
-  MyTextField password;
   TextEditingController usernameController;
   TextEditingController passwordController;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -27,34 +25,33 @@ class _LoginPageState extends State<LoginPage> {
     inputs = LoginInputs();
     usernameController = TextEditingController();
     passwordController = TextEditingController();
-    username = MyTextField(
-      hintText: "Username",
-      obscureText: false,
-      keyboardType: TextInputType.number,
-      textEditingController: usernameController,
-    );
-    password = MyTextField(
-      hintText: "Password",
-      obscureText: true,
-      keyboardType: TextInputType.text,
-      textEditingController: passwordController,
-    );
   }
 
   void login(LoginModel loginModel) {
-    if (username != null && password != null) {
-      Navigator.pushNamed(context, '/load', arguments: loginModel);
-    } else {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        content: Text("Please Enter Username and Password"),
-        duration: Duration(seconds: 1),
-      ));
-    }
+    Navigator.pushNamed(context, '/load', arguments: loginModel);
   }
 
   void forgotPassword() {
     Navigator.pushNamedAndRemoveUntil(
         context, '/Forgot', (Route<dynamic> route) => false);
+  }
+
+  loginPressed(String text){
+    if (usernameController.text.length == 0 ||
+        passwordController.text.length == 0) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text('Please enter username and passsword'),
+      ));
+    } else if (!RegExp(r'[0-9]')
+        .hasMatch(usernameController.text)) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(
+        content: Text("Username can't be alphabet"),
+      ));
+    } else {
+      LoginModel loginModel = LoginModel(
+          usernameController.text, passwordController.text);
+      login(loginModel);
+    }
   }
 
   @override
@@ -69,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
     }
     return Scaffold(
       key: _scaffoldKey,
-//      backgroundColor: Theme.of(context).brightness == Brightness.light
+//      backgroundColor: isLight(context)
 //          ? Color(0xFFF7F7F9)
 //          : Colors.black,
       body: Stack(
@@ -77,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
           Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: Theme.of(context).brightness == Brightness.light
+                    colors: isLight(context)
                         ? [
                             Color(0xFFf4f5f7),
                             Color(0xFFf4f5f7).withOpacity(0.8)
@@ -87,14 +84,14 @@ class _LoginPageState extends State<LoginPage> {
                     end: Alignment.bottomRight)),
           ),
           Positioned(
-            left: -width * 0.8,
-            top: -width * 0.3,
+            left: -width,
+            top: -width * 0.4,
             child: Container(
               width: height * 1.06,
               height: height * 1.06,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Theme.of(context).brightness == Brightness.light
+                  color: isLight(context)
                       ? Colors.white
                       : Colors.grey.shade900),
             ),
@@ -106,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                   right: width * 0.2,
                   // Checks if keyboard is open or not
                   bottom: MediaQuery.of(context).viewInsets.bottom != 0
-                      ? 20
+                      ? 10
                       : height * 0.25),
               duration: Duration(microseconds: 200),
               curve: ElasticInOutCurve(),
@@ -118,26 +115,12 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.white,
                   size: 28.0,
                 ),
-                color: Theme.of(context).brightness == Brightness.light
+                color: isLight(context)
                     ? Color(0xff3655B5)
                     : Color(0xff364042),
-                padding: EdgeInsets.all(20.0),
-                onPressed: () {
-                  if (usernameController.text.length == 0 ||
-                      passwordController.text.length == 0) {
-                    _scaffoldKey.currentState.showSnackBar(SnackBar(
-                      content: Text('Please enter username and passsword'),
-                    ));
-                  } else if (!RegExp(r'[0-9]')
-                      .hasMatch(usernameController.text)) {
-                    _scaffoldKey.currentState.showSnackBar(SnackBar(
-                      content: Text("Username can't be alphabet"),
-                    ));
-                  } else {
-                    LoginModel loginModel = LoginModel(
-                        usernameController.text, passwordController.text);
-                    login(loginModel);
-                  }
+                padding: EdgeInsets.all(18.0),
+                onPressed: (){
+                  loginPressed(null);
                 },
                 splashColor: Colors.blueGrey.withOpacity(0.4),
                 shape: CircleBorder(),
@@ -145,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           Positioned(
-            top: width * 0.25,
+            top: width * 0.2,
             left: width * 0.1,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,19 +155,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 SizedBox(
-                  height: 28,
+                  height: 15,
                 ),
                 SizedBox(
                   width: width * 0.7,
                   child: MyTextField(
                     hintText: "Password",
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.visiblePassword,
                     obscureText: true,
                     textEditingController: passwordController,
+                    onSubmit: loginPressed,
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 5,
                 ),
                 Padding(
                   padding: EdgeInsets.only(left: width * 0.4),
@@ -192,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       "Forget Password?",
                       style: TextStyle(
-                        fontSize: 14.5,
+                        fontSize: 14,
                       ),
                     ),
                     shape: StadiumBorder(),
@@ -206,4 +190,18 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+}
+
+class LoginAppBar extends StatelessWidget implements PreferredSizeWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.transparent
+    );
+  }
+
+  @override
+  // TODO: implement preferredSize
+  Size get preferredSize => Size.fromHeight(0);
+
 }

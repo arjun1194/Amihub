@@ -7,13 +7,15 @@ class MyTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final bool obscureText;
   final TextEditingController textEditingController;
+  final Function(String) onSubmit;
 
   MyTextField(
       {Key key,
       this.hintText,
       this.keyboardType,
       this.obscureText,
-      this.textEditingController})
+      this.textEditingController,
+      this.onSubmit})
       : super(key: key);
 
   @override
@@ -22,6 +24,7 @@ class MyTextField extends StatefulWidget {
 
 class _MyTextFieldState extends State<MyTextField> {
   bool passwordVisible;
+
 
   @override
   void initState() {
@@ -41,22 +44,23 @@ class _MyTextFieldState extends State<MyTextField> {
       keyboardType: widget.keyboardType,
       autofocus: false,
       obscureText: passwordVisible,
+      maxLines: 1,
       cursorColor: Colors.blueGrey.shade800,
       decoration: InputDecoration(
-          fillColor: Theme.of(context).brightness == Brightness.light
+          fillColor: isLight(context)
               ? Colors.white
               : Colors.grey.shade900,
           filled: true,
           focusColor: Color(0xff656C8C),
           labelText: widget.hintText,
           labelStyle: TextStyle(
-            color: Theme.of(context).brightness == Brightness.light
+            color: isLight(context)
                 ? Colors.blueGrey.shade800
                 : Colors.white,
           ),
           focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                  color: Theme.of(context).brightness == Brightness.light
+                  color: isLight(context)
                       ? Color(0xff656C8C)
                       : Colors.grey),
               borderRadius: BorderRadius.circular(30)),
@@ -76,17 +80,18 @@ class _MyTextFieldState extends State<MyTextField> {
                       ? Icon(
                           Icons.remove_red_eye,
                           color:
-                              Theme.of(context).brightness == Brightness.light
+                              isLight(context)
                                   ? Color(0xff3A4577)
                                   : Colors.grey.shade700,
                         )
                       : Icon(Icons.visibility_off,
                           color:
-                              Theme.of(context).brightness == Brightness.light
+                              isLight(context)
                                   ? Color(0xff3A4577)
                                   : Colors.grey.shade700))
               : null),
       controller: widget.textEditingController,
+      onSubmitted: widget.onSubmit,
     );
   }
 }

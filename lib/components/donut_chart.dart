@@ -1,8 +1,6 @@
 import 'package:amihub/components/custom_appbar.dart';
 import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/course/my_courses_future_builder.dart';
-import 'package:amihub/home/body/my_courses.dart';
-import 'package:amihub/home/home_appbar.dart';
 import 'package:amihub/models/course_attendance.dart';
 import 'package:amihub/models/course_attendance_type.dart';
 import 'package:amihub/repository/amizone_repository.dart';
@@ -11,18 +9,13 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class DonutChartFutureBuilder extends StatefulWidget {
-  @override
-  _DonutChartFutureBuilderState createState() =>
-      _DonutChartFutureBuilderState();
-}
 
-class _DonutChartFutureBuilderState extends State<DonutChartFutureBuilder> {
+
+class DonutChartFutureBuilder extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: AmizoneRepository().fetchCurrentAttendance(),
-      // a previously-obtained Future<String> or null
       builder: (BuildContext context,
           AsyncSnapshot<List<CourseAttendanceType>> snapshot) {
         switch (snapshot.connectionState) {

@@ -6,6 +6,7 @@ class AmizoneInterceptor extends InterceptorContract {
 
   @override
   Future<RequestData> interceptRequest({RequestData data}) async {
+    print('Doing network call for ${data.url}');
     try {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();

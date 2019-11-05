@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:amihub/components/error.dart';
+import 'package:intl/intl.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,8 +33,8 @@ class _HomeResultsState extends State<HomeResults> {
     return userSemester = sharedPreferences.getInt('semester');
   }
 
-  Future<Score> getCurrentSemScore(int sem) async {
-    return await amizoneRepository.fetchCurrentScoreWithSemester(sem);
+  Future<Score> getSemScore(int sem) async {
+    return await amizoneRepository.fetchScoreWithSemester(sem);
   }
 
   @override
@@ -48,14 +49,14 @@ class _HomeResultsState extends State<HomeResults> {
       });
       return val;
     }).then((val) {
-      getCurrentSemScore(val).then((sc) {
+      getSemScore(val).then((sc) {
         score = sc;
       });
     });
   }
 
   changeSemester(int sem) async {
-    score = await getCurrentSemScore(sem);
+    score = await getSemScore(sem);
     setState(() {
       semester = sem;
       resultFuture = amizoneRepository.fetchResultsWithSemester(semester);
@@ -65,7 +66,7 @@ class _HomeResultsState extends State<HomeResults> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).brightness == Brightness.light
+      color: isLight(context)
           ? Colors.white
           : Colors.black,
       child: semester == null || isLoading
@@ -127,7 +128,7 @@ class _HomeResultsState extends State<HomeResults> {
                           if (snapshot.hasError) {
                             return ErrorPage();
                           }
-                          if (snapshot.data.length == 0) return ResultNotFound();
+                          if (snapshot.data.first.courseTitle == "") return ResultNotFound();
                           return Container(
                               child: ResultBuild(
                                   results: snapshot.data, score: score));
@@ -244,7 +245,7 @@ class _ResultBuildState extends State<ResultBuild>
                 color: Colors.grey.shade400,
               ),
               gradient: LinearGradient(
-                colors: Theme.of(context).brightness == Brightness.light ? [
+                colors: isLight(context) ? [
                   Color(0xffe6f8f9),Colors.white
                 ]: [Color(0xff393e46),Color(0xff222831)],
                 begin: Alignment.topLeft,
@@ -284,13 +285,16 @@ class _ResultBuildState extends State<ResultBuild>
               ),
               Center(
                 child: Text(
-                  "${(gpa * 10).toStringAsFixed(1)}",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  "${(gpa * 10).toStringAsFixed(2)}",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               )
             ],
           ),
-          Text(text)
+          Text(text,
+          style: TextStyle(
+            fontSize: 12.5
+          ),)
         ],
       ),
     );
@@ -319,7 +323,6 @@ class _ResultBuildState extends State<ResultBuild>
   }
 
   Widget gradeIcon(double gpa, String text) {
-    var p = math.pi;
     return Padding(
       padding: const EdgeInsets.all(32.0),
       child: Column(
@@ -391,6 +394,7 @@ class _ResultBuildState extends State<ResultBuild>
   }
 
   Widget resultCard(CourseResult courseResult) {
+    DateTime publish = DateFormat("dd/MM/yyyy").parse(courseResult.publishDate);
     return card(
         child: Column(
       children: <Widget>[
@@ -415,7 +419,16 @@ class _ResultBuildState extends State<ResultBuild>
                         overflow: TextOverflow.ellipsis,
                       )
                     ]),
-                    Text(courseResult.courseCode),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Text(courseResult.courseCode),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10,left: 50),
+                          child: Text(DateFormat.yMMMMd().format(publish)),
+                        )
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -451,13 +464,30 @@ class _ResultBuildState extends State<ResultBuild>
   }
 }
 
-//returns a guageMeter
-
-//Container(height: 100,width: 100,color: Colors.red,)
 
 class ResultNotFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Result hasnt been uploaded yet"));
+    return Container(
+      color: blackOrWhite(context),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Relax !',
+              style: TextStyle(fontSize: 35),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Results are not out yet.',
+              style: TextStyle(fontSize: 16),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

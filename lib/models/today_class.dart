@@ -85,4 +85,11 @@ class TodayClass {
     data['title'] = this._title;
     return data;
   }
+
+  @override
+  String toString() {
+    return 'TodayClass{_color: $_color, _courseCode: $_courseCode, _facultyName: $_facultyName, _roomNo: $_roomNo, _start: $_start, _end: $_end, _title: $_title}';
+  }
+
+
 }

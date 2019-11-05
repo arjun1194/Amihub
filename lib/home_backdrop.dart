@@ -67,7 +67,7 @@ class _HomeState extends State<Home> {
             )
           ],
         ),
-        backLayerColor: Theme.of(context).brightness == Brightness.light
+        backLayerColor: isLight(context)
             ? Color(0xff171C1F)
             : Color(0xff1a1d1e),
         headerHeight: 40,

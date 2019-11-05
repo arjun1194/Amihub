@@ -64,7 +64,9 @@ var lightTheme = ThemeData(
     backgroundColor: Colors.white,
     colorScheme: ColorScheme.light());
 
-blackOrWhite(context) => Theme.of(context).brightness == Brightness.light
+bool isLight(context) => Theme.of(context).brightness == Brightness.light ? true : false;
+
+blackOrWhite(context) => isLight(context)
     ? Colors.white
     : Colors.black;
 const appTitle = 'Amihub';

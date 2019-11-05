@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Settings extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     ThemeChanger themeChanger = Provider.of<ThemeChanger>(context);
@@ -17,9 +16,7 @@ class Settings extends StatelessWidget {
         MediaQuery.of(context).platformBrightness == Brightness.dark;
     bool isDarkThemeEnabled = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      color: Theme.of(context).brightness == Brightness.light
-          ? Colors.white
-          : Colors.black,
+      color: isLight(context) ? Colors.white : Colors.black,
       width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +26,7 @@ class Settings extends StatelessWidget {
             leading: Icon(Icons.brightness_4),
             title: Text('Dark mode'),
             subtitle: isDarkModeSupported
-                ? Text('Dark theme enabled by OS')
+                ? Text('Enabled by OS')
                 : isDarkThemeEnabled
                     ? Text('Disable dark mode')
                     : Text('Enable dark mode'),
@@ -37,12 +34,15 @@ class Settings extends StatelessWidget {
                 ? CupertinoSwitch(
                     value: isDarkThemeEnabled,
                     onChanged: !isDarkModeSupported
-                        ? (value) {
+                        ? (value) async {
                             if (value)
                               themeChanger.setThemeData(darkTheme);
                             else
                               themeChanger.setThemeData(lightTheme);
 
+                            SharedPreferences sp =
+                                await SharedPreferences.getInstance();
+                            sp.setBool('isDarkThemeEnabled', value);
                           }
                         : null,
                   )
@@ -55,7 +55,8 @@ class Settings extends StatelessWidget {
                             else
                               themeChanger.setThemeData(lightTheme);
 
-                            SharedPreferences sp = await SharedPreferences.getInstance();
+                            SharedPreferences sp =
+                                await SharedPreferences.getInstance();
                             sp.setBool('isDarkThemeEnabled', value);
                           }
                         : null,

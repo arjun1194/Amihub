@@ -1,3 +1,5 @@
+import 'package:amihub/components/error.dart';
+import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/course/course_attendance_detail.dart';
@@ -18,20 +20,24 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
-  AmizoneRepository amizoneRepository = AmizoneRepository();
 
   int semester;
+  bool isLoading = true;
 
   getSemester() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    semester = prefs.getInt("semester");
+    return prefs.getInt("semester");
   }
 
   @override
   void initState() {
     super.initState();
+    // Check here if error comes
     getSemester().then((val) {
-      setState(() {});
+      setState(() {
+        semester = val;
+        isLoading = false;
+      });
     });
   }
 
@@ -46,7 +52,7 @@ class _CoursePageState extends State<CoursePage> {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-              color: Theme.of(context).brightness == Brightness.light
+              color: isLight(context)
                   ? Colors.black
                   : Colors.white),
         ),
@@ -55,7 +61,7 @@ class _CoursePageState extends State<CoursePage> {
         leading: IconButton(
           icon: Icon(
             backButton(),
-            color: Theme.of(context).brightness == Brightness.light
+            color: isLight(context)
                 ? Colors.black
                 : Colors.white,
           ),
@@ -79,7 +85,7 @@ class _CoursePageState extends State<CoursePage> {
                       child: Text(
                     getPercentage(),
                     style: TextStyle(
-                        color: Theme.of(context).brightness == Brightness.light
+                        color: isLight(context)
                             ? Colors.black
                             : Colors.white,
                         fontSize: 35),
@@ -90,7 +96,7 @@ class _CoursePageState extends State<CoursePage> {
                       'Attendance detail',
                       style: TextStyle(
                           color:
-                              Theme.of(context).brightness == Brightness.light
+                              isLight(context)
                                   ? Colors.black
                                   : Colors.white),
                     ),
@@ -111,7 +117,12 @@ class _CoursePageState extends State<CoursePage> {
               height: 5,
             ),
             internalAssessmentBuild(),
-            fetchFaculty(),
+            isLoading
+                ? Padding(
+                    padding: EdgeInsets.only(top: 40),
+                    child: Loader(),
+                  )
+                : FetchFaculty(course: widget.course)
           ],
         ),
       ),
@@ -120,124 +131,24 @@ class _CoursePageState extends State<CoursePage> {
 
   Widget internalAssessmentBuild() {
     return widget.course.internalAssessment != null
-              ? Padding(
-                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                  child: ExpansionTile(
-                    title: Text('Internal Assessment'),
-                    trailing:
-                        Text(widget.course.internalAssessment.split("[")[0]),
-                    leading: Icon(Icons.assignment),
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          widget.course.internalAssessment,
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      )
-                    ],
+        ? Padding(
+            padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+            child: ExpansionTile(
+              title: Text('Internal Assessment'),
+              trailing: Text(widget.course.internalAssessment.split("[")[0]),
+              leading: Icon(Icons.assignment),
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    widget.course.internalAssessment,
+                    style: TextStyle(fontSize: 18),
                   ),
                 )
-              : Container();
-  }
-
-  Widget fetchFaculty() {
-    return FutureBuilder(
-      future: amizoneRepository.fetchMyFaculty(),
-      builder: (context, AsyncSnapshot<List<Faculty>> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            break;
-          case ConnectionState.waiting:
-            return Container();
-          case ConnectionState.active:
-            break;
-          case ConnectionState.done:
-            List<Faculty> faculties = snapshot.data
-                .where(
-                    (faculty) => faculty.courseName == widget.course.courseName)
-                .toList();
-            return (snapshot.hasError || snapshot.data == null)
-                ? Text('error')
-                : faculties.length != 0
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          PageHeader('Faculties'),
-                          Container(
-                            height: 140,
-                            child: ListView.builder(
-                              padding: EdgeInsets.all(8),
-                              shrinkWrap: true,
-                              physics: BouncingScrollPhysics(),
-                              itemCount: faculties.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                Faculty faculty = faculties.elementAt(index);
-                                return faculty.facultyImage != null
-                                    ? Padding(
-                                        padding:
-                                            EdgeInsets.only(left: 5, right: 5),
-                                        child: Container(
-                                          child: Stack(
-                                            children: <Widget>[
-                                              Align(
-                                                alignment: Alignment.topCenter,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 25),
-                                                  child: CircleAvatar(
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                      faculty.facultyImage,
-                                                    ),
-                                                    radius: 50,
-                                                  ),
-                                                ),
-                                              ),
-                                              Align(
-                                                alignment:
-                                                    Alignment.bottomCenter,
-                                                child: Container(
-                                                  width: 150,
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      10, 5, 10, 5),
-                                                  decoration: ShapeDecoration(
-                                                      shape: StadiumBorder(),
-                                                      color: Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.light
-                                                          ? Colors
-                                                              .blueGrey.shade800
-                                                          : Colors.white),
-                                                  child: Text(
-                                                    faculty.facultyName,
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        color: blackOrWhite(
-                                                            context)),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    : Container();
-                              },
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container();
-        }
-        return Text('end');
-      },
-    );
+              ],
+            ),
+          )
+        : Container();
   }
 
   Color getColor() {
@@ -253,29 +164,6 @@ class _CoursePageState extends State<CoursePage> {
     var percentage = double.tryParse("${widget.course.percentage}");
     return '${percentage.toStringAsFixed(2)}%';
   }
-
-//  facultyShimmer() {
-//    return Container(
-//      height: 130,
-//      child: ListView.builder(
-//        itemCount: 3,
-//        scrollDirection: Axis.horizontal,
-//        itemBuilder: (context, index) {
-//          return Card(
-//            shape: RoundedRectangleBorder(
-//                borderRadius: BorderRadius.circular(15),
-//                side: BorderSide(color: Colors.grey, width: 0.5)),
-//            child: Container(
-//              width: 180,
-//              child: Center(
-//                child: Text('dsadsadasd'),
-//              ),
-//            ),
-//          );
-//        },
-//      ),
-//    );
-//  }
 }
 
 class Faculty {
@@ -314,3 +202,119 @@ class Faculty {
     return 'Faculty{courseCode: $courseCode, courseName: $courseName, facultyImage: $facultyImage, facultyName: $facultyName, facultySignature: $facultySignature}';
   }
 }
+
+class FetchFaculty extends StatelessWidget {
+  final Course course;
+  final AmizoneRepository amizoneRepository = AmizoneRepository();
+
+  FetchFaculty({Key key, this.course}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: amizoneRepository.fetchMyFaculty(),
+      builder: (context, AsyncSnapshot<List<Faculty>> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            break;
+          case ConnectionState.waiting:
+            return Padding(
+              padding: EdgeInsets.only(top: 40),
+              child: Loader(),
+            );
+          case ConnectionState.active:
+            break;
+          case ConnectionState.done:
+            List<Faculty> faculties;
+            if (snapshot.hasData)
+              faculties = snapshot.data
+                  .where((faculty) =>
+              faculty.courseName == course.courseName)
+                  .toList();
+            return (snapshot.hasError || snapshot.data == null)
+                ? Padding(
+              child: ErrorPage(),
+              padding: EdgeInsets.only(top: 50),
+            )
+                : faculties.length != 0
+                ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                PageHeader('Faculties'),
+                Container(
+                  height: 140,
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(8),
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    itemCount: faculties.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      Faculty faculty = faculties.elementAt(index);
+                      return faculty.facultyImage != null
+                          ? Padding(
+                        padding:
+                        EdgeInsets.only(left: 5, right: 5),
+                        child: Container(
+                          child: Stack(
+                            children: <Widget>[
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets.only(
+                                      left: 25),
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                    NetworkImage(
+                                      faculty.facultyImage,
+                                    ),
+                                    radius: 50,
+                                  ),
+                                ),
+                              ),
+                              Align(
+                                alignment:
+                                Alignment.bottomCenter,
+                                child: Container(
+                                  width: 150,
+                                  padding: EdgeInsets.fromLTRB(
+                                      10, 5, 10, 5),
+                                  decoration: ShapeDecoration(
+                                      shape: StadiumBorder(),
+                                      color: Theme.of(context)
+                                          .brightness ==
+                                          Brightness.light
+                                          ? Colors
+                                          .blueGrey.shade800
+                                          : Colors.white),
+                                  child: Text(
+                                    faculty.facultyName,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: blackOrWhite(
+                                            context)),
+                                    maxLines: 1,
+                                    overflow:
+                                    TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                          : Container();
+                    },
+                  ),
+                ),
+              ],
+            )
+                : Container();
+        }
+        return Text('end');
+      },
+    );
+  }
+}
+

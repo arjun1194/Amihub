@@ -18,6 +18,7 @@ class HomeTodayClassBuilder extends StatefulWidget {
 class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   AmizoneRepository amizoneRepository = AmizoneRepository();
   int currentPage;
+  Future todayClassFuture;
   PageController pageController;
 
   changePage(int page) {
@@ -30,7 +31,14 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   void initState() {
     super.initState();
     currentPage = 0;
+    todayClassFuture = amizoneRepository.fetchTodayClass();
     pageController = PageController(initialPage: currentPage);
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,7 +46,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return FutureBuilder<List<TodayClass>>(
-      future: amizoneRepository.fetchTodayClass(),
+      future: todayClassFuture,
       builder:
           (BuildContext context, AsyncSnapshot<List<TodayClass>> snapshot) {
         switch (snapshot.connectionState) {
@@ -62,14 +70,56 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   }
 
   Padding errorClassBuilder() {
+    int randomInt = Random().nextInt(lightColors.length);
     return Padding(
-      padding: EdgeInsets.all(8),
-      child: Center(
-          child: Icon(
-        Icons.cloud_off,
-        size: 32,
-        color: Colors.grey,
-      )),
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 23),
+      child: Material(
+          shadowColor: isLight(context)
+              ? lightColors.elementAt(randomInt)
+              : Colors.grey.shade300,
+          elevation: 8,
+          clipBehavior: Clip.antiAlias,
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: isLight(context)
+                        ? [
+                            lightColors.elementAt(randomInt),
+                            darkColors.elementAt(randomInt)
+                          ]
+                        : [Colors.blueGrey.shade900, Colors.black],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter),
+                borderRadius: BorderRadius.all(Radius.circular(13))),
+            child: Stack(
+              children: <Widget>[
+                QuarterCircle(
+                  circleAlignment: CircleAlignment.topRight,
+                  color: Colors.white.withOpacity(0.1),
+                ),
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(28, 15, 20, 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Error fetching Today's Class",
+                          style: TextStyle(fontSize: 17, color: Colors.white),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
     );
   }
 
@@ -98,10 +148,10 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
             todayClass.courseCode,
             start,
             end,
-            Theme.of(context).brightness == Brightness.light
+            isLight(context)
                 ? lightColors[math.min(index, index % lightColors.length)]
                 : Colors.blueGrey.shade900,
-            Theme.of(context).brightness == Brightness.light
+            isLight(context)
                 ? darkColors[math.min(index, index % lightColors.length)]
                 : Colors.black,
           ),
@@ -117,16 +167,23 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 23),
       child: Material(
-        shadowColor: Colors.grey.shade300,
-        elevation: 10,
+        shadowColor: isLight(context)
+            ? lightColors.elementAt(randomInt)
+            : Colors.grey.shade300,
+        elevation: 8,
         clipBehavior: Clip.antiAlias,
         color: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [
-                lightColors.elementAt(randomInt),
-                darkColors.elementAt(randomInt)
-              ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+              gradient: LinearGradient(
+                  colors: isLight(context)
+                      ? [
+                          lightColors.elementAt(randomInt),
+                          darkColors.elementAt(randomInt)
+                        ]
+                      : [Colors.blueGrey.shade900, Colors.black],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter),
               borderRadius: BorderRadius.all(Radius.circular(13))),
           child: Stack(
             children: <Widget>[

@@ -1,3 +1,4 @@
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class RefreshButton extends StatelessWidget {
@@ -8,7 +9,7 @@ class RefreshButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      backgroundColor: Theme.of(context).brightness == Brightness.light
+      backgroundColor: isLight(context)
           ? Color(0xff3655B5)
           : Color(0xff364042),
       child: Icon(Icons.refresh,

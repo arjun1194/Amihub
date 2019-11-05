@@ -1,15 +1,19 @@
+import 'dart:async';
+
 import 'package:amihub/components/error.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/refresh_button.dart';
-import 'package:amihub/database/database_helper.dart';
+import 'package:amihub/components/utilities.dart';
 import 'package:amihub/home/body/todayclass/today_class_seamer.dart';
 import 'package:amihub/models/today_class.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/repository/refresh_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TodayClassBuilder extends StatefulWidget {
   final DateTime date;
@@ -24,6 +28,9 @@ class TodayClassBuilder extends StatefulWidget {
 
 class _TodayClassBuilderState extends State<TodayClassBuilder> {
   AmizoneRepository amizoneRepository = AmizoneRepository();
+  RefreshRepository refreshRepository = RefreshRepository();
+  final key = new GlobalKey<ScaffoldState>();
+  final refreshKey = GlobalKey<RefreshIndicatorState>();
   DateTime selectDate;
 
   @override
@@ -38,22 +45,42 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
     });
   }
 
-  refresh() {
-    setState(() {});
-    return DatabaseHelper.db.deleteTodayClassesWithDate(
-        "${selectDate.month}/${selectDate.day}/${selectDate.year}");
+  Future<Null> refresh() async {
+    await Utility.checkInternet().then((onValue) async {
+      await refreshRepository
+          .refreshTodayClass(DateFormat("MM/dd/yyyy").format(selectDate))
+          .then((val) {
+        setState(() {});
+        key.currentState.showSnackBar(SnackBar(
+          content: Text('Updated...'),
+          duration: Duration(milliseconds: 500),
+        ));
+      });
+    }).catchError((onError) async {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      String time = sharedPreferences.getString("lastTimeTCUpdated");
+      DateTime lastTime = DateTime.parse(time);
+      key.currentState.showSnackBar(SnackBar(
+        content: Text(
+          "Can't connect to internet.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
+        ),
+        duration: Duration(milliseconds: 1200),
+      ));
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.width;
-    return Container(
-      color: Theme.of(context).brightness == Brightness.light
-          ? Colors.white
-          : Colors.black,
-      child: Stack(
-        children: <Widget>[
-          Column(
+    return RefreshIndicator(
+      onRefresh: refresh,
+      key: refreshKey,
+      displacement: 70,
+      child: Scaffold(
+        key: key,
+        body: Container(
+          color: isLight(context) ? Colors.white : Colors.black,
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               widget.isHeader ? PageHeader("Classes") : Container(),
@@ -63,7 +90,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                   IconButton(
                     icon: Icon(Icons.arrow_back_ios),
                     iconSize: 20,
-                    color: Colors.grey.shade700,
+                    color: Colors.grey.shade400,
                     onPressed: () {
                       changeState(selectDate.subtract(Duration(days: 1)));
                     },
@@ -74,9 +101,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                       DatePicker.showDatePicker(context,
                           theme: DatePickerTheme(
                             backgroundColor:
-                                Theme.of(context).brightness == Brightness.light
-                                    ? Colors.white
-                                    : Colors.black,
+                                isLight(context) ? Colors.white : Colors.black,
                             itemStyle:
                                 TextStyle(fontFamily: "OpenSans", fontSize: 19),
                             cancelStyle: TextStyle(
@@ -106,7 +131,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                   IconButton(
                     icon: Icon(Icons.arrow_forward_ios),
                     iconSize: 20,
-                    color: Colors.grey.shade700,
+                    color: Colors.grey.shade400,
                     onPressed: () {
                       changeState(selectDate.add(Duration(days: 1)));
                     },
@@ -130,14 +155,12 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
               Expanded(child: buildFutureBuilder())
             ],
           ),
-          Positioned(
-            right: height * 0.03,
-            bottom: height * 0.03,
-            child: RefreshButton(
-              onPressed: refresh,
-            ),
-          )
-        ],
+        ),
+        floatingActionButton: RefreshButton(
+          onPressed: () {
+            refreshKey.currentState?.show(atTop: true);
+          },
+        ),
       ),
     );
   }
@@ -178,7 +201,9 @@ class NoClassToday extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        SizedBox(height: 10,),
+        SizedBox(
+          height: 10,
+        ),
         Image.asset(
           "assets/chill.png",
           width: width * 0.5,
@@ -223,7 +248,7 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
   Widget build(BuildContext context) {
     return ListView(
       padding: EdgeInsets.only(left: 8, right: 8),
-      physics: BouncingScrollPhysics(),
+      physics: AlwaysScrollableScrollPhysics(),
       children: List.generate(widget.snapshot.data.length, (int index) {
         TodayClass todayClass = widget.snapshot.data.elementAt(index);
         DateTime end =
@@ -263,8 +288,11 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
               ),
               contentPadding: EdgeInsets.only(left: 0, right: 8),
             ),
-            Divider(
-              color: Colors.grey.shade600.withOpacity(0.3),
+            Padding(
+              padding: EdgeInsets.only(left: 15, right: 15),
+              child: Divider(
+                color: Colors.grey.shade600.withOpacity(0.3),
+              ),
             ),
           ],
         );
