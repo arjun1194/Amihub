@@ -54,7 +54,10 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
   Future<Null> refresh() async {
     await Utility.checkInternet().then((onValue) async {
       await refreshRepository.refreshCourses(semester).then((val) {
-        setState(() {});
+        setState(() {
+          myFuture = amizoneRepository
+              .fetchMyCoursesWithSemester(semester);
+        });
         key.currentState.showSnackBar(SnackBar(
           content: Text('Updated...'),
           duration: Duration(milliseconds: 500),
@@ -76,18 +79,18 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: refresh,
-      key: refreshKey,
-      displacement: 70,
-      child: Scaffold(
-        key: key,
-        body: Container(
-          color: isLight(context) ? Colors.white : Colors.black,
-          child: Center(
-            child: isLoading
-                ? CircularProgressIndicator()
-                : Column(
+    return Scaffold(
+      key: key,
+      body: Container(
+        color: isLight(context) ? Colors.white : Colors.black,
+        child: Center(
+          child: isLoading
+              ? CircularProgressIndicator()
+              : RefreshIndicator(
+                  onRefresh: refresh,
+                  key: refreshKey,
+                  displacement: 70,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       widget.isHeader ? PageHeader("My Courses") : Container(),
@@ -137,19 +140,39 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                         height: 8,
                       ),
                       Expanded(
-                        child: CourseFutureBuilder(
-                            myFuture: myFuture, semester: semester),
+                        child: myCourseFutureBuilder(),
                       ),
                     ],
                   ),
-          ),
-        ),
-        floatingActionButton: RefreshButton(
-          onPressed: () {
-            refreshKey.currentState?.show();
-          },
+                ),
         ),
       ),
+      floatingActionButton: RefreshButton(
+        onPressed: () {
+          refreshKey.currentState?.show();
+        },
+      ),
+    );
+  }
+
+  Widget myCourseFutureBuilder() {
+    return FutureBuilder<List<Course>>(
+      future: myFuture,
+      builder: (BuildContext context, AsyncSnapshot<List<Course>> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return MyCourseShimmer();
+          case ConnectionState.done:
+            return (snapshot.hasError || snapshot.data == null)
+                ? ErrorPage()
+                : CourseBuild(snapshot: snapshot, semester: semester);
+          case ConnectionState.none:
+            break;
+          case ConnectionState.active:
+            break;
+        }
+        return Text("End"); // unreachable
+      },
     );
   }
 }
@@ -228,35 +251,5 @@ class _CourseBuildState extends State<CourseBuild> {
             );
           },
         ));
-  }
-}
-
-class CourseFutureBuilder extends StatelessWidget {
-  final Future<List> myFuture;
-
-  final int semester;
-
-  CourseFutureBuilder({this.myFuture, this.semester});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Course>>(
-      future: myFuture,
-      builder: (BuildContext context, AsyncSnapshot<List<Course>> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return MyCourseShimmer();
-          case ConnectionState.done:
-            return (snapshot.hasError || snapshot.data == null)
-                ? ErrorPage()
-                : CourseBuild(snapshot: snapshot, semester: semester);
-          case ConnectionState.none:
-            break;
-          case ConnectionState.active:
-            break;
-        }
-        return Text("End"); // unreachable
-      },
-    );
   }
 }

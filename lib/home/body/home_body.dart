@@ -25,40 +25,43 @@ class _HomeBodyState extends State<HomeBody> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.height;
-    return RefreshIndicator(
-      onRefresh: refresh,
-      key: refreshKey,
-      child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: isLight(context) ? Colors.white : Colors.black,
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            PageHeader("Today's Class"),
-            SizedBox(height: 2),
-            Expanded(
-              child: ListView(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(bottom: 15),
-                physics: BouncingScrollPhysics(),
-                children: <Widget>[
-                  buildContainer(height, width, HomeTodayClassBuilder()),
-                  PageHeader("Attendance Summary"),
-                  // TODO : Change The Pie Chart
-                  buildContainer(height, width, DonutChartFutureBuilder()),
-                  // TODO : Remove this for 1st semester
-                  PageHeader("Score Summary"),
-                  buildContainer(height, width, HorizontalChartBuilder()),
-                ],
-              ),
+    return Scaffold(
+      key: scaffoldKey,
+      backgroundColor: isLight(context) ? Colors.white : Colors.black,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          PageHeader("Today's Class"),
+          SizedBox(height: 2),
+          Expanded(
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.only(bottom: 15),
+              children: <Widget>[
+                buildContainer(height, width, HomeTodayClassBuilder()),
+                PageHeader("Attendance Summary"),
+                // TODO : Change The Pie Chart
+                buildContainer(height, width, DonutChartFutureBuilder()),
+                // TODO : Remove this for 1st semester
+                PageHeader("Score Summary"),
+                buildContainer(height, width, HorizontalChartBuilder()),
+              ],
             ),
-          ],
-        ),
-        floatingActionButton: RefreshButton(onPressed: () {
-          refreshKey.currentState?.show();
-        }),
+          ),
+        ],
       ),
+      floatingActionButton: RefreshButton(onPressed: () {
+        scaffoldKey.currentState.showSnackBar(SnackBar(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          content: Text('Refreshing'),
+          behavior: SnackBarBehavior.floating,
+          elevation: 8,
+          duration: Duration(milliseconds: 600),
+        ));
+        refresh();
+      }),
     );
   }
 

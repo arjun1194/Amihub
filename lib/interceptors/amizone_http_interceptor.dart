@@ -21,9 +21,10 @@ class AmizoneInterceptor extends InterceptorContract {
 
   @override
   Future<ResponseData> interceptResponse({ResponseData data}) async {
-    if(data.statusCode==401){
+    if (data.statusCode == 401) {
       print('Authentication Error!');
-      navKey.currentState.pushNamedAndRemoveUntil('/login',(Route<dynamic> route) => false);
+      navKey.currentState
+          .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
     }
     return data;
   }

@@ -301,7 +301,7 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
   }
 
   todayClassBottomSheet(TodayClass todayClass) {
-    showModalBottomSheet(
+    showCupertinoModalPopup(
         context: context,
         builder: (context) {
           List<String> faculties = todayClass.facultyName.split(",");
@@ -309,15 +309,19 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
               DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.end);
           DateTime start =
               DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
-          return Container(
-            decoration: ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    topRight: Radius.circular(15)),
+          return Material(
+            color: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              decoration: ShapeDecoration(
+                color: blackOrWhite(context),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15)),
+                ),
               ),
-            ),
-            child: Scrollbar(
+              height: MediaQuery.of(context).size.height* 0.6,
               child: ListView(
                 physics: BouncingScrollPhysics(),
                 padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
@@ -432,6 +436,7 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
           );
         });
   }
+
 
   Stack stack(Text text2, Text text1) {
     return Stack(

@@ -46,7 +46,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return FutureBuilder<List<TodayClass>>(
-      future: todayClassFuture,
+      future: amizoneRepository.fetchTodayClass(),
       builder:
           (BuildContext context, AsyncSnapshot<List<TodayClass>> snapshot) {
         switch (snapshot.connectionState) {
@@ -80,6 +80,9 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
           elevation: 8,
           clipBehavior: Clip.antiAlias,
           color: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(13),
+          ),
           child: Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -173,6 +176,9 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
         elevation: 8,
         clipBehavior: Clip.antiAlias,
         color: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(13),
+        ),
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
