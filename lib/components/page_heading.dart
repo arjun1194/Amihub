@@ -14,6 +14,6 @@ class PageHeader extends StatelessWidget {
         style: TextStyle(fontSize: 18),
       ),
     );
-    ;
+
   }
 }

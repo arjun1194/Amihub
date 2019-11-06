@@ -2,12 +2,14 @@ import 'package:amihub/components/theme_changer.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'routes/routes.dart';
 
 void main() {
+  Stetho.initialize();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) => runApp(MyApp()));
 }
@@ -73,9 +75,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 }
 
 class MaterialAppWithTheme extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navKey,
       debugShowCheckedModeBanner: false,
       title: 'Application 1',
       routes: routes,

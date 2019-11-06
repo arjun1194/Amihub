@@ -161,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                   width: width * 0.7,
                   child: MyTextField(
                     hintText: "Password",
-                    keyboardType: TextInputType.visiblePassword,
+                    keyboardType: TextInputType.text,
                     obscureText: true,
                     textEditingController: passwordController,
                     onSubmit: loginPressed,

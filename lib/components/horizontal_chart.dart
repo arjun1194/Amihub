@@ -1,4 +1,3 @@
-import 'dart:ui' as ui;
 
 import 'package:amihub/models/score.dart';
 import 'package:amihub/repository/amizone_repository.dart';

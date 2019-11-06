@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 
 class TodayClass {
   String _color;
@@ -27,31 +26,24 @@ class TodayClass {
   }
 
   String get color => _color;
-
   set color(String color) => _color = color;
 
   String get courseCode => _courseCode;
-
   set courseCode(String courseCode) => _courseCode = courseCode;
 
   String get facultyName => _facultyName;
-
   set facultyName(String facultyName) => _facultyName = facultyName;
 
   String get roomNo => _roomNo;
-
   set roomNo(String roomNo) => _roomNo = roomNo;
 
   String get start => _start;
-
   set start(String start) => _start = start;
 
   String get end => _end;
-
   set end(String end) => _end = end;
 
   String get title => _title;
-
   set title(String title) => _title = title;
 
   TodayClass.fromJson(Map<String, dynamic> json) {

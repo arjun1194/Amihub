@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 class CourseResult {
   String courseCode;
