@@ -269,9 +269,17 @@ class AmizoneRepository {
   }
 
   Future<void> logout(BuildContext context) async {
+    ///clear shared preferences
     SharedPreferences.getInstance().then((sp) {
       sp.remove('Authorization');
+      sp.remove('lastTimeMCUpdated');
+      sp.remove('lastTimeMetadataUpdated');
+      sp.remove('lastTimeTCUpdated');
+      sp.remove('enrollNo');
+      sp.remove('semester');
+
     });
+    ///clear database
     dbHelper.deleteDatabase().then((e) {
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);

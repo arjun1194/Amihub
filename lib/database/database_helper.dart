@@ -23,7 +23,6 @@ class DatabaseHelper {
   }
 
   Future<Database> getDatabaseInstance() async {
-    Directory directory = await getApplicationDocumentsDirectory();
     String _path  = await getDatabasesPath();
     String path = join(_path, "amihub.db");
     return await openDatabase(path, version: 1,
