@@ -1,6 +1,7 @@
 import 'package:amihub/components/custom_appbar.dart';
 import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/course/my_courses_future_builder.dart';
+import 'package:amihub/models/backdrop_selected.dart';
 import 'package:amihub/models/course_attendance.dart';
 import 'package:amihub/models/course_attendance_type.dart';
 import 'package:amihub/repository/amizone_repository.dart';
@@ -8,6 +9,7 @@ import 'package:amihub/theme/theme.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -169,7 +171,7 @@ class DonutChartBuild extends StatelessWidget {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
+    var backdropSelected = Provider.of<BackdropSelected>(context);
     var series = [
       charts.Series<CourseAttendanceType, dynamic>(
         id: 'attendance',
@@ -244,13 +246,9 @@ class DonutChartBuild extends StatelessWidget {
                     ),
                     OutlineButton(
                       onPressed: () {
-                        CustomPageRoute.pushPage(
-                            context: context,
-                            child: Scaffold(
-                                body: MyCourseBuilder(
-                                  isHeader: false,
-                                ),
-                                appBar: CustomAppbar('My Courses')));
+                        backdropSelected.selected=2;
+
+                        //                        CustomPageRoute.pushPage(context: context, child: Scaffold(body: MyCourseBuilder(isHeader: false,), appBar: CustomAppbar('My Courses')));
                       },
                       shape: StadiumBorder(),
                       child: Row(

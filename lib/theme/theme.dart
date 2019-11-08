@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 //widget keys
 final navKey = new GlobalKey<NavigatorState>();
 
-//colors
+///colors
+
 
 const greenMain = Color(0xFF203782);
 const fontMain = Color(0xFF0F100F);

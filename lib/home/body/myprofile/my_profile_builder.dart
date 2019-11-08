@@ -4,6 +4,7 @@ import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/home/body/myprofile/academic_details.dart';
 import 'package:amihub/home/body/myprofile/personal_details.dart';
 import 'package:amihub/home/body/myprofile/profile_Icon.dart';
+import 'package:amihub/models/profile.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +21,9 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<dynamic>(
+    return FutureBuilder<Profile>(
       future: amizoneRepository.fetchMyProfile(),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<Profile> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
             return Container(
@@ -54,18 +55,18 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
                       physics: BouncingScrollPhysics(),
                       children: <Widget>[
                         ProfileIcon(
-                          imageLink: snapshot.data['photo'],
-                          name: snapshot.data['name'],
+                          imageLink: snapshot.data.photo,
+                          name: snapshot.data.name,
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
                               top: 25, left: 20, right: 20),
                           child: AcademicDetails(
-                            batch: snapshot.data['batch'].toString(),
+                            batch: snapshot.data.batch,
                             enrollmentNumber:
-                                snapshot.data['enrollmentNo'].toString(),
-                            program: snapshot.data['program'].toString(),
-                            semester: snapshot.data['semester'].toString(),
+                                snapshot.data.enrollmentNumber,
+                            program: snapshot.data.program,
+                            semester: snapshot.data.semester.toString(),
                           ),
                         ),
                         Padding(
@@ -74,10 +75,10 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
                           child: PersonalDetails(
                             dateOfBirth: DateFormat.yMMMMd("en_US").format(
                                 DateTime.fromMillisecondsSinceEpoch(
-                                    snapshot.data['dob'],
+                                    snapshot.data.dateOfBirth,
                                     isUtc: false)),
-                            email: snapshot.data['email'].toString(),
-                            phoneNumber: snapshot.data['phone'].toString(),
+                            email: snapshot.data.email,
+                            phoneNumber: snapshot.data.phoneNumber,
                           ),
                         ),
                         Padding(
