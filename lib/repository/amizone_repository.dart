@@ -30,6 +30,7 @@ class AmizoneRepository {
   }
 
   Future<Score> fetchScoreWithSemester(int semester) async {
+    if (semester == 1) return Score(cgpa: 1,sgpa: 1,semester: semester);
     Score dbResponse = await dbHelper.getScoreWithSemester(semester);
     Score dbResponseMinusOne;
     if (dbResponse == null)

@@ -51,6 +51,7 @@ class _HomeResultsState extends State<HomeResults> {
     }).then((val) {
       getSemScore(val).then((sc) {
         score = sc;
+        print(score.toString());
       });
     });
   }
@@ -66,9 +67,7 @@ class _HomeResultsState extends State<HomeResults> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: isLight(context)
-          ? Colors.white
-          : Colors.black,
+      color: isLight(context) ? Colors.white : Colors.black,
       child: semester == null || isLoading
           ? Center(
               child: Loader(),
@@ -77,14 +76,16 @@ class _HomeResultsState extends State<HomeResults> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 PageHeader('Results'),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 32, right: 32),
                   child: Center(
                     child: Material(
                       shape: StadiumBorder(
-                          side:
-                              BorderSide(width: 1, color: Colors.grey.shade200)),
+                          side: BorderSide(
+                              width: 1, color: Colors.grey.shade200)),
                       elevation: 1,
                       child: Container(
                         padding: EdgeInsets.only(left: 10, right: 10),
@@ -101,8 +102,9 @@ class _HomeResultsState extends State<HomeResults> {
                                   semesterList.indexOf(dropdownValue) + 1);
                             });
                           },
-                          items:
-                              semesterList.sublist(0, userSemester).map((value) {
+                          items: semesterList
+                              .sublist(0, userSemester)
+                              .map((value) {
                             return DropdownMenuItem<String>(
                               value: value,
                               child: Text(value),
@@ -125,10 +127,11 @@ class _HomeResultsState extends State<HomeResults> {
                         case ConnectionState.waiting:
                           return Loader();
                         case ConnectionState.done:
-                          if (snapshot.hasError) {
-                            return ErrorPage();
+                          if (snapshot.hasError) return ErrorPage();
+                          if (snapshot.data.isEmpty ||
+                              snapshot.data.first.courseTitle == "") {
+                            return ResultNotFound();
                           }
-                          if (snapshot.data.first.courseTitle == "") return ResultNotFound();
                           return Container(
                               child: ResultBuild(
                                   results: snapshot.data, score: score));
@@ -137,7 +140,7 @@ class _HomeResultsState extends State<HomeResults> {
                         case ConnectionState.active:
                           break;
                       }
-                      return Text(''); // unreachable
+                      return Text('');
                     },
                   ),
                 )
@@ -237,7 +240,8 @@ class _ResultBuildState extends State<ResultBuild>
         elevation: 6,
         clipBehavior: Clip.antiAlias,
         color: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(13))),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(13))),
         child: Container(
           decoration: BoxDecoration(
               border: Border.all(
@@ -245,12 +249,11 @@ class _ResultBuildState extends State<ResultBuild>
                 color: Colors.grey.shade400,
               ),
               gradient: LinearGradient(
-                colors: isLight(context) ? [
-                  Color(0xffe6f8f9),Colors.white
-                ]: [Color(0xff393e46),Color(0xff222831)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight
-              ),
+                  colors: isLight(context)
+                      ? [Color(0xffe6f8f9), Colors.white]
+                      : [Color(0xff393e46), Color(0xff222831)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight),
               borderRadius: BorderRadius.all(Radius.circular(13))),
           child: child,
         ),
@@ -261,7 +264,7 @@ class _ResultBuildState extends State<ResultBuild>
   Widget gaugeMeter(double gpa, String text) {
     var p = math.pi;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(32, 30, 32,0),
+      padding: const EdgeInsets.fromLTRB(32, 30, 32, 0),
       child: Column(
         children: <Widget>[
           Stack(
@@ -291,10 +294,10 @@ class _ResultBuildState extends State<ResultBuild>
               )
             ],
           ),
-          Text(text,
-          style: TextStyle(
-            fontSize: 12.5
-          ),)
+          Text(
+            text,
+            style: TextStyle(fontSize: 12.5),
+          )
         ],
       ),
     );
@@ -383,7 +386,9 @@ class _ResultBuildState extends State<ResultBuild>
                   color: Colors.grey,
                   size: 18,
                 ),
-                SizedBox(width: 4,),
+                SizedBox(
+                  width: 4,
+                ),
                 Text(text)
               ],
             ),
@@ -424,7 +429,7 @@ class _ResultBuildState extends State<ResultBuild>
                       children: <Widget>[
                         Text(courseResult.courseCode),
                         Padding(
-                          padding: const EdgeInsets.only(right: 10,left: 50),
+                          padding: const EdgeInsets.only(right: 10, left: 50),
                           child: Text(DateFormat.yMMMMd().format(publish)),
                         )
                       ],
@@ -463,7 +468,6 @@ class _ResultBuildState extends State<ResultBuild>
     ));
   }
 }
-
 
 class ResultNotFound extends StatelessWidget {
   @override

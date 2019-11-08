@@ -82,7 +82,7 @@ class DatabaseHelper {
            attendanceType TEXT PRIMARY KEY,
            noOfCourses INTEGER
          )''');
-
+      // TODO : Please add delete query on adding a table
       await db.rawQuery("PRAGMA table_info(course);");
     });
   }
