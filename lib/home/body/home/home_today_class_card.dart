@@ -44,12 +44,12 @@ class _TodayClassCardState extends State<TodayClassCard> {
             : attendanceState = 0;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 15),
+      padding: const EdgeInsets.only(bottom: 3),
       child: Material(
         shadowColor: isLight(context)
             ? widget.topColor
             : Colors.grey,
-        elevation: 8,
+        elevation: 6,
         color: Colors.transparent,
         clipBehavior: Clip.antiAlias,
         shape: RoundedRectangleBorder(

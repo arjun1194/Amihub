@@ -21,7 +21,6 @@ class Profile {
         this.name});
 
   Profile.fromJson(Map<String, dynamic> json) {
-    print('json[semester] is of type'+json['semester'].runtimeType.toString());
     enrollmentNumber = json['enrollmentNumber'];
     program = json['program'];
     batch = json['batch'];

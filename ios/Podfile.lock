@@ -1,5 +1,7 @@
 PODS:
   - Flutter (1.0.0)
+  - flutter_stetho (0.0.1):
+    - Flutter
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
@@ -15,6 +17,7 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `.symlinks/flutter/ios`)
+  - flutter_stetho (from `.symlinks/plugins/flutter_stetho/ios`)
   - http_interceptor (from `.symlinks/plugins/http_interceptor/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
@@ -27,6 +30,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   Flutter:
     :path: ".symlinks/flutter/ios"
+  flutter_stetho:
+    :path: ".symlinks/plugins/flutter_stetho/ios"
   http_interceptor:
     :path: ".symlinks/plugins/http_interceptor/ios"
   path_provider:
@@ -38,10 +43,11 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_stetho: 0e844616b41b86d6429e86a518ae3a46e83af7cd
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   http_interceptor: 35739d2beb6230e975f7015d7c994ebd4698402f
-  path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
-  shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
+  path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
+  shared_preferences: 430726339841afefe5142b9c1f50cb6bd7793e01
   sqflite: ff1d9da63c06588cc8d1faf7256d741f16989d5a
 
 PODFILE CHECKSUM: 7fb83752f59ead6285236625b82473f90b1cb932

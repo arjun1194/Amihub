@@ -38,7 +38,6 @@ class _MyTextFieldState extends State<MyTextField> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
     return TextField(
       keyboardAppearance: Theme.of(context).brightness,
       keyboardType: widget.keyboardType,

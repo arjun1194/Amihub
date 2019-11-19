@@ -7,13 +7,11 @@ import 'package:amihub/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../captcha_page.dart';
-
-
 //Make Splash Screen home
 Map<String, WidgetBuilder> routes = {
   '/': (BuildContext context) => SplashScreen(),
-  '/home': (BuildContext context) => ChangeNotifierProvider(builder: (context)=>BackdropSelected(),child: Home()),
+  '/home': (BuildContext context) => ChangeNotifierProvider(
+      builder: (context) => BackdropSelected(), child: Home()),
 //  '/captcha': (BuildContext context) => CaptchaPageNew(),
   '/forgotPassword': (BuildContext context) => ForgotPassword(),
   '/load': (BuildContext context) => LoadApi(),

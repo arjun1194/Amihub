@@ -1,6 +1,3 @@
-import 'package:amihub/components/custom_appbar.dart';
-import 'package:amihub/components/platform_specific.dart';
-import 'package:amihub/home/body/course/my_courses_future_builder.dart';
 import 'package:amihub/models/backdrop_selected.dart';
 import 'package:amihub/models/course_attendance.dart';
 import 'package:amihub/models/course_attendance_type.dart';

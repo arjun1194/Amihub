@@ -30,7 +30,6 @@ class AmizoneRepository {
   }
 
   Future<Score> fetchScoreWithSemester(int semester) async {
-    if (semester == 1) return Score(cgpa: 1,sgpa: 1,semester: semester);
     Score dbResponse = await dbHelper.getScoreWithSemester(semester);
     Score dbResponseMinusOne;
     if (dbResponse == null)
@@ -38,6 +37,7 @@ class AmizoneRepository {
     if (dbResponse == null && dbResponseMinusOne == null) {
       Map data = await networkCallMetadata();
       List<Score> scores = data['score'];
+      if (semester == 1 && scores.isEmpty) return Score(cgpa: 1,sgpa: 1,semester: semester);
       return scores.firstWhere((score) => score.semester == semester);
     }
     if (dbResponse == null && dbResponseMinusOne != null)
@@ -62,9 +62,11 @@ class AmizoneRepository {
     var response = await http.get('$amihubUrl/metadata');
     var jsonResponse = convert.jsonDecode(response.body);
 
-    /// Saving semester and enrollNo in SharedPref
+    /// Saving semester, photo,name and enrollNo in SharedPref
     SharedPreferences.getInstance().then((sp) {
       sp.setInt("semester", jsonResponse['semester']);
+      sp.setString("photo", jsonResponse['photo']);
+      sp.setString("name", jsonResponse['name']);
       sp.setString("enrollNo", jsonResponse['enrollmentNumber']);
     });
 
@@ -246,7 +248,6 @@ class AmizoneRepository {
     HttpWithInterceptor http =
         HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/myProfile');
-    //print(jsonDecode(response.body));
     return await convert.jsonDecode(response.body);
   }
 
@@ -272,13 +273,7 @@ class AmizoneRepository {
   Future<void> logout(BuildContext context) async {
     ///clear shared preferences
     SharedPreferences.getInstance().then((sp) {
-      sp.remove('Authorization');
-      sp.remove('lastTimeMCUpdated');
-      sp.remove('lastTimeMetadataUpdated');
-      sp.remove('lastTimeTCUpdated');
-      sp.remove('enrollNo');
-      sp.remove('semester');
-
+      sp.clear();
     });
     ///clear database
     dbHelper.deleteDatabase().then((e) {

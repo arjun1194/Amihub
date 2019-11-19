@@ -55,8 +55,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
     await Utility.checkInternet().then((onValue) async {
       await refreshRepository.refreshCourses(semester).then((val) {
         setState(() {
-          myFuture = amizoneRepository
-              .fetchMyCoursesWithSemester(semester);
+          myFuture = amizoneRepository.fetchMyCoursesWithSemester(semester);
         });
         key.currentState.showSnackBar(SnackBar(
           content: Text('Updated...'),

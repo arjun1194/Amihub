@@ -51,7 +51,6 @@ class _HomeResultsState extends State<HomeResults> {
     }).then((val) {
       getSemScore(val).then((sc) {
         score = sc;
-        print(score.toString());
       });
     });
   }

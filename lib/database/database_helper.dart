@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_attendance_type.dart';
@@ -7,7 +6,6 @@ import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/models/today_class.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {

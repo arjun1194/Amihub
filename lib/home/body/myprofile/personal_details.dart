@@ -15,7 +15,6 @@ class PersonalDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
     return Column(
       children: <Widget>[
         Text(

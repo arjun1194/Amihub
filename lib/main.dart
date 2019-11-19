@@ -1,4 +1,5 @@
 import 'package:amihub/components/theme_changer.dart';
+import 'package:amihub/routes/routes.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,9 +7,9 @@ import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'routes/routes.dart';
 
 void main() {
+  //TODO: Remove this
   Stetho.initialize();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) => runApp(MyApp()));

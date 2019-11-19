@@ -45,7 +45,6 @@ class _TodayClassShimmerState extends State<TodayClassShimmer>
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    var height = MediaQuery.of(context).size.height;
 
     return ListView.builder(
       scrollDirection: Axis.vertical,

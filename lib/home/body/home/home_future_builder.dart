@@ -72,7 +72,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   Padding errorClassBuilder() {
     int randomInt = Random().nextInt(lightColors.length);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 23),
+      padding: EdgeInsets.all(8),
       child: Material(
           shadowColor: isLight(context)
               ? lightColors.elementAt(randomInt)
@@ -168,7 +168,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   Padding noClassBuilder(double height, double width) {
     int randomInt = Random().nextInt(lightColors.length);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 23),
+      padding: const EdgeInsets.all(8),
       child: Material(
         shadowColor: isLight(context)
             ? lightColors.elementAt(randomInt)
