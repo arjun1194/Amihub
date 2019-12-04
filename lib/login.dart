@@ -15,7 +15,6 @@ class _LoginPageState extends State<LoginPage> {
   LoginInputs inputs;
   TextEditingController usernameController;
   TextEditingController passwordController;
-  var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -39,13 +38,16 @@ class _LoginPageState extends State<LoginPage> {
   loginPressed(String text){
     if (usernameController.text.length == 0 ||
         passwordController.text.length == 0) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      loginPageScaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('Please enter username and passsword'),
+        behavior: SnackBarBehavior.floating,
       ));
     } else if (!RegExp(r'[0-9]')
         .hasMatch(usernameController.text)) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      loginPageScaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Username can't be alphabet"),
+        behavior: SnackBarBehavior.floating,
+
       ));
     } else {
       LoginModel loginModel = LoginModel(
@@ -65,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
       ));
     }
     return Scaffold(
-      key: _scaffoldKey,
+      key: loginPageScaffoldKey,
 //      backgroundColor: isLight(context)
 //          ? Color(0xFFF7F7F9)
 //          : Colors.black,

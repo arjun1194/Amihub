@@ -5,7 +5,9 @@ import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/course/course_detail.dart';
+import 'package:amihub/home/body/faculty/faculty_detail.dart';
 import 'package:amihub/models/course.dart';
+import 'package:amihub/models/faculty.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -16,9 +18,7 @@ class MyFaculty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: isLight(context)
-          ? Colors.white
-          : Colors.black,
+      color: isLight(context) ? Colors.white : Colors.black,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
@@ -84,12 +84,25 @@ class FacultyBuild extends StatelessWidget {
                       Positioned(
                         top: 70,
                         left: 70,
-                        child: Container(
-                          decoration: ShapeDecoration(
-                              shape: StadiumBorder(), color: isLight(context)?  Color(0xffe6f8f9) : Color(0xff3c3d47)),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Text(faculty.facultyName),
+                        child: InkWell(
+                          onTap: () {
+                            CustomPageRoute.pushPage(
+                                context: context,
+                                child: FacultyDetail(
+                                  facultyCode: faculty.facultyCode,
+                                  facultyName: faculty.facultyName,
+                                ));
+                          },
+                          child: Container(
+                            decoration: ShapeDecoration(
+                                shape: StadiumBorder(),
+                                color: isLight(context)
+                                    ? Color(0xffe6f8f9)
+                                    : Color(0xff3c3d47)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(faculty.facultyName),
+                            ),
                           ),
                         ),
                       ),

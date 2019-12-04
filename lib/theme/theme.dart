@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 //widget keys
 final navKey = new GlobalKey<NavigatorState>();
+var loginPageScaffoldKey = new GlobalKey<ScaffoldState>();
+
 
 ///colors
 
@@ -79,20 +81,20 @@ const appTitle = 'Amihub';
 const appIcon = 'assets/logo.png';
 
 //api end point
-var amihubUrl = 'http://api.avirias.me:8080';
+var amihubUrl = 'http://api.avirias.xyz:8080';
 
 String facultyImage(String code) =>
     "https://amizone.net/AdminAmizone/images/StaffImages/${code}_p.png";
 
-//Webview url
+//Webiew url
 var webViewUrl = 'https://student.amizone.net';
 
 //javascript-code
-var jsRemoveWebviewBackground =
+var jsRemoveWebViewBackground =
     "var el11 = document.getElementsByClassName('wrap-login100')[0];el11.classList.remove('wrap-login100');var el12 = document.getElementsByClassName('container-login100')[0];el12.classList.remove('container-login100');var el1 = document.getElementsByClassName('logo-section')[0];el1.parentNode.removeChild(el1);var el2 = document.getElementsByClassName('login100-form-title')[0];el2.parentNode.removeChild(el2);var el3 = document.getElementsByClassName('wrap-input100 validate-input')[0];el3.parentNode.removeChild(el3);var el4 = document.getElementsByClassName('wrap-input100 validate-input')[0];el4.parentNode.removeChild(el4);var el5 = document.getElementsByClassName('container-login100-form-btn')[0];el5.parentNode.removeChild(el5);var el6 = document.getElementsByClassName('text-center p-t-12 fg-password')[0];el6.parentNode.removeChild(el6);var el8 = document.getElementsByClassName('widget-box forgot-box login100-form')[0];el8.parentNode.removeChild(el8);var el9 = document.getElementsByClassName('login100-pic')[0];el9.parentNode.removeChild(el9);";
-var jsSetWebviewBackgroundColor =
+var jsSetWebViewBackgroundColor =
     "document.getElementsByTagName('body')[0].style.backgroundColor = '#fafafa';";
-var jsSetWebviewCenter =
+var jsSetWebViewCenter =
     "document.getElementById('login-box').style='position:absolute !important;top:150px !important;left:25% !important;width:60% !important; '";
 var jsGetCaptchaResponse =
     "document.getElementById('g-recaptcha-response').value;";

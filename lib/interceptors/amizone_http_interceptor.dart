@@ -1,10 +1,15 @@
+import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AmizoneInterceptor extends InterceptorContract {
   AmizoneInterceptor();
+
+  AmizoneRepository amizoneRepository = AmizoneRepository();
+
 
   @override
   Future<RequestData> interceptRequest({RequestData data}) async {
@@ -21,8 +26,9 @@ class AmizoneInterceptor extends InterceptorContract {
 
   @override
   Future<ResponseData> interceptResponse({ResponseData data}) async {
-    //TODO: Check for 5XX
+
     if (data.statusCode == 401) {
+      amizoneRepository.logout(navKey.currentContext);
       navKey.currentState
           .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
     }

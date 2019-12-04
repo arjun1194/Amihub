@@ -1,12 +1,14 @@
 import 'dart:convert' as convert;
 
 import 'package:amihub/database/database_helper.dart';
-import 'package:amihub/home/body/course/course_detail.dart';
 import 'package:amihub/interceptors/amizone_http_interceptor.dart';
 import 'package:amihub/models/attendance.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_attendance.dart';
 import 'package:amihub/models/course_attendance_type.dart';
+import 'package:amihub/models/course_info.dart' as ci;
+import 'package:amihub/models/faculty.dart';
+import 'package:amihub/models/faculty_info.dart' as fi;
 import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/models/today_class.dart';
@@ -53,6 +55,21 @@ class AmizoneRepository {
       return data['score'];
     }
     return dbResponse;
+  }
+  
+  Future<ci.CourseInfo> getCourseInfo(String courseCode) async {
+    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    var response = await http.get('$amihubUrl/myCourses/$courseCode');
+    var jsonResponse = convert.jsonDecode(response.body);
+    ci.CourseInfo info  = ci.CourseInfo.fromJson(jsonResponse);
+    return info;
+  }
+
+  Future<fi.FacultyInfo> getFacultyInfo(String facultyCode) async{
+    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    var response = await http.get('$amihubUrl/faculty/$facultyCode');
+    var jsonResponse = convert.jsonDecode(response.body);
+    return fi.FacultyInfo.fromJson(jsonResponse);
   }
 
   Future<Map> networkCallMetadata() async {

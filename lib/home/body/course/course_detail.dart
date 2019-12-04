@@ -3,7 +3,9 @@ import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/course/course_attendance_detail.dart';
+import 'package:amihub/home/body/faculty/faculty_detail.dart';
 import 'package:amihub/models/course.dart';
+import 'package:amihub/models/course_info.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,7 +22,6 @@ class CoursePage extends StatefulWidget {
 }
 
 class _CoursePageState extends State<CoursePage> {
-
   int semester;
   bool isLoading = true;
 
@@ -51,19 +52,15 @@ class _CoursePageState extends State<CoursePage> {
           widget.course.courseName,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-              color: isLight(context)
-                  ? Colors.black
-                  : Colors.white),
+          style:
+              TextStyle(color: isLight(context) ? Colors.black : Colors.white),
         ),
         elevation: 0,
         brightness: Theme.of(context).brightness,
         leading: IconButton(
           icon: Icon(
             backButton(),
-            color: isLight(context)
-                ? Colors.black
-                : Colors.white,
+            color: isLight(context) ? Colors.black : Colors.white,
           ),
           onPressed: () {
             Navigator.of(context).pop();
@@ -85,9 +82,7 @@ class _CoursePageState extends State<CoursePage> {
                       child: Text(
                     getPercentage(),
                     style: TextStyle(
-                        color: isLight(context)
-                            ? Colors.black
-                            : Colors.white,
+                        color: isLight(context) ? Colors.black : Colors.white,
                         fontSize: 35),
                   )),
                   OutlineButton(
@@ -96,9 +91,7 @@ class _CoursePageState extends State<CoursePage> {
                       'Attendance detail',
                       style: TextStyle(
                           color:
-                              isLight(context)
-                                  ? Colors.black
-                                  : Colors.white),
+                              isLight(context) ? Colors.black : Colors.white),
                     ),
                     onPressed: semester == widget.course.semester
                         ? () {
@@ -122,7 +115,7 @@ class _CoursePageState extends State<CoursePage> {
                     padding: EdgeInsets.only(top: 40),
                     child: Loader(),
                   )
-                : FetchFaculty(course: widget.course)
+                : CourseInformation(course: widget.course)
           ],
         ),
       ),
@@ -166,54 +159,17 @@ class _CoursePageState extends State<CoursePage> {
   }
 }
 
-class Faculty {
-  String courseCode;
-  String courseName;
-  String facultyImage;
-  String facultyName;
-  String facultySignature;
-
-  Faculty({
-    this.courseCode,
-    this.courseName,
-    this.facultyImage,
-    this.facultyName,
-    this.facultySignature,
-  });
-
-  factory Faculty.fromJson(Map<String, dynamic> json) => Faculty(
-        courseCode: json["courseCode"],
-        courseName: json["courseName"],
-        facultyImage: json["facultyImage"],
-        facultyName: json["facultyName"],
-        facultySignature: json["facultySignature"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "courseCode": courseCode,
-        "courseName": courseName,
-        "facultyImage": facultyImage,
-        "facultyName": facultyName,
-        "facultySignature": facultySignature,
-      };
-
-  @override
-  String toString() {
-    return 'Faculty{courseCode: $courseCode, courseName: $courseName, facultyImage: $facultyImage, facultyName: $facultyName, facultySignature: $facultySignature}';
-  }
-}
-
-class FetchFaculty extends StatelessWidget {
+class CourseInformation extends StatelessWidget {
   final Course course;
   final AmizoneRepository amizoneRepository = AmizoneRepository();
 
-  FetchFaculty({Key key, this.course}) : super(key: key);
+  CourseInformation({Key key, this.course}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: amizoneRepository.fetchMyFaculty(),
-      builder: (context, AsyncSnapshot<List<Faculty>> snapshot) {
+      future: amizoneRepository.getCourseInfo(course.courseCode),
+      builder: (context, AsyncSnapshot<CourseInfo> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
             break;
@@ -225,96 +181,113 @@ class FetchFaculty extends StatelessWidget {
           case ConnectionState.active:
             break;
           case ConnectionState.done:
-            List<Faculty> faculties;
             if (snapshot.hasData)
-              faculties = snapshot.data
-                  .where((faculty) =>
-              faculty.courseName == course.courseName)
-                  .toList();
-            return (snapshot.hasError || snapshot.data == null)
-                ? Padding(
-              child: ErrorPage(),
-              padding: EdgeInsets.only(top: 50),
-            )
-                : faculties.length != 0
-                ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                PageHeader('Faculties'),
-                Container(
-                  height: 140,
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(8),
-                    shrinkWrap: true,
-                    physics: BouncingScrollPhysics(),
-                    itemCount: faculties.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      Faculty faculty = faculties.elementAt(index);
-                      return faculty.facultyImage != null
-                          ? Padding(
-                        padding:
-                        EdgeInsets.only(left: 5, right: 5),
-                        child: Container(
-                          child: Stack(
-                            children: <Widget>[
-                              Align(
-                                alignment: Alignment.topCenter,
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets.only(
-                                      left: 25),
-                                  child: CircleAvatar(
-                                    backgroundImage:
-                                    NetworkImage(
-                                      faculty.facultyImage,
-                                    ),
-                                    radius: 50,
-                                  ),
-                                ),
-                              ),
-                              Align(
-                                alignment:
-                                Alignment.bottomCenter,
-                                child: Container(
-                                  width: 150,
-                                  padding: EdgeInsets.fromLTRB(
-                                      10, 5, 10, 5),
-                                  decoration: ShapeDecoration(
-                                      shape: StadiumBorder(),
-                                      color: Theme.of(context)
-                                          .brightness ==
-                                          Brightness.light
-                                          ? Colors
-                                          .blueGrey.shade800
-                                          : Colors.white),
-                                  child: Text(
-                                    faculty.facultyName,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: blackOrWhite(
-                                            context)),
-                                    maxLines: 1,
-                                    overflow:
-                                    TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              )
-                            ],
+              return (snapshot.hasError || snapshot.data == null)
+                  ? Padding(
+                      child: ErrorPage(),
+                      padding: EdgeInsets.only(top: 50),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        PageHeader('Faculties'),
+                        Container(
+                          height: 140,
+                          child: ListView.builder(
+                            padding: EdgeInsets.all(8),
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                            itemCount: snapshot.data.faculties.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              Faculty faculty =
+                                  snapshot.data.faculties.elementAt(index);
+                              return faculty.photo != null
+                                  ? Padding(
+                                      padding:
+                                          EdgeInsets.only(left: 5, right: 5),
+                                      child: Container(
+                                        child: Stack(
+                                          children: <Widget>[
+                                            Align(
+                                              alignment: Alignment.topCenter,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.only(
+                                                        left: 25),
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    CustomPageRoute.pushPage(
+                                                        context: context,
+                                                        child: FacultyDetail(
+                                                            facultyCode: faculty.code,
+                                                            facultyName: faculty.name));
+                                                  },
+                                                  child: CircleAvatar(
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                      faculty.photo,
+                                                    ),
+                                                    radius: 50,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Align(
+                                              alignment:
+                                                  Alignment.bottomCenter,
+                                              child: Container(
+                                                width: 150,
+                                                padding: EdgeInsets.fromLTRB(
+                                                    10, 5, 10, 5),
+                                                decoration: ShapeDecoration(
+                                                    shape: StadiumBorder(),
+                                                    color: Theme.of(context)
+                                                                .brightness ==
+                                                            Brightness.light
+                                                        ? Colors
+                                                            .blueGrey.shade800
+                                                        : Colors.white),
+                                                child: Text(
+                                                  faculty.name,
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      color: blackOrWhite(
+                                                          context)),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : Container();
+                            },
                           ),
                         ),
-                      )
-                          : Container();
-                    },
-                  ),
-                ),
-              ],
-            )
-                : Container();
+
+                        //TODO: add these
+
+                        /**
+
+                      Average assessment
+                      course level
+                      no of backs
+                      average gpa
+                      no of students studied
+                      semester
+                      syllabus
+                      course type
+
+                   */
+                      ],
+                    );
         }
         return Text('end');
       },
     );
   }
 }
-

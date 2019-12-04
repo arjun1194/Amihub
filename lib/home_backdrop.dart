@@ -12,7 +12,6 @@ import 'package:amihub/home/body/todays_classes.dart';
 import 'package:amihub/models/backdrop_selected.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,7 +27,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Widget selected;
-  String photo;
   List<Widget> homeWidgets = [
     HomeBody(),
     HomeTodayClass(),
@@ -71,28 +69,50 @@ class _HomeState extends State<Home> {
 
   Widget accountButton() {
     return Material(
-      shape: CircleBorder(),
-      color: Colors.transparent,
-      clipBehavior: Clip.antiAlias,
-      child: photo != null
-          ? IconButton(
-              onPressed: accountButtonTapped,
-              icon: Container(
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.blueGrey),
-                child: Padding(
-                  padding: EdgeInsets.all(3.0),
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(photo, fit: BoxFit.fitWidth)),
-                ),
-              ),
-            )
-          : Icon(Icons.person_outline),
-    );
+        shape: CircleBorder(),
+        color: Colors.transparent,
+        clipBehavior: Clip.antiAlias,
+        child: FutureBuilder(
+          future: getPhoto(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+                break;
+              case ConnectionState.waiting:
+                return Padding(
+                  padding: EdgeInsets.all(3),
+                  child: IconButton(
+                      icon: Icon(Icons.account_circle),
+                      onPressed: () {
+                        accountButtonTapped(snapshot.data);
+                      }),
+                );
+              case ConnectionState.active:
+                break;
+              case ConnectionState.done:
+                return IconButton(
+                  onPressed: () {
+                    accountButtonTapped(snapshot.data);
+                  },
+                  icon: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: Colors.blueGrey),
+                    child: Padding(
+                      padding: EdgeInsets.all(3.0),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(snapshot.data,
+                              fit: BoxFit.fitWidth)),
+                    ),
+                  ),
+                );
+            }
+            return Text('end');
+          },
+        ));
   }
 
-  accountButtonTapped() async {
+  accountButtonTapped(String photo) async {
     String name;
     String enrollNo;
     SharedPreferences.getInstance().then((val) {
@@ -106,7 +126,7 @@ class _HomeState extends State<Home> {
               title: Text('Logged in as'),
               elevation: 8,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6)),
+                  borderRadius: BorderRadius.circular(8)),
               contentPadding: EdgeInsets.fromLTRB(5, 8, 5, 8),
               children: <Widget>[
                 ListTile(
@@ -132,17 +152,29 @@ class _HomeState extends State<Home> {
                         logoutDialog(context);
                       }),
                 ),
-                Divider(),
                 SizedBox(
-                  height: 10,
+                  height: 18,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 25, right: 25),
-                  child: OutlineButton(
-                    child: Text('Add another account'),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    onPressed: () {},
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10,left: 30,right: 30),
+                    child: FlatButton(
+                      onPressed: (){},
+                      shape: StadiumBorder(),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(Icons.info_outline,size: 23,),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            'About us',
+                            style: TextStyle(fontSize: 18),
+                          )
+                        ],
+                      ),
+                    ),
                   ),
                 )
               ],
@@ -151,18 +183,14 @@ class _HomeState extends State<Home> {
     });
   }
 
-
-  Future<SharedPreferences> openSharedPref() async {
+  Future<String> getPhoto() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences;
+    return sharedPreferences.getString('photo');
   }
 
   @override
   void initState() {
     super.initState();
-    openSharedPref().then((val) {
-      photo = val.getString('photo');
-    });
   }
 
   @override

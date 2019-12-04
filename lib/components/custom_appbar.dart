@@ -15,6 +15,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       brightness: Theme.of(context).brightness,
       title: Text(
         title,
+        maxLines: 2,
         style: TextStyle(
             color: isLight(context)
                 ? Colors.black

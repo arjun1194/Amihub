@@ -26,6 +26,9 @@ class _LoadApiState extends State<LoadApi> {
           case ConnectionState.waiting:
             return Scaffold(body: Loader());
           case ConnectionState.done:
+            if (snapshot.data == null || snapshot.data.statusCode >= 500) {
+              return ServerUnreachable();
+            }
             if (snapshot.hasError) {
               return errorPage();
             }
@@ -148,5 +151,61 @@ class _LoadApiState extends State<LoadApi> {
   void initState() {
     super.initState();
     _amizoneRepository = AmizoneRepository();
+  }
+}
+
+class ServerUnreachable extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    return Scaffold(
+      body: Container(
+        child: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: width * 0.7),
+                ),
+                Text(':(',
+                style: TextStyle(
+                  fontSize: 50
+                ),),
+                SizedBox(height: 20,),
+                Text(
+                  "Can't connect to our server",
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 25,
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Please try again",
+                  style: TextStyle(fontSize: 16),
+                  maxLines: 2,
+                  textAlign: TextAlign.center,
+                ),
+                Expanded(
+                  child: Container(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: OutlineButton(
+                    child: Text('go back'.toUpperCase()),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    shape: StadiumBorder(),
+                  ),
+                )
+              ]),
+        ),
+      ),
+    );
   }
 }
