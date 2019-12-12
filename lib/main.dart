@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   //TODO: Remove this
+  WidgetsFlutterBinding.ensureInitialized();
   Stetho.initialize();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) => runApp(MyApp()));
@@ -20,45 +21,23 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends State<MyApp>{
   bool isDarkThemeEnabled;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     openSharedPref().then((value) {
       setState(() {});
     });
   }
 
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
 
   openSharedPref() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     isDarkThemeEnabled = sharedPreferences.getBool('isDarkThemeEnabled');
     if (isDarkThemeEnabled == null) {
       isDarkThemeEnabled = false;
-    }
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-//      if (isLight(context))
-//        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-//            systemNavigationBarIconBrightness: Brightness.dark,
-//            systemNavigationBarColor: Colors.white));
-    } else if (state == AppLifecycleState.inactive) {
-      // app is inactive
-    } else if (state == AppLifecycleState.paused) {
-      // user quit our app temporally
-    } else if (state == AppLifecycleState.suspending) {
-      // app suspended
     }
   }
 
