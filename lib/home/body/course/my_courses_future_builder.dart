@@ -164,7 +164,14 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
           case ConnectionState.done:
             return (snapshot.hasError || snapshot.data == null)
                 ? ErrorPage()
-                : CourseBuild(snapshot: snapshot, semester: semester);
+                : snapshot.data.length == 0
+                    ? Center(
+                        child: Text(
+                          "Nothing here :(",
+                          style: TextStyle(fontSize: 28),
+                        ),
+                      )
+                    : CourseBuild(snapshot: snapshot, semester: semester);
           case ConnectionState.none:
             break;
           case ConnectionState.active:

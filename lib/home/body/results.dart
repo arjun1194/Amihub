@@ -2,9 +2,12 @@ import 'dart:ui';
 
 import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
+import 'package:amihub/components/refresh_button.dart';
+import 'package:amihub/components/utilities.dart';
 import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/repository/refresh_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -161,15 +164,32 @@ class ResultBuild extends StatefulWidget {
 
 class _ResultBuildState extends State<ResultBuild>
     with SingleTickerProviderStateMixin {
+  final key = new GlobalKey<ScaffoldState>();
+  final refreshKey = GlobalKey<RefreshIndicatorState>();
+  RefreshRepository refreshRepository = RefreshRepository();
+
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      child: ListView(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        padding: EdgeInsets.only(bottom: 15),
-        physics: BouncingScrollPhysics(),
-        children: resultCardList(),
+    print("building");
+    return Scaffold(
+      key: key,
+      body: Scrollbar(
+        child: RefreshIndicator(
+          onRefresh: refresh,
+          key: refreshKey,
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            padding: EdgeInsets.only(bottom: 15),
+            physics: BouncingScrollPhysics(),
+            children: resultCardList(),
+          ),
+        ),
+      ),
+      floatingActionButton: RefreshButton(
+        onPressed: () {
+          refreshKey.currentState?.show(atTop: true);
+        },
       ),
     );
   }
@@ -466,11 +486,31 @@ class _ResultBuildState extends State<ResultBuild>
       ],
     ));
   }
+
+  Future<Null> refresh() async {
+    await Utility.checkInternet().then((onValue) async {
+      await refreshRepository.refreshResult(widget.score.semester).then((val) {
+        setState(() {});
+        key.currentState.showSnackBar(SnackBar(
+          content: Text('Updated...'),
+          duration: Duration(milliseconds: 500),
+        ));
+      });
+    }).catchError((onError) async {
+      key.currentState.showSnackBar(SnackBar(
+        content: Text(
+          "Can't connect to internet.",
+        ),
+        duration: Duration(milliseconds: 1200),
+      ));
+    });
+  }
 }
 
 class ResultNotFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print("building");
     return Container(
       color: blackOrWhite(context),
       child: Center(

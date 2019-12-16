@@ -11,7 +11,11 @@ class RefreshRepository {
     await _amizoneRepository.networkCallCourses(semester);
   }
 
-  Future refreshMetadata() async{
+  Future refreshMetadata() async {
     await _amizoneRepository.networkCallMetadata();
+  }
+
+  Future refreshResult(int semester) async {
+    await _amizoneRepository.networkCallResult(semester);
   }
 }

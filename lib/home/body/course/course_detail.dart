@@ -190,7 +190,9 @@ class CourseInformation extends StatelessWidget {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        PageHeader('Faculties'),
+                        snapshot.data.faculties.length != 0
+                            ? PageHeader('Faculties')
+                            : Container(),
                         Container(
                           height: 140,
                           child: ListView.builder(
@@ -212,16 +214,17 @@ class CourseInformation extends StatelessWidget {
                                             Align(
                                               alignment: Alignment.topCenter,
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsets.only(
-                                                        left: 25),
+                                                padding: const EdgeInsets.only(
+                                                    left: 25),
                                                 child: InkWell(
                                                   onTap: () {
                                                     CustomPageRoute.pushPage(
                                                         context: context,
                                                         child: FacultyDetail(
-                                                            facultyCode: faculty.code,
-                                                            facultyName: faculty.name));
+                                                            facultyCode:
+                                                                faculty.code,
+                                                            facultyName:
+                                                                faculty.name));
                                                   },
                                                   child: CircleAvatar(
                                                     backgroundImage:
@@ -234,8 +237,7 @@ class CourseInformation extends StatelessWidget {
                                               ),
                                             ),
                                             Align(
-                                              alignment:
-                                                  Alignment.bottomCenter,
+                                              alignment: Alignment.bottomCenter,
                                               child: Container(
                                                 width: 150,
                                                 padding: EdgeInsets.fromLTRB(

@@ -39,8 +39,11 @@ class AmizoneRepository {
     if (dbResponse == null && dbResponseMinusOne == null) {
       Map data = await networkCallMetadata();
       List<Score> scores = data['score'];
-      if (semester == 1 && scores.isEmpty) return Score(cgpa: 1,sgpa: 1,semester: semester);
-      return scores.firstWhere((score) => score.semester == semester);
+      if (semester == 1 && scores.isEmpty)
+        return Score(cgpa: 1, sgpa: 1, semester: semester);
+      try {
+        return scores.firstWhere((score) => score.semester == semester);
+      } catch (e) {}
     }
     if (dbResponse == null && dbResponseMinusOne != null)
       return Score(cgpa: 0.0, sgpa: 0.0);
@@ -56,26 +59,27 @@ class AmizoneRepository {
     }
     return dbResponse;
   }
-  
+
   Future<ci.CourseInfo> getCourseInfo(String courseCode) async {
-    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    HttpClientWithInterceptor http =
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/myCourses/$courseCode');
     var jsonResponse = convert.jsonDecode(response.body);
-    ci.CourseInfo info  = ci.CourseInfo.fromJson(jsonResponse);
+    ci.CourseInfo info = ci.CourseInfo.fromJson(jsonResponse);
     return info;
   }
 
-  Future<fi.FacultyInfo> getFacultyInfo(String facultyCode) async{
-    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+  Future<fi.FacultyInfo> getFacultyInfo(String facultyCode) async {
+    HttpClientWithInterceptor http =
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/faculty/$facultyCode');
     var jsonResponse = convert.jsonDecode(response.body);
     return fi.FacultyInfo.fromJson(jsonResponse);
   }
 
   Future<Map> networkCallMetadata() async {
-
     HttpWithInterceptor http =
-    HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+        HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/metadata');
     var jsonResponse = convert.jsonDecode(response.body);
 
@@ -89,7 +93,7 @@ class AmizoneRepository {
 
     /// Parsing scores
     List<Score> scores = [];
-    for (var item in jsonResponse['results']){
+    for (var item in jsonResponse['results']) {
       Score score = Score.fromJson(item);
       scores.add(score);
       dbHelper.addGpa(score);
@@ -105,8 +109,7 @@ class AmizoneRepository {
 
     List<CourseAttendanceType> list = [
       CourseAttendanceType(attendanceType: "BELOW_75", noOfCourses: 0),
-      CourseAttendanceType(
-          attendanceType: "BETWEEN_75_TO_85", noOfCourses: 0),
+      CourseAttendanceType(attendanceType: "BETWEEN_75_TO_85", noOfCourses: 0),
       CourseAttendanceType(attendanceType: "ABOVE_85", noOfCourses: 0)
     ];
 
@@ -122,7 +125,8 @@ class AmizoneRepository {
     list.forEach((f) => dbHelper.addCourseAttendance(f));
 
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.setString("lastTimeMetadataUpdated", DateTime.now().toString());
+    sharedPreferences.setString(
+        "lastTimeMetadataUpdated", DateTime.now().toString());
 
     Map data = Map();
     data["score"] = scores;
@@ -130,26 +134,31 @@ class AmizoneRepository {
     return data;
   }
 
+  Future<List<CourseResult>> networkCallResult(int semester) async {
+    List<CourseResult> results = [];
+
+    HttpWithInterceptor http =
+        HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    var response = await http.get('$amihubUrl/result?semester=$semester');
+    var jsonResponse = convert.jsonDecode(response.body);
+    if (jsonResponse.length == 1) {
+      CourseResult courseResult = CourseResult.fromJson(jsonResponse[0]);
+      if (courseResult.courseTitle == "") return [courseResult];
+    }
+    for (var item in jsonResponse) {
+      CourseResult courseResult = CourseResult.fromJson(item);
+      courseResult.semester = semester;
+      dbHelper.addCourseResult(courseResult);
+      results.add(courseResult);
+    }
+    return results;
+  }
+
   Future<List<CourseResult>> fetchResultsWithSemester(int semester) async {
     List<CourseResult> dbResponse =
         await dbHelper.getResultWithSemester(semester);
-    List<CourseResult> results = [];
     if (dbResponse.isEmpty) {
-      HttpWithInterceptor http =
-          HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-      var response = await http.get('$amihubUrl/result?semester=$semester');
-      var jsonResponse = convert.jsonDecode(response.body);
-      if (jsonResponse.length == 1) {
-        CourseResult courseResult = CourseResult.fromJson(jsonResponse[0]);
-        if (courseResult.courseTitle == "") return [courseResult];
-      }
-      for (var item in jsonResponse) {
-        CourseResult courseResult = CourseResult.fromJson(item);
-        courseResult.semester = semester;
-        dbHelper.addCourseResult(courseResult);
-        results.add(courseResult);
-      }
-      return results;
+      return networkCallResult(semester);
     }
     return dbResponse;
   }
@@ -292,6 +301,7 @@ class AmizoneRepository {
     SharedPreferences.getInstance().then((sp) {
       sp.clear();
     });
+
     ///clear database
     dbHelper.deleteDatabase().then((e) {
       Navigator.of(context)

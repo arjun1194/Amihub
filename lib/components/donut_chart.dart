@@ -8,11 +8,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
-
-class DonutChartFutureBuilder extends StatelessWidget{
+class DonutChartFutureBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    int noOfCourseFound = 0;
     return FutureBuilder(
       future: AmizoneRepository().fetchCurrentAttendance(),
       builder: (BuildContext context,
@@ -25,11 +24,50 @@ class DonutChartFutureBuilder extends StatelessWidget{
             return DonutChartShimmer();
           case ConnectionState.done:
             if (snapshot.hasError) return Text('Error: ${snapshot.error}');
+            snapshot.data.forEach((f) => noOfCourseFound += f.noOfCourses);
+            if (noOfCourseFound == 0) return noCourseFound(context);
             return DonutChartBuild(
                 snapshot.data, "#56CD93", "#ECA24D", "#FF5479");
         }
         return Text(''); // unreachable
       },
+    );
+  }
+
+  Widget noCourseFound(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Material(
+          color: Colors.transparent,
+          shadowColor: Colors.grey,
+          clipBehavior: Clip.antiAlias,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+          elevation: 5,
+          child: ClipRRect(
+              borderRadius: BorderRadius.circular(13),
+              clipBehavior: Clip.antiAlias,
+              child: Container(
+                  decoration: ShapeDecoration(
+                      color:
+                          isLight(context) ? Color(0xffd6e5f3) : Colors.black,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(13)),
+                          side: BorderSide(
+                            width: 0.3,
+                            color: Colors.grey.shade400,
+                          ))),
+                  child: Center(
+                      child: Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 40, 15, 0),
+                    child: Text(
+                      "Can't get any of your courses",
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 28),
+                    ),
+                  ))))),
     );
   }
 }
@@ -243,7 +281,7 @@ class DonutChartBuild extends StatelessWidget {
                     ),
                     OutlineButton(
                       onPressed: () {
-                        backdropSelected.selected=2;
+                        backdropSelected.selected = 2;
 
                         //                        CustomPageRoute.pushPage(context: context, child: Scaffold(body: MyCourseBuilder(isHeader: false,), appBar: CustomAppbar('My Courses')));
                       },

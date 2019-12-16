@@ -88,9 +88,11 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   IconButton(
-                    icon: Icon(Icons.arrow_back_ios),
+                    icon: Icon(Icons.arrow_back),
                     iconSize: 20,
-                    color: Colors.grey.shade400,
+                    color: isLight(context)
+                        ? Colors.grey.shade700
+                        : Colors.white70,
                     onPressed: () {
                       changeState(selectDate.subtract(Duration(days: 1)));
                     },
@@ -102,8 +104,12 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                           theme: DatePickerTheme(
                             backgroundColor:
                                 isLight(context) ? Colors.white : Colors.black,
-                            itemStyle:
-                                TextStyle(fontFamily: "OpenSans", fontSize: 19),
+                            itemStyle: TextStyle(
+                                fontFamily: "OpenSans",
+                                fontSize: 19,
+                                color: isLight(context)
+                                    ? Colors.black
+                                    : Colors.white),
                             cancelStyle: TextStyle(
                                 fontFamily: "OpenSans",
                                 fontSize: 17,
@@ -112,7 +118,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                                 TextStyle(fontFamily: "OpenSans", fontSize: 17),
                           ),
                           showTitleActions: true,
-                          minTime: DateTime(2018, 3, 5),
+                          minTime: DateTime.now().subtract(Duration(days: 200)),
                           maxTime: DateTime(DateTime.now().year,
                                   DateTime.now().month, DateTime.now().day)
                               .add(Duration(days: 30)), onConfirm: (date) {
@@ -129,9 +135,11 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.arrow_forward_ios),
+                    icon: Icon(Icons.arrow_forward),
                     iconSize: 20,
-                    color: Colors.grey.shade400,
+                    color: isLight(context)
+                        ? Colors.grey.shade700
+                        : Colors.white70,
                     onPressed: () {
                       changeState(selectDate.add(Duration(days: 1)));
                     },
@@ -321,7 +329,7 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
                       topRight: Radius.circular(15)),
                 ),
               ),
-              height: MediaQuery.of(context).size.height* 0.6,
+              height: MediaQuery.of(context).size.height * 0.6,
               child: ListView(
                 physics: BouncingScrollPhysics(),
                 padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
@@ -436,7 +444,6 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
           );
         });
   }
-
 
   Stack stack(Text text2, Text text1) {
     return Stack(
