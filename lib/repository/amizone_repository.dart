@@ -155,6 +155,7 @@ class AmizoneRepository {
   }
 
   Future<List<CourseResult>> fetchResultsWithSemester(int semester) async {
+    print("hiii");
     List<CourseResult> dbResponse =
         await dbHelper.getResultWithSemester(semester);
     if (dbResponse.isEmpty) {

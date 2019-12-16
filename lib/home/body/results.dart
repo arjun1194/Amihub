@@ -30,6 +30,9 @@ class _HomeResultsState extends State<HomeResults> {
   int userSemester;
   Future<List> resultFuture;
   bool isLoading = true;
+  final key = new GlobalKey<ScaffoldState>();
+  final refreshKey = GlobalKey<RefreshIndicatorState>();
+  RefreshRepository refreshRepository = RefreshRepository();
 
   openSharedPref() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -68,87 +71,120 @@ class _HomeResultsState extends State<HomeResults> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: isLight(context) ? Colors.white : Colors.black,
-      child: semester == null || isLoading
-          ? Center(
-              child: Loader(),
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                PageHeader('Results'),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 32, right: 32),
-                  child: Center(
-                    child: Material(
-                      shape: StadiumBorder(
-                          side: BorderSide(
-                              width: 1, color: Colors.grey.shade200)),
-                      elevation: 1,
-                      child: Container(
-                        padding: EdgeInsets.only(left: 10, right: 10),
-                        color: blackOrWhite(context),
-                        child: DropdownButton<String>(
-                          underline: Container(),
-                          value: dropdownValue,
-                          isExpanded: false,
-                          isDense: true,
-                          onChanged: (String newValue) {
-                            setState(() {
-                              dropdownValue = newValue;
-                              changeSemester(
-                                  semesterList.indexOf(dropdownValue) + 1);
-                            });
-                          },
-                          items: semesterList
-                              .sublist(0, userSemester)
-                              .map((value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
+    return Scaffold(
+      key: key,
+      body: Container(
+        color: isLight(context) ? Colors.white : Colors.black,
+        child: semester == null || isLoading
+            ? Center(
+                child: Loader(),
+              )
+            : RefreshIndicator(
+                key: refreshKey,
+                onRefresh: refresh,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    PageHeader('Results'),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 32, right: 32),
+                      child: Center(
+                        child: Material(
+                          shape: StadiumBorder(
+                              side: BorderSide(
+                                  width: 1, color: Colors.grey.shade200)),
+                          elevation: 1,
+                          child: Container(
+                            padding: EdgeInsets.only(left: 10, right: 10),
+                            color: blackOrWhite(context),
+                            child: DropdownButton<String>(
+                              underline: Container(),
+                              value: dropdownValue,
+                              isExpanded: false,
+                              isDense: true,
+                              onChanged: (String newValue) {
+                                setState(() {
+                                  dropdownValue = newValue;
+                                  changeSemester(
+                                      semesterList.indexOf(dropdownValue) + 1);
+                                });
+                              },
+                              items: semesterList
+                                  .sublist(0, userSemester)
+                                  .map((value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Expanded(
-                  child: FutureBuilder<List<CourseResult>>(
-                    future: resultFuture,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<CourseResult>> snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return Loader();
-                        case ConnectionState.done:
-                          if (snapshot.hasError) return ErrorPage();
-                          if (snapshot.data.isEmpty ||
-                              snapshot.data.first.courseTitle == "") {
-                            return ResultNotFound();
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Expanded(
+                      child: FutureBuilder<List<CourseResult>>(
+                        future: resultFuture,
+                        builder: (BuildContext context,
+                            AsyncSnapshot<List<CourseResult>> snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.waiting:
+                              return Loader();
+                            case ConnectionState.done:
+                              if (snapshot.hasError) return ErrorPage();
+                              if (snapshot.data.isEmpty ||
+                                  snapshot.data.first.courseTitle == "") {
+                                return ResultNotFound();
+                              }
+                              return Container(
+                                  child: ResultBuild(
+                                      results: snapshot.data, score: score));
+                            case ConnectionState.none:
+                              break;
+                            case ConnectionState.active:
+                              break;
                           }
-                          return Container(
-                              child: ResultBuild(
-                                  results: snapshot.data, score: score));
-                        case ConnectionState.none:
-                          break;
-                        case ConnectionState.active:
-                          break;
-                      }
-                      return Text('');
-                    },
-                  ),
-                )
-              ],
-            ),
+                          return Text('');
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ),
+      ),
+      floatingActionButton: RefreshButton(
+        onPressed: () {
+          refreshKey.currentState?.show(atTop: true);
+        },
+      ),
     );
+  }
+
+  Future<Null> refresh() async {
+    await Utility.checkInternet().then((onValue) async {
+      await refreshRepository.refreshResult(score.semester).then((val) {
+        setState(() {
+          resultFuture = amizoneRepository.fetchResultsWithSemester(semester);
+        });
+        key.currentState.showSnackBar(SnackBar(
+          content: Text('Updated...'),
+          duration: Duration(milliseconds: 500),
+        ));
+      });
+    }).catchError((onError) async {
+      key.currentState.showSnackBar(SnackBar(
+        content: Text(
+          "Can't connect to internet.",
+        ),
+        duration: Duration(milliseconds: 1200),
+      ));
+    });
   }
 }
 
@@ -164,32 +200,15 @@ class ResultBuild extends StatefulWidget {
 
 class _ResultBuildState extends State<ResultBuild>
     with SingleTickerProviderStateMixin {
-  final key = new GlobalKey<ScaffoldState>();
-  final refreshKey = GlobalKey<RefreshIndicatorState>();
-  RefreshRepository refreshRepository = RefreshRepository();
-
   @override
   Widget build(BuildContext context) {
-    print("building");
-    return Scaffold(
-      key: key,
-      body: Scrollbar(
-        child: RefreshIndicator(
-          onRefresh: refresh,
-          key: refreshKey,
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            padding: EdgeInsets.only(bottom: 15),
-            physics: BouncingScrollPhysics(),
-            children: resultCardList(),
-          ),
-        ),
-      ),
-      floatingActionButton: RefreshButton(
-        onPressed: () {
-          refreshKey.currentState?.show(atTop: true);
-        },
+    return Scrollbar(
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        padding: EdgeInsets.only(bottom: 15),
+        physics: BouncingScrollPhysics(),
+        children: resultCardList(),
       ),
     );
   }
@@ -486,31 +505,11 @@ class _ResultBuildState extends State<ResultBuild>
       ],
     ));
   }
-
-  Future<Null> refresh() async {
-    await Utility.checkInternet().then((onValue) async {
-      await refreshRepository.refreshResult(widget.score.semester).then((val) {
-        setState(() {});
-        key.currentState.showSnackBar(SnackBar(
-          content: Text('Updated...'),
-          duration: Duration(milliseconds: 500),
-        ));
-      });
-    }).catchError((onError) async {
-      key.currentState.showSnackBar(SnackBar(
-        content: Text(
-          "Can't connect to internet.",
-        ),
-        duration: Duration(milliseconds: 1200),
-      ));
-    });
-  }
 }
 
 class ResultNotFound extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("building");
     return Container(
       color: blackOrWhite(context),
       child: Center(
