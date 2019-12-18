@@ -15,6 +15,16 @@ class CustomPageRoute {
   }
 }
 
+SnackBar platformSnackBar(
+    {@required Widget content, @required Duration duration, double elevation}) {
+  return SnackBar(
+    content: content,
+    duration: duration,
+    behavior:
+        Platform.isIOS ? SnackBarBehavior.floating : SnackBarBehavior.fixed,
+  );
+}
+
 IconData backButton() {
   return Platform.isIOS ? CupertinoIcons.back : Icons.arrow_back;
 }

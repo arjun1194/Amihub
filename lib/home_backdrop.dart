@@ -101,8 +101,10 @@ class _HomeState extends State<Home> {
                       padding: EdgeInsets.all(3.0),
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: Image.network(snapshot.data,
-                              fit: BoxFit.fitWidth)),
+                          child: snapshot.data != null
+                              ? Image.network(snapshot.data,
+                                  fit: BoxFit.fitWidth)
+                              : Icon(Icons.account_circle)),
                     ),
                   ),
                 );
@@ -157,14 +159,18 @@ class _HomeState extends State<Home> {
                 ),
                 Center(
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10,left: 30,right: 30),
+                    padding:
+                        const EdgeInsets.only(bottom: 10, left: 30, right: 30),
                     child: FlatButton(
-                      onPressed: (){},
+                      onPressed: () {},
                       shape: StadiumBorder(),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Icon(Icons.info_outline,size: 23,),
+                          Icon(
+                            Icons.info_outline,
+                            size: 23,
+                          ),
                           SizedBox(
                             width: 5,
                           ),

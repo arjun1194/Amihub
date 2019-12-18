@@ -25,6 +25,7 @@ dependencies:
 
   cupertino_icons: ^0.1.2
   shared_preferences:
+  http: ^0.12.0+2
   http_interceptor:
   random_color:
   intl: ^0.16.0

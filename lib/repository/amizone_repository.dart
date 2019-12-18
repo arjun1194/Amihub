@@ -15,12 +15,18 @@ import 'package:amihub/models/today_class.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AmizoneRepository {
   DatabaseHelper dbHelper = DatabaseHelper.db;
+
+  Future<bool> checkServerStatus() async {
+    var response = await http.get('$amihubUrl/serverDown');
+    return (response.body == 'true') ? true : false;
+  }
 
   Future<List<CourseAttendanceType>> fetchCurrentAttendance() async {
     List<CourseAttendanceType> dbResponse = await dbHelper.getCourseType();
@@ -155,7 +161,6 @@ class AmizoneRepository {
   }
 
   Future<List<CourseResult>> fetchResultsWithSemester(int semester) async {
-    print("hiii");
     List<CourseResult> dbResponse =
         await dbHelper.getResultWithSemester(semester);
     if (dbResponse.isEmpty) {

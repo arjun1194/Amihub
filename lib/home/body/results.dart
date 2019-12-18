@@ -180,7 +180,7 @@ class _HomeResultsState extends State<HomeResults> {
     }).catchError((onError) async {
       key.currentState.showSnackBar(SnackBar(
         content: Text(
-          "Can't connect to internet.",
+          "Can't connect to our server.",
         ),
         duration: Duration(milliseconds: 1200),
       ));

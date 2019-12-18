@@ -54,11 +54,9 @@ class _HomeBodyState extends State<HomeBody> {
       ),
       floatingActionButton: RefreshButton(onPressed: () {
         scaffoldKey.currentState.showSnackBar(SnackBar(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
           content: Text('Refreshing'),
-          behavior: SnackBarBehavior.floating,
           elevation: 8,
-          duration: Duration(milliseconds: 600),
+          duration: Duration(milliseconds: 500),
         ));
         refresh();
       }),
@@ -85,7 +83,7 @@ class _HomeBodyState extends State<HomeBody> {
       DateTime lastTime = DateTime.parse(time);
       scaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text(
-          "Can't connect to internet.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
+          "Can't connect to our server.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
         ),
         duration: Duration(milliseconds: 1200),
       ));

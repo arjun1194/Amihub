@@ -69,7 +69,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
       DateTime lastTime = DateTime.parse(time);
       key.currentState.showSnackBar(SnackBar(
         content: Text(
-          "Can't connect to internet.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
+          "Can't connect to our server.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
         ),
         duration: Duration(milliseconds: 1200),
       ));

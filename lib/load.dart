@@ -36,6 +36,7 @@ class _LoadApiState extends State<LoadApi> {
               return usernameOrPasswordIncorrect(snapshot);
             } else
               SharedPreferences.getInstance().then((sharedPreferences) {
+                sharedPreferences.setBool("appDown", false);
                 sharedPreferences
                     .setString(
                         "Authorization", snapshot.data.headers['authorization'])

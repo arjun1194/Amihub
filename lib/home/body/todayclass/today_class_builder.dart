@@ -63,7 +63,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
       DateTime lastTime = DateTime.parse(time);
       key.currentState.showSnackBar(SnackBar(
         content: Text(
-          "Can't connect to internet.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
+          "Can't connect to our server.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
         ),
         duration: Duration(milliseconds: 1200),
       ));
@@ -332,8 +332,11 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
               height: MediaQuery.of(context).size.height * 0.6,
               child: ListView(
                 physics: BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(15, 20, 15, 15),
+                padding: EdgeInsets.fromLTRB(15, 10, 15, 15),
                 children: <Widget>[
+                  SizedBox(
+                    height: 10,
+                  ),
                   stack(
                     Text(
                       "Course",

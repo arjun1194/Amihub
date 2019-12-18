@@ -1,3 +1,4 @@
+import 'package:amihub/components/app_down.dart';
 import 'package:amihub/forgot_password.dart';
 import 'package:amihub/home_backdrop.dart';
 import 'package:amihub/load.dart';
@@ -16,4 +17,5 @@ Map<String, WidgetBuilder> routes = {
   '/forgotPassword': (BuildContext context) => ForgotPassword(),
   '/load': (BuildContext context) => LoadApi(),
   '/login': (BuildContext context) => LoginPage(),
+  '/down': (BuildContext context) => AppDown(),
 };

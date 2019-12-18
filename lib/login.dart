@@ -40,13 +40,11 @@ class _LoginPageState extends State<LoginPage> {
         passwordController.text.length == 0) {
       loginPageScaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text('Please enter username and passsword'),
-        behavior: SnackBarBehavior.floating,
       ));
     } else if (!RegExp(r'[0-9]')
         .hasMatch(usernameController.text)) {
       loginPageScaffoldKey.currentState.showSnackBar(SnackBar(
         content: Text("Username can't be alphabet"),
-        behavior: SnackBarBehavior.floating,
 
       ));
     } else {
@@ -64,6 +62,10 @@ class _LoginPageState extends State<LoginPage> {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarIconBrightness: Brightness.light,
         statusBarColor: Colors.transparent
+      ));
+    } else {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarBrightness: Brightness.light
       ));
     }
     return Scaffold(
@@ -194,16 +196,3 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-class LoginAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent
-    );
-  }
-
-  @override
-  // TODO: implement preferredSize
-  Size get preferredSize => Size.fromHeight(0);
-
-}

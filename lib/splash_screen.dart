@@ -11,13 +11,17 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+
     SharedPreferences.getInstance().then((sharedPreferences) {
       if (sharedPreferences.containsKey('Authorization')) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/home', (Route<dynamic> route) => false);
+        if (!sharedPreferences.getBool("appDown") ) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/home', (Route<dynamic> route) => false);
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/down', (Route<dynamic> route) => false);
+        }
       } else {
-        if (sharedPreferences.containsKey('Authorization'))
-          sharedPreferences.remove('Authorization');
         Navigator.pushNamedAndRemoveUntil(
             context, '/login', (Route<dynamic> route) => false);
       }
