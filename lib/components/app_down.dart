@@ -2,6 +2,7 @@ import 'package:amihub/components/custom_appbar.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppDown extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _AppDownState extends State<AppDown> {
       appBar: CustomAppbar(
         "App Down",
         isBackEnabled: false,
+        isCenter: true
       ),
       body: Container(
         width: double.infinity,
@@ -55,7 +57,7 @@ class _AppDownState extends State<AppDown> {
             RaisedButton(
               shape: StadiumBorder(),
               child: Text(
-                'Retry',
+                'Retry'.toUpperCase(),
               ),
               onPressed: buttonPressed,
             ),
@@ -69,8 +71,10 @@ class _AppDownState extends State<AppDown> {
   }
 
   void buttonPressed() {
-    _amizoneRepository.checkServerStatus().then((status) {
+    _amizoneRepository.checkServerStatus().then((status) async {
       if (!status) {
+        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        sharedPreferences.setBool("appDown", false);
         navKey.currentState
             .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
       }

@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 final navKey = new GlobalKey<NavigatorState>();
 var loginPageScaffoldKey = new GlobalKey<ScaffoldState>();
 
-
 ///colors
-
 
 const greenMain = Color(0xFF203782);
 const fontMain = Color(0xFF0F100F);
@@ -44,6 +42,16 @@ List semesterList = [
   'Ten'
 ];
 
+String aboutUs = "We are two tech enthusiasts who love making software for the welfare of people.\n"
+    "Our only aim and motivation to develop this app was to provide free and open information to all students of amity.\n"
+    "We have worked hard to make our dream become a reality, which was to provide to you, the students of Amity with free and open information which will help you with the Struggle in Amity.\n"
+    "We will continue to provide high quality information for every student in Amity university. \n"
+    "By using this app,we wanted to make sure that our juniors don’t  go through the same lack of information as we did.\n"
+    "Amity Univeristy is big university, with over 120 Institutes, over a 1000 faculties, and well over 40,000 students.There is a lot going on in Amity all the time.\n"
+    "No one can get a glimpse of what is going on in Amity all the time. So we decided to do that for you and provide to you a ton of information which will help you through the course of your college life, and help you make a your life here a little better by giving you updated information about on going events from all over the campus.\n"
+    "We are students just like you so if we feel good about this app or want to connect with us, or have a cool idea that would make this app way cooler please feel free to contact us or follow us on our socials below.\n"
+    "If you are a tech guy or girl and want to contribute in some way please contact us as it is really hard to maintain this app by ourselves.";
+
 var darkTheme = ThemeData(
   brightness: Brightness.dark,
   fontFamily: "GoogleSans",
@@ -70,18 +78,16 @@ var lightTheme = ThemeData(
     backgroundColor: Colors.white,
     colorScheme: ColorScheme.light());
 
-bool isLight(context) => Theme.of(context).brightness == Brightness.light ? true : false;
-
+bool isLight(context) =>
+    Theme.of(context).brightness == Brightness.light ? true : false;
 
 //some cards change color with this
-blackOrWhite(context) => isLight(context)
-    ? Colors.white
-    : Colors.black;
+blackOrWhite(context) => isLight(context) ? Colors.white : Colors.black;
 const appTitle = 'Amihub';
 const appIcon = 'assets/logo.png';
 
 //api end point
-var amihubUrl = 'http://192.168.0.4:8080';
+var amihubUrl = 'http://api.avirias.xyz:8080';
 
 String facultyImage(String code) =>
     "https://amizone.net/AdminAmizone/images/StaffImages/${code}_p.png";
@@ -133,4 +139,3 @@ List<BottomNavigationBarItem> list = [
           "Home")
       .bottomNavItem,
 ];
-

@@ -83,20 +83,20 @@ class _LoadApiState extends State<LoadApi> {
         ),
         Expanded(child: Container()),
         Padding(
-          padding: const EdgeInsets.only(bottom: 200),
+          padding: const EdgeInsets.only(bottom: 180),
           child: Column(
             children: <Widget>[
               Text(
                 'Aw snap! we hit a roadblock',
                 maxLines: 2,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 27),
+                style: TextStyle(fontSize: 25),
               ),
               SizedBox(
-                height: 20,
+                height: 14,
               ),
               Text(
-                snapshot.data.body.toString(),
+                snapshot.data.body.toString().toLowerCase(),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,

@@ -87,7 +87,7 @@ class HorizontalChartBuild extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(13),
                 child: Container(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.fromLTRB(10,10,10,3),
                   decoration: ShapeDecoration(
                       color: blackOrWhite(context),
                       shape: RoundedRectangleBorder(
@@ -135,40 +135,84 @@ class HorizontalChart extends StatefulWidget {
 }
 
 class _HorizontalChartState extends State<HorizontalChart> {
-  String textSelected;
+
+  Score _selectedScore;
+
+  _onSelectionChanged(SelectionModel model){
+    final selectedDatum = model.selectedDatum;
+    Score score;
+
+    if(selectedDatum.isNotEmpty){
+      score = selectedDatum.elementAt(0).datum as Score;
+    }
+
+    setState(() {
+      _selectedScore = score;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return LineChart(
-      widget.seriesList,
-      defaultRenderer:
-          LineRendererConfig(includeLine: true, includePoints: true),
-      behaviors: [
-        SeriesLegend(
-          position: BehaviorPosition.inside,
-          insideJustification: InsideJustification.topEnd,
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.height;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          height: 0.24 * height,
+          width: width * 0.95,
+          child: LineChart(
+            widget.seriesList,
+            defaultRenderer:
+                LineRendererConfig(includeLine: true, includePoints: true),
+            behaviors: [
+              SeriesLegend(
+                position: BehaviorPosition.inside,
+                insideJustification: InsideJustification.topEnd,
+              ),
+            ],
+            selectionModels: [
+              SelectionModelConfig(
+                type: SelectionModelType.info,
+                changedListener: _onSelectionChanged
+              )
+            ],
+            primaryMeasureAxis: new NumericAxisSpec(
+                tickProviderSpec: new StaticNumericTickProviderSpec(List.generate(
+                    10,
+                    (index) => TickSpec(index + 1,
+                        label: index % 2 != 0 ? '${index + 1}' : '',
+                        style: TextStyleSpec(
+                            color: isLight(context)
+                                ? Color.black
+                                : Color.white)))),
+                showAxisLine: true),
+            domainAxis: NumericAxisSpec(
+                tickProviderSpec: StaticNumericTickProviderSpec(List.generate(
+                    widget.score.length,
+                    (index) => TickSpec(index + 1,
+                        label: '${index + 1}',
+                        style: TextStyleSpec(
+                            color: isLight(context)
+                                ? Color.black
+                                : Color.white))))),
+            animate: true,
+          ),
         ),
+        _selectedScore != null ? Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('CGPA :'),
+            SizedBox(width: 2,),
+            Text(_selectedScore.cgpa.toString()),
+            SizedBox(width: 13,),
+            Text('SGPA :'),
+            SizedBox(width: 2,),
+            Text(_selectedScore.sgpa.toString())
+          ],
+        ) : Container()
       ],
-      primaryMeasureAxis: new NumericAxisSpec(
-          tickProviderSpec: new StaticNumericTickProviderSpec(List.generate(
-              10,
-              (index) => TickSpec(index + 1,
-                  label: index % 2 != 0 ? '${index + 1}' : '',
-                  style: TextStyleSpec(
-                      color: isLight(context)
-                          ? Color.black
-                          : Color.white)))),
-          showAxisLine: true),
-      domainAxis: NumericAxisSpec(
-          tickProviderSpec: StaticNumericTickProviderSpec(List.generate(
-              widget.score.length,
-              (index) => TickSpec(index + 1,
-                  label: '${index + 1}',
-                  style: TextStyleSpec(
-                      color: isLight(context)
-                          ? Color.black
-                          : Color.white))))),
-      animate: true,
     );
   }
 }

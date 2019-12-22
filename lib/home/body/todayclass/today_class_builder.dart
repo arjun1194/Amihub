@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:amihub/components/error.dart';
 import 'package:amihub/components/page_heading.dart';
+import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/components/refresh_button.dart';
 import 'package:amihub/components/utilities.dart';
 import 'package:amihub/home/body/todayclass/today_class_seamer.dart';
@@ -51,7 +52,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
           .refreshTodayClass(DateFormat("MM/dd/yyyy").format(selectDate))
           .then((val) {
         setState(() {});
-        key.currentState.showSnackBar(SnackBar(
+        key.currentState.showSnackBar(platformSnackBar(
           content: Text('Updated...'),
           duration: Duration(milliseconds: 500),
         ));
@@ -61,7 +62,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
           await SharedPreferences.getInstance();
       String time = sharedPreferences.getString("lastTimeTCUpdated");
       DateTime lastTime = DateTime.parse(time);
-      key.currentState.showSnackBar(SnackBar(
+      key.currentState.showSnackBar(platformSnackBar(
         content: Text(
           "Can't connect to our server.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
         ),
@@ -75,7 +76,7 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
     return RefreshIndicator(
       onRefresh: refresh,
       key: refreshKey,
-      displacement: 70,
+      displacement: 75,
       child: Scaffold(
         key: key,
         body: Container(

@@ -33,9 +33,11 @@ dependencies:
   path_provider:
   sqflite:
   charts_flutter:
+  url_launcher: ^5.4.1
+
   provider: ^3.1.0+1
   #stetho for chrome debug tools
-  flutter_stetho:
+  #flutter_stetho:
 
 
 
@@ -72,6 +74,8 @@ flutter:
     - assets/authentication.png
     - assets/error.png
     - assets/chill.png
+    - assets/github.png
+
   fonts:
     - family: Playfair
       fonts:

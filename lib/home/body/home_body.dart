@@ -1,6 +1,7 @@
 import 'package:amihub/components/donut_chart.dart';
 import 'package:amihub/components/horizontal_chart.dart';
 import 'package:amihub/components/page_heading.dart';
+import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/components/refresh_button.dart';
 import 'package:amihub/components/utilities.dart';
 import 'package:amihub/home/body/home/home_future_builder.dart';
@@ -24,7 +25,8 @@ class _HomeBodyState extends State<HomeBody> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    var scaleFactor = MediaQuery.of(context).textScaleFactor;
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: isLight(context) ? Colors.white : Colors.black,
@@ -32,7 +34,7 @@ class _HomeBodyState extends State<HomeBody> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           PageHeader("Today's Class"),
-          SizedBox(height: 2),
+          SizedBox(height: 4,),
           Expanded(
             child: ListView(
               scrollDirection: Axis.vertical,
@@ -40,20 +42,25 @@ class _HomeBodyState extends State<HomeBody> {
               physics: BouncingScrollPhysics(),
               padding: EdgeInsets.only(bottom: 15),
               children: <Widget>[
-                buildContainer(height, width, HomeTodayClassBuilder()),
+                buildContainer(
+                    height, width, scaleFactor, HomeTodayClassBuilder()),
                 PageHeader("Attendance Summary"),
                 // TODO : Change The Pie Chart
-                buildContainer(height, width, DonutChartFutureBuilder()),
+                buildContainer(
+                    height, width, scaleFactor, DonutChartFutureBuilder()),
                 // TODO : Remove this for 1st semester
                 PageHeader("Score Summary"),
-                buildContainer(height, width, HorizontalChartBuilder()),
+                Container(
+                    height: height / width < 2.0 ? height * 0.31 * scaleFactor : height * 0.31 * scaleFactor,
+                    width: width * 0.95,
+                    child: HorizontalChartBuilder()),
               ],
             ),
           ),
         ],
       ),
       floatingActionButton: RefreshButton(onPressed: () {
-        scaffoldKey.currentState.showSnackBar(SnackBar(
+        scaffoldKey.currentState.showSnackBar(platformSnackBar(
           content: Text('Refreshing'),
           elevation: 8,
           duration: Duration(milliseconds: 500),
@@ -70,7 +77,7 @@ class _HomeBodyState extends State<HomeBody> {
           .then((val) async {
         await refreshRepository.refreshMetadata().then((val) {
           setState(() {});
-          scaffoldKey.currentState.showSnackBar(SnackBar(
+          scaffoldKey.currentState.showSnackBar(platformSnackBar(
             content: Text('Updated...'),
             duration: Duration(milliseconds: 500),
           ));
@@ -81,7 +88,7 @@ class _HomeBodyState extends State<HomeBody> {
           await SharedPreferences.getInstance();
       String time = sharedPreferences.getString("lastTimeTCUpdated");
       DateTime lastTime = DateTime.parse(time);
-      scaffoldKey.currentState.showSnackBar(SnackBar(
+      scaffoldKey.currentState.showSnackBar(platformSnackBar(
         content: Text(
           "Can't connect to our server.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
         ),
@@ -90,7 +97,17 @@ class _HomeBodyState extends State<HomeBody> {
     });
   }
 
-  Container buildContainer(double height, double width, Widget child) {
-    return Container(height: 0.3 * height, width: 0.95 * width, child: child);
+  Container buildContainer(
+      double height, double width, double scaleFactor, Widget child) {
+    if (height / width < 2)
+      return Container(
+          height: 0.3 * height * scaleFactor,
+          width: 0.95 * width,
+          child: child);
+    return Container(
+      height: 0.26 * height * scaleFactor,
+      width: 0.95 * width,
+      child: child,
+    );
   }
 }

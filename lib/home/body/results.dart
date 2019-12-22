@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
+import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/components/refresh_button.dart';
 import 'package:amihub/components/utilities.dart';
 import 'package:amihub/models/result.dart';
@@ -49,7 +50,7 @@ class _HomeResultsState extends State<HomeResults> {
     openSharedPref().then((val) {
       setState(() {
         semester = val;
-        dropdownValue = semesterList.elementAt(semester - 1);
+        dropdownValue = semesterList.elementAt(semester - 2);
         resultFuture = amizoneRepository.fetchResultsWithSemester(semester);
         isLoading = false;
       });
@@ -82,6 +83,7 @@ class _HomeResultsState extends State<HomeResults> {
             : RefreshIndicator(
                 key: refreshKey,
                 onRefresh: refresh,
+                displacement: 70,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -98,7 +100,7 @@ class _HomeResultsState extends State<HomeResults> {
                                   width: 1, color: Colors.grey.shade200)),
                           elevation: 1,
                           child: Container(
-                            padding: EdgeInsets.only(left: 10, right: 10),
+                            padding: EdgeInsets.only(left: 15, right: 10),
                             color: blackOrWhite(context),
                             child: DropdownButton<String>(
                               underline: Container(),
@@ -168,17 +170,17 @@ class _HomeResultsState extends State<HomeResults> {
 
   Future<Null> refresh() async {
     await Utility.checkInternet().then((onValue) async {
-      await refreshRepository.refreshResult(score.semester).then((val) {
+      await refreshRepository.refreshResult(semester).then((val) {
         setState(() {
           resultFuture = amizoneRepository.fetchResultsWithSemester(semester);
         });
-        key.currentState.showSnackBar(SnackBar(
+        key.currentState.showSnackBar(platformSnackBar(
           content: Text('Updated...'),
           duration: Duration(milliseconds: 500),
         ));
       });
     }).catchError((onError) async {
-      key.currentState.showSnackBar(SnackBar(
+      key.currentState.showSnackBar(platformSnackBar(
         content: Text(
           "Can't connect to our server.",
         ),
@@ -462,15 +464,15 @@ class _ResultBuildState extends State<ResultBuild>
                         overflow: TextOverflow.ellipsis,
                       )
                     ]),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Text(courseResult.courseCode),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10, left: 50),
-                          child: Text(DateFormat.yMMMMd().format(publish)),
-                        )
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(right:10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(courseResult.courseCode),
+                          Text(DateFormat.yMMMMd().format(publish))
+                        ],
+                      ),
                     ),
                   ],
                 ),

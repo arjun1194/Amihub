@@ -1,8 +1,11 @@
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:amihub/components/about_us.dart';
 import 'package:amihub/components/backdrop.dart';
 import 'package:amihub/components/backdrop_buttons.dart';
 import 'package:amihub/components/logout.dart';
+import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/faculty/faculty.dart';
 import 'package:amihub/home/body/home_body.dart';
 import 'package:amihub/home/body/my_courses.dart';
@@ -96,7 +99,7 @@ class _HomeState extends State<Home> {
                   },
                   icon: Container(
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.blueGrey),
+                        shape: BoxShape.circle, color: Colors.white),
                     child: Padding(
                       padding: EdgeInsets.all(3.0),
                       child: ClipRRect(
@@ -133,10 +136,14 @@ class _HomeState extends State<Home> {
               children: <Widget>[
                 ListTile(
                   leading: CircleAvatar(
-                    radius: 25,
+                    radius: 32,
+                    backgroundColor: Colors.white,
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.network(photo, fit: BoxFit.cover)),
+                        borderRadius: BorderRadius.circular(32),
+                        child: Image.network(
+                          photo,
+                          fit: BoxFit.cover,
+                        )),
                   ),
                   title: Text(
                     name,
@@ -144,7 +151,7 @@ class _HomeState extends State<Home> {
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                     ),
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(enrollNo),
@@ -155,14 +162,17 @@ class _HomeState extends State<Home> {
                       }),
                 ),
                 SizedBox(
-                  height: 18,
+                  height: 14,
                 ),
                 Center(
                   child: Padding(
                     padding:
                         const EdgeInsets.only(bottom: 10, left: 30, right: 30),
                     child: FlatButton(
-                      onPressed: () {},
+                      onPressed: (){
+                        Navigator.of(context).pop();
+                        CustomPageRoute.pushPage(context: context, child: AboutUS());
+                      },
                       shape: StadiumBorder(),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -224,11 +234,18 @@ class _HomeState extends State<Home> {
         ],
       ),
       backLayerColor: isLight(context) ? Color(0xff171C1F) : Color(0xff1a1d1e),
-      headerHeight: 40,
+      headerHeight: Platform.isIOS ? 45 : 40,
       backLayer: Center(child: BackDropButtons()),
       frontLayer: homeWidgets[backdropSelected.selected ?? 0],
       iconPosition: BackdropIconPosition.leading,
       actions: [accountButton()],
+      frontLayerBorderRadius: Platform.isIOS
+          ? BorderRadius.only(
+              topLeft: Radius.circular(13), topRight: Radius.circular(13))
+          : BorderRadius.only(
+              topLeft: Radius.circular(16.0),
+              topRight: Radius.circular(16.0),
+            ),
     );
   }
 }

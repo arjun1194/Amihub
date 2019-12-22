@@ -1,3 +1,4 @@
+import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/components/textfield.dart';
 import 'package:amihub/login/login-inputs.dart';
 import 'package:amihub/theme/theme.dart';
@@ -38,13 +39,15 @@ class _LoginPageState extends State<LoginPage> {
   loginPressed(String text){
     if (usernameController.text.length == 0 ||
         passwordController.text.length == 0) {
-      loginPageScaffoldKey.currentState.showSnackBar(SnackBar(
+      loginPageScaffoldKey.currentState.showSnackBar(platformSnackBar(
         content: Text('Please enter username and passsword'),
+        duration: Duration(milliseconds: 800)
       ));
     } else if (!RegExp(r'[0-9]')
         .hasMatch(usernameController.text)) {
-      loginPageScaffoldKey.currentState.showSnackBar(SnackBar(
+      loginPageScaffoldKey.currentState.showSnackBar(platformSnackBar(
         content: Text("Username can't be alphabet"),
+          duration: Duration(milliseconds: 800)
 
       ));
     } else {

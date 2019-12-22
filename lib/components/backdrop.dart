@@ -1,6 +1,7 @@
 library backdrop;
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -35,11 +36,8 @@ class BackdropScaffold extends StatefulWidget {
     this.frontLayer,
     this.backLayerColor,
     this.actions = const <Widget>[],
-    this.headerHeight = 32.0,
-    this.frontLayerBorderRadius = const BorderRadius.only(
-      topLeft: Radius.circular(16.0),
-      topRight: Radius.circular(16.0),
-    ),
+    this.headerHeight,
+    this.frontLayerBorderRadius,
     this.iconPosition = BackdropIconPosition.leading,
   });
 

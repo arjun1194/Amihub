@@ -57,7 +57,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
         setState(() {
           myFuture = amizoneRepository.fetchMyCoursesWithSemester(semester);
         });
-        key.currentState.showSnackBar(SnackBar(
+        key.currentState.showSnackBar(platformSnackBar(
           content: Text('Updated...'),
           duration: Duration(milliseconds: 500),
         ));
@@ -67,7 +67,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
           await SharedPreferences.getInstance();
       String time = sharedPreferences.getString("lastTimeMCUpdated");
       DateTime lastTime = DateTime.parse(time);
-      key.currentState.showSnackBar(SnackBar(
+      key.currentState.showSnackBar(platformSnackBar(
         content: Text(
           "Can't connect to our server.\nlast updated ${Utility.lastTimeUpdated(lastTime)} ago",
         ),
@@ -105,7 +105,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                                     width: 1, color: Colors.grey.shade200)),
                             elevation: 1,
                             child: Container(
-                              padding: EdgeInsets.only(left: 10, right: 10),
+                              padding: EdgeInsets.only(left: 15, right: 10),
                               color: blackOrWhite(context),
                               child: DropdownButton<String>(
                                 underline: Container(),

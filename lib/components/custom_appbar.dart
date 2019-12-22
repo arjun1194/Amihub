@@ -5,13 +5,15 @@ import 'package:flutter/material.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final bool isCenter;
   final bool isBackEnabled;
 
-  CustomAppbar(this.title,{this.isBackEnabled = true});
+  CustomAppbar(this.title,{this.isBackEnabled = true,this.isCenter = false});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      centerTitle: isCenter,
       brightness: Theme.of(context).brightness,
       title: Text(
         title,
