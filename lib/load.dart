@@ -36,11 +36,9 @@ class _LoadApiState extends State<LoadApi> {
               return usernameOrPasswordIncorrect(snapshot);
             } else
               SharedPreferences.getInstance().then((sharedPreferences) {
-                sharedPreferences.setBool("appDown", false);
-                sharedPreferences
-                    .setString(
-                        "Authorization", snapshot.data.headers['authorization'])
-                    .then((saved) {
+                sharedPreferences.setString(
+                    "Authorization", snapshot.data.headers['authorization']);
+                sharedPreferences.setBool("isOpen", false).then((saved) {
                   Future.delayed(Duration(seconds: 3));
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/home', (Route<dynamic> route) => false);
@@ -168,11 +166,13 @@ class ServerUnreachable extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(top: width * 0.7),
                 ),
-                Text(':(',
-                style: TextStyle(
-                  fontSize: 50
-                ),),
-                SizedBox(height: 20,),
+                Text(
+                  ':(',
+                  style: TextStyle(fontSize: 50),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 Text(
                   "Can't connect to our server",
                   maxLines: 2,

@@ -21,6 +21,7 @@ class _FacultyDetailState extends State<FacultyDetail> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: FutureBuilder(
       future: amizoneRepository.getFacultyInfo(widget.facultyCode),
@@ -52,32 +53,63 @@ class _FacultyDetailState extends State<FacultyDetail> {
                 : CustomScrollView(
                     slivers: <Widget>[
                       SliverAppBar(
-                        expandedHeight: MediaQuery.of(context).size.width,
-                        forceElevated: false,
-                        floating: false,
-                        pinned: true,
-                        backgroundColor: greyMain,
-                        flexibleSpace: new FlexibleSpaceBar(
-                          title: Text(
-                            snapshot.data.facultyName,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          background: Stack(
-                            fit: StackFit.expand,
-                            children: <Widget>[
-                              Image.network(
-                                snapshot.data.facultyImage,
-                                fit: BoxFit.cover,
+                          expandedHeight:
+                              MediaQuery.of(context).size.width * 0.8,
+                          pinned: true,
+                          flexibleSpace: FlexibleSpaceBar(
+                            collapseMode: CollapseMode.none,
+                            background: Container(
+                              margin: EdgeInsets.fromLTRB(width * 0.05,
+                                  width * 0.25, width * 0.05, width * 0.1),
+                              child: Center(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: <Widget>[
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(6),
+                                      child: Image.network(
+                                        snapshot.data.facultyImage,
+                                        width: 180,
+                                        height: 180,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10,),
+                                    Flexible(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(snapshot.data.facultyName,
+                                          style: TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w600
+                                          ),
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.left,),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: <Widget>[
+                                            Icon(Icons.mail),
+                                            SizedBox(width: 18,),
+                                            Icon(Icons.call),
+                                          ],
+                                        )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SliverList(delegate: SliverChildListDelegate([
+                            ),
+                          )),
+                      SliverList(
+                          delegate: SliverChildListDelegate([
                         Container(
                           height: 1000,
                         )

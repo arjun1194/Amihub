@@ -74,6 +74,7 @@ flutter:
     - assets/authentication.png
     - assets/error.png
     - assets/chill.png
+    - assets/whatsapp.png
     - assets/github.png
 
   fonts:

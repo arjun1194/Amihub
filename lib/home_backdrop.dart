@@ -107,7 +107,7 @@ class _HomeState extends State<Home> {
                           child: snapshot.data != null
                               ? Image.network(snapshot.data,
                                   fit: BoxFit.fitWidth)
-                              : Icon(Icons.account_circle)),
+                              : Icon(Icons.account_circle,color: Colors.blueGrey.shade700,)),
                     ),
                   ),
                 );
@@ -147,11 +147,12 @@ class _HomeState extends State<Home> {
                   ),
                   title: Text(
                     name,
+                    maxLines: 2,
+                    softWrap: false,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                     ),
-                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   subtitle: Text(enrollNo),
@@ -162,16 +163,17 @@ class _HomeState extends State<Home> {
                       }),
                 ),
                 SizedBox(
-                  height: 14,
+                  height: 4,
                 ),
                 Center(
                   child: Padding(
                     padding:
                         const EdgeInsets.only(bottom: 10, left: 30, right: 30),
                     child: FlatButton(
-                      onPressed: (){
+                      onPressed: () {
                         Navigator.of(context).pop();
-                        CustomPageRoute.pushPage(context: context, child: AboutUS());
+                        CustomPageRoute.pushPage(
+                            context: context, child: AboutUS());
                       },
                       shape: StadiumBorder(),
                       child: Row(
@@ -218,8 +220,8 @@ class _HomeState extends State<Home> {
         children: <Widget>[
           Image.asset(
             'assets/amihub.png',
-            height: 32,
-            width: 32,
+            height: 30,
+            width: 30,
           ),
           SizedBox(
             width: 8,
@@ -228,7 +230,7 @@ class _HomeState extends State<Home> {
             appTitle,
             style: TextStyle(
               color: Colors.grey.shade200.withOpacity(0.7),
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w600,
             ),
           )
         ],

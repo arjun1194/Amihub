@@ -16,6 +16,7 @@ class _AboutUSState extends State<AboutUS> {
       appBar: CustomAppbar('About Us'),
       body: Container(
         child: ListView(
+          physics: BouncingScrollPhysics(),
           children: <Widget>[
             PageHeader('Team'),
             SizedBox(
@@ -58,7 +59,8 @@ class _AboutUSState extends State<AboutUS> {
                 githubButton("@avirias", "https://github.com/avirias"),
                 githubButton("@arjun1194", "https://github.com/arjun1194")
               ],
-            )
+            ),
+            SizedBox(height: 20,)
           ],
         ),
       ),

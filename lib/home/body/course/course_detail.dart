@@ -11,6 +11,7 @@ import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CoursePage extends StatefulWidget {
   final Course course;
@@ -68,8 +69,8 @@ class _CoursePageState extends State<CoursePage> {
         ),
       ),
       body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          physics: BouncingScrollPhysics(),
           children: <Widget>[
             SizedBox(
               height: 10,
@@ -123,7 +124,8 @@ class _CoursePageState extends State<CoursePage> {
   }
 
   Widget internalAssessmentBuild() {
-    return widget.course.internalAssessment != null
+    return widget.course.internalAssessment != null &&
+            widget.course.internalAssessment != ""
         ? Padding(
             padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
             child: ExpansionTile(
@@ -188,108 +190,205 @@ class CourseInformation extends StatelessWidget {
                       padding: EdgeInsets.only(top: 50),
                     )
                   : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         snapshot.data.faculties.length != 0
                             ? PageHeader('Faculties')
                             : Container(),
-                        Container(
-                          height: 140,
-                          child: ListView.builder(
-                            padding: EdgeInsets.all(8),
-                            shrinkWrap: true,
-                            physics: BouncingScrollPhysics(),
-                            itemCount: snapshot.data.faculties.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              Faculty faculty =
-                                  snapshot.data.faculties.elementAt(index);
-                              return faculty.photo != null
-                                  ? Padding(
-                                      padding:
-                                          EdgeInsets.only(left: 5, right: 5),
-                                      child: Container(
-                                        child: Stack(
-                                          children: <Widget>[
-                                            Align(
-                                              alignment: Alignment.topCenter,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 25),
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    CustomPageRoute.pushPage(
-                                                        context: context,
-                                                        child: FacultyDetail(
-                                                            facultyCode:
-                                                                faculty.code,
-                                                            facultyName:
-                                                                faculty.name));
-                                                  },
-                                                  child: CircleAvatar(
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                      faculty.photo,
+                        snapshot.data.faculties.length != 0
+                            ? Container(
+                                height: 140,
+                                child: ListView.builder(
+                                  padding: EdgeInsets.all(8),
+                                  shrinkWrap: true,
+                                  physics: BouncingScrollPhysics(),
+                                  itemCount: snapshot.data.faculties.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    Faculty faculty = snapshot.data.faculties
+                                        .elementAt(index);
+                                    return faculty.photo != null
+                                        ? Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 5, right: 5),
+                                            child: Container(
+                                              child: Stack(
+                                                children: <Widget>[
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 25),
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          CustomPageRoute.pushPage(
+                                                              context: context,
+                                                              child: FacultyDetail(
+                                                                  facultyCode:
+                                                                      faculty
+                                                                          .code,
+                                                                  facultyName:
+                                                                      faculty
+                                                                          .name));
+                                                        },
+                                                        child: CircleAvatar(
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                            faculty.photo,
+                                                          ),
+                                                          radius: 50,
+                                                        ),
+                                                      ),
                                                     ),
-                                                    radius: 50,
                                                   ),
-                                                ),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.bottomCenter,
+                                                    child: Container(
+                                                      width: 150,
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              10, 5, 10, 5),
+                                                      decoration: ShapeDecoration(
+                                                          shape:
+                                                              StadiumBorder(),
+                                                          color: Theme.of(context)
+                                                                      .brightness ==
+                                                                  Brightness
+                                                                      .light
+                                                              ? Colors.blueGrey
+                                                                  .shade800
+                                                              : Colors.white),
+                                                      child: Text(
+                                                        faculty.name,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            color: blackOrWhite(
+                                                                context)),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
                                               ),
                                             ),
-                                            Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: Container(
-                                                width: 150,
-                                                padding: EdgeInsets.fromLTRB(
-                                                    10, 5, 10, 5),
-                                                decoration: ShapeDecoration(
-                                                    shape: StadiumBorder(),
-                                                    color: Theme.of(context)
-                                                                .brightness ==
-                                                            Brightness.light
-                                                        ? Colors
-                                                            .blueGrey.shade800
-                                                        : Colors.white),
-                                                child: Text(
-                                                  faculty.name,
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      color: blackOrWhite(
-                                                          context)),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
+                                          )
+                                        : Container();
+                                  },
+                                ),
+                              )
+                            : Container(),
+                        snapshot.data.noOfStudentsStudied != 0
+                            ? Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Card(
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)),
+                                  color: isLight(context) ? Colors.grey.shade100 : Color(0xff121212),
+                                  child: Container(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            PageHeader("Stats"),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 8),
+                                              child: IconButton(
+                                                  icon: Icon(Icons.more_vert),
+                                                  onPressed: () {}),
                                             )
                                           ],
                                         ),
-                                      ),
-                                    )
-                                  : Container();
-                            },
-                          ),
-                        ),
-
-                        //TODO: add these
-
-                        /**
-
-                      Average assessment
-                      course level
-                      no of backs
-                      average gpa
-                      no of students studied
-                      semester
-                      syllabus
-                      course type
-
-                   */
+                                        Center(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Chip(
+                                                  label: Text(snapshot
+                                                      .data.courseType)),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                              Chip(
+                                                  label: Text(snapshot
+                                                      .data.levelOfHardness
+                                                      .toString()))
+                                            ],
+                                          ),
+                                        ),
+                                        buildRow(
+                                            'Average Assessment',
+                                            snapshot.data.averageAssessment
+                                                .toStringAsFixed(2)),
+                                        buildRow('No of backs',
+                                            snapshot.data.noOfBacks),
+                                        buildRow('Average GPA',
+                                            snapshot.data.averageGpa.toStringAsFixed(2)),
+                                        buildRow('Students studied',
+                                            snapshot.data.noOfStudentsStudied),
+                                        SizedBox(
+                                          height: 10,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        PageHeader('Syllabus'),
+                        Center(
+                          child: RaisedButton(
+                              shape: StadiumBorder(),
+                              elevation: 0,
+                              hoverElevation: 0,
+                              color: isLight(context) ? Colors.grey.shade200 : Color(0xff121212),
+                              onPressed: () async {
+                                launch(snapshot.data.courseSyllabus);
+                              },
+                              child: Text(extractSyllabus(
+                                  snapshot.data.courseSyllabus))),
+                        )
                       ],
                     );
         }
         return Text('end');
       },
     );
+  }
+
+  Widget buildRow(String key, var value) {
+    return Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            key,
+            style: TextStyle(fontSize: 16),
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Text(value.toString(), style: TextStyle(fontSize: 16))
+        ],
+      ),
+    );
+  }
+
+  String extractSyllabus(String courseSyllabus) {
+    List<String> parts = courseSyllabus.split("/");
+    return parts.elementAt(parts.length - 1);
   }
 }
