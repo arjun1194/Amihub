@@ -37,7 +37,7 @@ dependencies:
 
   provider: ^3.1.0+1
   #stetho for chrome debug tools
-  #flutter_stetho:
+  flutter_stetho:
 
 
 
@@ -74,7 +74,7 @@ flutter:
     - assets/authentication.png
     - assets/error.png
     - assets/chill.png
-    - assets/whatsapp.png
+#    - assets/whatsapp.png
     - assets/github.png
 
   fonts:

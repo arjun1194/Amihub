@@ -1,10 +1,14 @@
 import 'package:amihub/components/custom_appbar.dart';
 import 'package:amihub/components/error.dart';
 import 'package:amihub/components/loader.dart';
+import 'package:amihub/components/page_heading.dart';
+import 'package:amihub/components/platform_specific.dart';
+import 'package:amihub/home/body/course/course_detail.dart';
 import 'package:amihub/models/faculty_info.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FacultyDetail extends StatefulWidget {
   final String facultyCode;
@@ -56,6 +60,10 @@ class _FacultyDetailState extends State<FacultyDetail> {
                           expandedHeight:
                               MediaQuery.of(context).size.width * 0.8,
                           pinned: true,
+                          actions: <Widget>[
+                            IconButton(
+                                icon: Icon(Icons.more_vert), onPressed: () {})
+                          ],
                           flexibleSpace: FlexibleSpaceBar(
                             collapseMode: CollapseMode.none,
                             background: Container(
@@ -74,32 +82,61 @@ class _FacultyDetailState extends State<FacultyDetail> {
                                         fit: BoxFit.cover,
                                       ),
                                     ),
-                                    SizedBox(width: 10,),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
                                     Flexible(
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          Text(snapshot.data.facultyName,
-                                          style: TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w600
+                                          Text(
+                                            snapshot.data.facultyName,
+                                            style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w600),
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.left,
                                           ),
-                                          maxLines: 3,
-                                          overflow: TextOverflow.ellipsis,
-                                          textAlign: TextAlign.left,),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: <Widget>[
-                                            Icon(Icons.mail),
-                                            SizedBox(width: 18,),
-                                            Icon(Icons.call),
-                                          ],
-                                        )
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: <Widget>[
+                                              IconButton(
+                                                icon: Icon(Icons.mail),
+                                                onPressed: () {
+                                                  launch(
+                                                      "mailto:${snapshot.data.email}");
+                                                },
+                                              ),
+                                              IconButton(
+                                                icon: Icon(Icons.call),
+                                                onPressed: () {
+                                                  launch(
+                                                      "tel:${snapshot.data.phoneNo}");
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                          snapshot.data.cabin != null
+                                              ? Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 10),
+                                                  child: Text(
+                                                    snapshot.data.cabin,
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  ),
+                                                )
+                                              : Container()
                                         ],
                                       ),
                                     )
@@ -110,9 +147,50 @@ class _FacultyDetailState extends State<FacultyDetail> {
                           )),
                       SliverList(
                           delegate: SliverChildListDelegate([
-                        Container(
-                          height: 1000,
-                        )
+                        snapshot.data.designation != null
+                            ? Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Chip(
+                                    label: Text(snapshot.data.designation)),
+                              )
+                            : Container(),
+                        snapshot.data.department != null
+                            ? Chip(
+                                label: Text(
+                                  snapshot.data.department,
+                                  style: TextStyle(),
+                                ),
+                              )
+                            : Container(),
+                        snapshot.data.courses.length != 0
+                            ? PageHeader('Courses')
+                            : Container(),
+                        snapshot.data.courses.length != 0
+                            ? Container(
+                                padding: EdgeInsets.all(10),
+                                child: Wrap(
+                                    children:
+                                        snapshot.data.courses.map((course) {
+                                  return InkWell(
+                                    onTap: () {
+//                                      CustomPageRoute.pushPage(context: context, child: CoursePage(course: ,))
+                                    },
+                                    child: Container(
+                                      decoration: ShapeDecoration(
+                                          color: Color(0xff121212),
+                                          shape: StadiumBorder()),
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            12, 8, 12, 8),
+                                        child: Text(
+                                          course.name,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList()),
+                              )
+                            : Container(),
                       ]))
                     ],
                   );

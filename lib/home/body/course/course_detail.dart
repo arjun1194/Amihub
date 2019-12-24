@@ -347,8 +347,8 @@ class CourseInformation extends StatelessWidget {
                                 ),
                               )
                             : Container(),
-                        PageHeader('Syllabus'),
-                        Center(
+                        snapshot.data.courseSyllabus != "#" ? PageHeader('Syllabus') : Container(),
+                        snapshot.data.courseSyllabus != "#" ? Center(
                           child: RaisedButton(
                               shape: StadiumBorder(),
                               elevation: 0,
@@ -359,7 +359,7 @@ class CourseInformation extends StatelessWidget {
                               },
                               child: Text(extractSyllabus(
                                   snapshot.data.courseSyllabus))),
-                        )
+                        ): Container()
                       ],
                     );
         }

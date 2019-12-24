@@ -20,12 +20,12 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-
     //
     inputs = LoginInputs();
     usernameController = TextEditingController();
     passwordController = TextEditingController();
   }
+
 
   void login(LoginModel loginModel) {
     Navigator.pushNamed(context, '/load', arguments: loginModel);
@@ -36,23 +36,19 @@ class _LoginPageState extends State<LoginPage> {
         context, '/Forgot', (Route<dynamic> route) => false);
   }
 
-  loginPressed(String text){
+  loginPressed(String text) {
     if (usernameController.text.length == 0 ||
         passwordController.text.length == 0) {
       loginPageScaffoldKey.currentState.showSnackBar(platformSnackBar(
-        content: Text('Please enter username and passsword'),
-        duration: Duration(milliseconds: 800)
-      ));
-    } else if (!RegExp(r'[0-9]')
-        .hasMatch(usernameController.text)) {
+          content: Text('Please enter username and passsword'),
+          duration: Duration(milliseconds: 800)));
+    } else if (!RegExp(r'[0-9]').hasMatch(usernameController.text)) {
       loginPageScaffoldKey.currentState.showSnackBar(platformSnackBar(
-        content: Text("Username can't be alphabet"),
-          duration: Duration(milliseconds: 800)
-
-      ));
+          content: Text("Username can't be alphabet"),
+          duration: Duration(milliseconds: 800)));
     } else {
-      LoginModel loginModel = LoginModel(
-          usernameController.text, passwordController.text);
+      LoginModel loginModel =
+          LoginModel(usernameController.text, passwordController.text);
       login(loginModel);
     }
   }
@@ -61,15 +57,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    if (Theme.of(context).brightness == Brightness.dark){
+    if (Theme.of(context).brightness == Brightness.dark) {
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarIconBrightness: Brightness.light,
-        statusBarColor: Colors.transparent
-      ));
+          statusBarIconBrightness: Brightness.light,
+          statusBarColor: Colors.transparent));
     } else {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarBrightness: Brightness.light
-      ));
+      SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(statusBarBrightness: Brightness.light));
     }
     return Scaffold(
       key: loginPageScaffoldKey,
@@ -98,9 +92,8 @@ class _LoginPageState extends State<LoginPage> {
               height: height * 1.06,
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isLight(context)
-                      ? Colors.white
-                      : Colors.grey.shade900),
+                  color:
+                      isLight(context) ? Colors.white : Colors.grey.shade900),
             ),
           ),
           Align(
@@ -122,11 +115,9 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.white,
                   size: 28.0,
                 ),
-                color: isLight(context)
-                    ? Color(0xff3655B5)
-                    : Color(0xff364042),
+                color: isLight(context) ? Color(0xff3655B5) : Color(0xff364042),
                 padding: EdgeInsets.all(18.0),
-                onPressed: (){
+                onPressed: () {
                   loginPressed(null);
                 },
                 splashColor: Colors.blueGrey.withOpacity(0.4),
@@ -187,7 +178,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     shape: StadiumBorder(),
-                    onPressed: () {},
+                    onPressed: () {
+
+                    },
                   ),
                 ),
               ],
@@ -198,4 +191,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
