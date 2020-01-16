@@ -1,6 +1,12 @@
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class TodayClassShimmer extends StatefulWidget {
+  
+  final ColorTween colorTween;
+
+  TodayClassShimmer({this.colorTween});
+
   @override
   _TodayClassShimmerState createState() => _TodayClassShimmerState();
 }
@@ -18,12 +24,10 @@ class _TodayClassShimmerState extends State<TodayClassShimmer>
       vsync: this,
     );
 
-    animation =
-        new ColorTween(begin: Colors.grey.shade200, end: Colors.grey.shade400)
-            .animate(animationController)
-              ..addListener(() {
-                setState(() {});
-              });
+    animation = widget.colorTween.animate(animationController)
+      ..addListener(() {
+        setState(() {});
+      });
 
     animationController.forward();
 

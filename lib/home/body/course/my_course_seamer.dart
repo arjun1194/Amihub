@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class MyCourseShimmer extends StatefulWidget {
+
+  final ColorTween colorTween;
+
+
+  MyCourseShimmer({this.colorTween});
+
   @override
   _MyCourseShimmerState createState() => _MyCourseShimmerState();
 }
@@ -18,10 +24,8 @@ class _MyCourseShimmerState extends State<MyCourseShimmer>
       vsync: this,
     );
 
-    animation = new ColorTween(
-      begin: const Color(0xeadcdcdc),
-      end: const Color(0xeaacacac),
-    ).animate(animationController)
+    animation = widget.colorTween
+        .animate(animationController)
       ..addListener(() {
         setState(() {});
       });

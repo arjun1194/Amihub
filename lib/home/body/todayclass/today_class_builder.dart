@@ -182,7 +182,15 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
           (BuildContext context, AsyncSnapshot<List<TodayClass>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return TodayClassShimmer();
+            return isLight(context)
+                ? TodayClassShimmer(
+                    colorTween: ColorTween(
+                        begin: Colors.grey.shade200, end: Colors.grey.shade400),
+                  )
+                : TodayClassShimmer(
+                    colorTween: ColorTween(
+                        begin: Colors.grey.shade900, end: Color(0xff121212)),
+                  );
           case ConnectionState.done:
             if (snapshot.hasError) return ErrorPage();
             // No Class check
@@ -211,7 +219,7 @@ class NoClassToday extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         Image.asset(
           "assets/chill.png",
@@ -323,7 +331,7 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
             elevation: 0,
             child: Container(
               decoration: ShapeDecoration(
-                color: blackOrWhite(context),
+                color: isLight(context)? Colors.white.withOpacity(0.87) : Colors.black87,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(15),

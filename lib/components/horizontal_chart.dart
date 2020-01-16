@@ -197,7 +197,7 @@ class _HorizontalChartState extends State<HorizontalChart> {
                             color: isLight(context)
                                 ? Color.black
                                 : Color.white))))),
-            animate: true,
+            animate: false,
           ),
         ),
         _selectedScore != null ? Row(

@@ -1,7 +1,14 @@
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomeTodayClassShimmer extends StatefulWidget {
+
+  final ColorTween colorTween;
+
+
+  HomeTodayClassShimmer({this.colorTween});
+
   @override
   _HomeTodayClassShimmerState createState() => _HomeTodayClassShimmerState();
 }
@@ -19,13 +26,11 @@ class _HomeTodayClassShimmerState extends State<HomeTodayClassShimmer>
       vsync: this,
     );
 
-    animation = new ColorTween(
-      begin: const Color(0xffd6d6d6),
-      end: const Color(0xffe8e8e8),
-    ).animate(animationController)
-      ..addListener(() {
-        setState(() {});
-      });
+    animation = widget.colorTween
+        .animate(animationController)
+          ..addListener(() {
+            setState(() {});
+          });
 
     animationController.forward();
 
@@ -57,7 +62,8 @@ class _HomeTodayClassShimmerState extends State<HomeTodayClassShimmer>
           child: Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [Colors.white70, Colors.white],
+                    colors: isLight(context) ? [Colors.white70, Colors.white]
+                    : [Colors.black87,Color(0xff121212)],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter),
                 borderRadius: BorderRadius.all(Radius.circular(13))),

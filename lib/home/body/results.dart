@@ -50,7 +50,7 @@ class _HomeResultsState extends State<HomeResults> {
     openSharedPref().then((val) {
       setState(() {
         semester = val;
-        dropdownValue = semesterList.elementAt(semester - 2);
+        dropdownValue = semesterList.elementAt(semester - 1);
         resultFuture = amizoneRepository.fetchResultsWithSemester(semester);
         isLoading = false;
       });

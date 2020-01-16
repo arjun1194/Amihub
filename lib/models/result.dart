@@ -49,4 +49,11 @@ class CourseResult {
     "publishDate": publishDate,
     "semester": semester,
   };
+
+  @override
+  String toString() {
+    return 'CourseResult{courseCode: $courseCode, courseTitle: $courseTitle, maxMarks: $maxMarks, associatedCreditUnits: $associatedCreditUnits, gradeObtained: $gradeObtained, gradePoints: $gradePoints, creditPoints: $creditPoints, earnedCreditUnits: $earnedCreditUnits, publishDate: $publishDate, semester: $semester}';
+  }
+
+
 }

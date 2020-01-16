@@ -1,12 +1,8 @@
-import 'package:amihub/components/custom_appbar.dart';
 import 'package:amihub/components/error.dart';
 import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
-import 'package:amihub/components/platform_specific.dart';
-import 'package:amihub/home/body/course/course_detail.dart';
 import 'package:amihub/models/faculty_info.dart';
 import 'package:amihub/repository/amizone_repository.dart';
-import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

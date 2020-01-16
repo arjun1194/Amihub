@@ -1,5 +1,5 @@
 name: amihub
-description: A new Flutter project.
+description: Attendance tracker for Amity University
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -11,7 +11,7 @@ description: A new Flutter project.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 0.0.11
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -37,7 +37,7 @@ dependencies:
 
   provider: ^3.1.0+1
   #stetho for chrome debug tools
-  flutter_stetho:
+#  flutter_stetho:
 
 
 

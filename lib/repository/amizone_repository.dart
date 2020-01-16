@@ -11,6 +11,7 @@ import 'package:amihub/models/faculty.dart';
 import 'package:amihub/models/faculty_info.dart' as fi;
 import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
+import 'package:amihub/models/timetable.dart';
 import 'package:amihub/models/today_class.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -158,6 +159,19 @@ class AmizoneRepository {
       results.add(courseResult);
     }
     return results;
+  }
+
+  Future<List<TimeTable>> networkCallTimeTable() async{
+    List<TimeTable> timetable = [];
+    HttpWithInterceptor http =
+    HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    var response = await http.get('$amihubUrl/timetable');
+    var jsonResponse = convert.jsonDecode(response.body);
+    for (var item in jsonResponse){
+      TimeTable tt = TimeTable.fromJson(item);
+      timetable.add(tt);
+    }
+    return timetable;
   }
 
   Future<List<CourseResult>> fetchResultsWithSemester(int semester) async {

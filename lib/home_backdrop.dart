@@ -214,41 +214,83 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var backdropSelected = Provider.of<BackdropSelected>(context);
-    return BackdropScaffold(
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/amihub.png',
-            height: 30,
-            width: 30,
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          Text(
-            appTitle,
-            style: TextStyle(
-              color: Colors.grey.shade200.withOpacity(0.7),
-              fontWeight: FontWeight.w600,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: BackdropScaffold(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'assets/amihub.png',
+              height: 27,
+              width: 27,
             ),
-          )
-        ],
+            SizedBox(
+              width: 8,
+            ),
+            Text(
+              appTitle,
+              style: TextStyle(
+                color: Colors.grey.shade200.withOpacity(0.7),
+                fontWeight: FontWeight.w600,
+              ),
+            )
+          ],
+        ),
+        backLayerColor: isLight(context) ? Color(0xff171C1F) : Color(0xff1a1d1e),
+        headerHeight: Platform.isIOS ? 45 : 40,
+        backLayer: Center(child: BackDropButtons()),
+        frontLayer: homeWidgets[backdropSelected.selected ?? 0],
+        iconPosition: BackdropIconPosition.leading,
+        actions: [accountButton()],
+        frontLayerBorderRadius: Platform.isIOS
+            ? BorderRadius.only(
+                topLeft: Radius.circular(13), topRight: Radius.circular(13))
+            : BorderRadius.only(
+                topLeft: Radius.circular(16.0),
+                topRight: Radius.circular(16.0),
+              ),
       ),
-      backLayerColor: isLight(context) ? Color(0xff171C1F) : Color(0xff1a1d1e),
-      headerHeight: Platform.isIOS ? 45 : 40,
-      backLayer: Center(child: BackDropButtons()),
-      frontLayer: homeWidgets[backdropSelected.selected ?? 0],
-      iconPosition: BackdropIconPosition.leading,
-      actions: [accountButton()],
-      frontLayerBorderRadius: Platform.isIOS
-          ? BorderRadius.only(
-              topLeft: Radius.circular(13), topRight: Radius.circular(13))
-          : BorderRadius.only(
-              topLeft: Radius.circular(16.0),
-              topRight: Radius.circular(16.0),
-            ),
     );
+  }
+
+  Future<bool> _onWillPop() {
+    var backdropSelected = Provider.of<BackdropSelected>(context);
+
+    if (backdropSelected.selected != 0){
+      setState(() {
+        backdropSelected.selected = 0;
+      });
+      return null;
+    }
+    else {
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8)
+            ),
+            title: new Text('Are you sure?'),
+            content: new Text('App will be closed'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text(
+                  'No',
+                ),
+              ),
+              new FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: new Text('Yes'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
 
@@ -274,8 +316,8 @@ class _BackDropButtonsState extends State<BackDropButtons> {
       Icons.home,
       Icons.list,
       Icons.library_books,
-      Icons.person,
-      Icons.home,
+      Icons.group,
+      Icons.assessment,
       Icons.settings
     ];
 

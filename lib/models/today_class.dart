@@ -1,4 +1,3 @@
-
 class TodayClass {
   String _color;
   String _courseCode;
@@ -26,24 +25,31 @@ class TodayClass {
   }
 
   String get color => _color;
+
   set color(String color) => _color = color;
 
   String get courseCode => _courseCode;
+
   set courseCode(String courseCode) => _courseCode = courseCode;
 
   String get facultyName => _facultyName;
+
   set facultyName(String facultyName) => _facultyName = facultyName;
 
   String get roomNo => _roomNo;
+
   set roomNo(String roomNo) => _roomNo = roomNo;
 
   String get start => _start;
+
   set start(String start) => _start = start;
 
   String get end => _end;
+
   set end(String end) => _end = end;
 
   String get title => _title;
+
   set title(String title) => _title = title;
 
   TodayClass.fromJson(Map<String, dynamic> json) {
@@ -57,12 +63,12 @@ class TodayClass {
   }
 
   String correctDate(String before) {
-     List<String> as = before.toString().split("/");
-    bool lessThanTen =
-        as[1].length == 1;
-    if (lessThanTen){
+    List<String> as = before.toString().split("/");
+    bool lessThanTen = as[1].length == 1;
+    if (lessThanTen) {
       as[1] = '0${as[1]}';
     }
+    if (as[0].length == 1) as[0] = '0${as[0]}';
     return as.join("/");
   }
 
@@ -82,6 +88,4 @@ class TodayClass {
   String toString() {
     return 'TodayClass{_color: $_color, _courseCode: $_courseCode, _facultyName: $_facultyName, _roomNo: $_roomNo, _start: $_start, _end: $_end, _title: $_title}';
   }
-
-
 }

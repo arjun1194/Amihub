@@ -9,6 +9,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
+
   DatabaseHelper._();
 
   static final DatabaseHelper db = DatabaseHelper._();

@@ -51,7 +51,15 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
           (BuildContext context, AsyncSnapshot<List<TodayClass>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return HomeTodayClassShimmer();
+            return isLight(context)
+                ? HomeTodayClassShimmer(
+                    colorTween: ColorTween(
+                        begin: Color(0xffd6d6d6), end: Color(0xffe8e8e8)),
+                  )
+                : HomeTodayClassShimmer(
+                    colorTween: ColorTween(
+                        begin: Colors.grey, end: Colors.grey.shade700),
+                  );
           case ConnectionState.done:
             return (snapshot.hasError || snapshot.data == null)
                 ? errorClassBuilder()

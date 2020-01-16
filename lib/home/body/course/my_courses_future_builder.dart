@@ -160,7 +160,16 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
       builder: (BuildContext context, AsyncSnapshot<List<Course>> snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
-            return MyCourseShimmer();
+            return isLight(context)
+                ? MyCourseShimmer(
+                    colorTween: new ColorTween(
+                        begin: const Color(0xeadcdcdc),
+                        end: const Color(0xeaacacac)),
+                  )
+                : MyCourseShimmer(
+                    colorTween: ColorTween(
+                        begin: Colors.grey.shade900, end: Color(0xff121212)),
+                  );
           case ConnectionState.done:
             return (snapshot.hasError || snapshot.data == null)
                 ? ErrorPage()
