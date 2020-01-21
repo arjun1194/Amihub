@@ -14,9 +14,11 @@ import 'package:amihub/home/body/results.dart';
 import 'package:amihub/home/body/settings/settings.dart';
 import 'package:amihub/home/body/todays_classes.dart';
 import 'package:amihub/models/backdrop_selected.dart';
+import 'package:http/http.dart' as http;
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -30,6 +32,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String imageData;
+  bool dataLoaded = false;
   Widget selected;
   List<Widget> homeWidgets = [
     HomeBody(),
@@ -77,49 +81,29 @@ class _HomeState extends State<Home> {
         shape: CircleBorder(),
         color: Colors.transparent,
         clipBehavior: Clip.antiAlias,
-        child: FutureBuilder(
-          future: getPhoto(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-                break;
-              case ConnectionState.waiting:
-                return Padding(
-                  padding: EdgeInsets.all(3),
-                  child: IconButton(
-                      icon: Icon(Icons.account_circle),
-                      onPressed: () {
-                        accountButtonTapped(snapshot.data);
-                      }),
-                );
-              case ConnectionState.active:
-                break;
-              case ConnectionState.done:
-                return IconButton(
-                  onPressed: () {
-                    accountButtonTapped(snapshot.data);
-                  },
-                  icon: Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.white),
-                    child: Padding(
-                      padding: EdgeInsets.all(3.0),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: snapshot.data != null
-                              ? Image.network(snapshot.data,
-                                  fit: BoxFit.fitWidth)
-                              : Icon(Icons.account_circle,color: Colors.blueGrey.shade700,)),
-                    ),
-                  ),
-                );
-            }
-            return Text('end');
+        child: IconButton(
+          onPressed: () {
+            accountButtonTapped();
           },
+          icon: Container(
+            decoration:
+                BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+            child: Padding(
+              padding: EdgeInsets.all(3.0),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: dataLoaded
+                      ? Image.file(File(imageData), fit: BoxFit.fitWidth)
+                      : Icon(
+                          Icons.account_circle,
+                          color: Colors.blueGrey.shade700,
+                        )),
+            ),
+          ),
         ));
   }
 
-  accountButtonTapped(String photo) async {
+  accountButtonTapped() async {
     String name;
     String enrollNo;
     SharedPreferences.getInstance().then((val) {
@@ -142,8 +126,8 @@ class _HomeState extends State<Home> {
                     backgroundColor: Colors.white,
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(32),
-                        child: Image.network(
-                          photo,
+                        child: Image.file(
+                          File(imageData),
                           fit: BoxFit.cover,
                         )),
                   ),
@@ -208,9 +192,37 @@ class _HomeState extends State<Home> {
     return sharedPreferences.getString('photo');
   }
 
+  _downloadImage() async {
+    var documentDirectory = await getApplicationDocumentsDirectory();
+    var firstPath = documentDirectory.path + "/images";
+    var filePathAndName = documentDirectory.path + '/images/pic.png';
+
+    File(filePathAndName).exists().then((value) {
+      if (value) {
+        setState(() {
+          imageData = filePathAndName;
+          dataLoaded = true;
+        });
+      } else {
+        getPhoto().then((val) async {
+          var url = val;
+          var response = await http.get(url);
+          await Directory(firstPath).create(recursive: true);
+          File file2 = new File(filePathAndName);
+          file2.writeAsBytesSync(response.bodyBytes);
+          setState(() {
+            imageData = filePathAndName;
+            dataLoaded = true;
+          });
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _downloadImage();
   }
 
   @override
@@ -239,7 +251,8 @@ class _HomeState extends State<Home> {
             )
           ],
         ),
-        backLayerColor: isLight(context) ? Color(0xff171C1F) : Color(0xff1a1d1e),
+        backLayerColor:
+            isLight(context) ? Color(0xff171C1F) : Color(0xff1a1d1e),
         headerHeight: Platform.isIOS ? 45 : 40,
         backLayer: Center(child: BackDropButtons()),
         frontLayer: homeWidgets[backdropSelected.selected ?? 0],
@@ -259,20 +272,18 @@ class _HomeState extends State<Home> {
   Future<bool> _onWillPop() {
     var backdropSelected = Provider.of<BackdropSelected>(context);
 
-    if (backdropSelected.selected != 0){
+    if (backdropSelected.selected != 0) {
       setState(() {
         backdropSelected.selected = 0;
       });
       return null;
-    }
-    else {
+    } else {
       return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8)
-            ),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             title: new Text('Are you sure?'),
             content: new Text('App will be closed'),
             actions: <Widget>[

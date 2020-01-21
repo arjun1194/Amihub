@@ -439,7 +439,10 @@ class _ResultBuildState extends State<ResultBuild>
   }
 
   Widget resultCard(CourseResult courseResult) {
-    DateTime publish = DateFormat("dd/MM/yyyy").parse(courseResult.publishDate);
+    DateTime publish;
+    try {
+      publish = DateFormat("dd/MM/yyyy").parse(courseResult.publishDate);
+    } catch (e) {}
     return card(
         child: Column(
       children: <Widget>[
@@ -465,12 +468,14 @@ class _ResultBuildState extends State<ResultBuild>
                       )
                     ]),
                     Padding(
-                      padding: const EdgeInsets.only(right:10.0),
+                      padding: const EdgeInsets.only(right: 10.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(courseResult.courseCode),
-                          Text(DateFormat.yMMMMd().format(publish))
+                          publish != null
+                              ? Text(DateFormat.yMMMMd().format(publish))
+                              : Container()
                         ],
                       ),
                     ),
