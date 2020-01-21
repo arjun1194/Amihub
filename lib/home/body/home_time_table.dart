@@ -49,16 +49,28 @@ class HomeTimeTable extends StatelessWidget {
   }
 }
 
-class TimeTableBuild extends StatelessWidget{
-
+class TimeTableBuild extends StatelessWidget {
   final List<TimeTable> timetables;
 
   TimeTableBuild({this.timetables});
 
   @override
   Widget build(BuildContext context) {
-    return UnderDevelopment();
+    return ListView(
+      scrollDirection: Axis.vertical,
+      children: [
+        ListView.builder(
+            shrinkWrap: true,
+            itemCount: timetables.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return Chip(
+                label: Text(timetables.elementAt(index).day),
+                shape: StadiumBorder(),
+                elevation: 5,
+              );
+            })
+      ],
+    );
   }
-
-
 }
