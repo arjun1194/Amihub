@@ -21,7 +21,6 @@ class _FacultyDetailState extends State<FacultyDetail> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: FutureBuilder(
       future: amizoneRepository.getFacultyInfo(widget.facultyCode),
@@ -50,149 +49,65 @@ class _FacultyDetailState extends State<FacultyDetail> {
                  * name
                  * courses
                  */
-                : CustomScrollView(
-                    slivers: <Widget>[
-                      SliverAppBar(
-                          expandedHeight:
-                              MediaQuery.of(context).size.width * 0.8,
-                          pinned: true,
-                          actions: <Widget>[
-                            IconButton(
-                                icon: Icon(Icons.more_vert), onPressed: () {})
-                          ],
-                          flexibleSpace: FlexibleSpaceBar(
-                            collapseMode: CollapseMode.none,
-                            background: Container(
-                              margin: EdgeInsets.fromLTRB(width * 0.05,
-                                  width * 0.25, width * 0.05, width * 0.1),
-                              child: Center(
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(6),
-                                      child: Image.network(
-                                        snapshot.data.facultyImage,
-                                        width: 180,
-                                        height: 180,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Flexible(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            snapshot.data.facultyName,
-                                            style: TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.w600),
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                            textAlign: TextAlign.left,
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: <Widget>[
-                                              IconButton(
-                                                icon: Icon(Icons.mail),
-                                                onPressed: () {
-                                                  launch(
-                                                      "mailto:${snapshot.data.email}");
-                                                },
-                                              ),
-                                              IconButton(
-                                                icon: Icon(Icons.call),
-                                                onPressed: () {
-                                                  launch(
-                                                      "tel:${snapshot.data.phoneNo}");
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                          snapshot.data.cabin != null
-                                              ? Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 10),
-                                                  child: Text(
-                                                    snapshot.data.cabin,
-                                                    style:
-                                                        TextStyle(fontSize: 18),
-                                                  ),
-                                                )
-                                              : Container()
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          )),
-                      SliverList(
-                          delegate: SliverChildListDelegate([
-                        snapshot.data.designation != null
-                            ? Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Chip(
-                                    label: Text(snapshot.data.designation)),
-                              )
-                            : Container(),
-                        snapshot.data.department != null
-                            ? Chip(
-                                label: Text(
-                                  snapshot.data.department,
-                                  style: TextStyle(),
-                                ),
-                              )
-                            : Container(),
-                        snapshot.data.courses.length != 0
-                            ? PageHeader('Courses')
-                            : Container(),
-                        snapshot.data.courses.length != 0
-                            ? Container(
-                                padding: EdgeInsets.all(10),
-                                child: Wrap(
-                                    children:
-                                        snapshot.data.courses.map((course) {
-                                  return InkWell(
-                                    onTap: () {
-//                                      CustomPageRoute.pushPage(context: context, child: CoursePage(course: ,))
-                                    },
-                                    child: Container(
-                                      decoration: ShapeDecoration(
-                                          color: Color(0xff121212),
-                                          shape: StadiumBorder()),
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            12, 8, 12, 8),
-                                        child: Text(
-                                          course.name,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList()),
-                              )
-                            : Container(),
-                      ]))
-                    ],
+                : FacultyDetailBuild(
+                    snapshot: snapshot,
                   );
         }
         return Text('end');
       },
     ));
+  }
+}
+
+class FacultyDetailBuild extends StatelessWidget {
+  final AsyncSnapshot<FacultyInfo> snapshot;
+
+  FacultyDetailBuild({Key key, @required this.snapshot}) : super(key: key);
+
+  /*{
+      facultyCode: 7310,
+      facultyImage: https://amizone.net/AdminAmizone/images/StaffImages/7310_p.png,
+      facultyName: Ms Anjali Jain,
+      email: null,
+      phoneNo: null,
+      cabin: null,
+      designation: null,
+      department: Amity School of Engineering and Technology,
+      courses: [
+        {
+          code: ES103,
+          name: Basic Electrical Engineering,
+          semester: 2
+        },
+        {
+          code: ELEC411,
+          name: Utilization of Electrical Energy,
+          semester: 8
+        }
+          ]
+     }*/
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    return CustomScrollView(
+      scrollDirection: Axis.vertical,
+      slivers: <Widget>[
+        SliverAppBar(
+          backgroundColor: Colors.blue,
+          expandedHeight: 250,
+          floating: false,
+          pinned: true,
+          actions: <Widget>[IconButton(icon: Icon(Icons.more_vert), onPressed: ()=>{print('hey')})],
+          flexibleSpace: FlexibleSpaceBar(
+            title: Container(color: Colors.red,child: Text('Hello'),),
+            background: Container(color:Colors.green,child: Icon(Icons.account_circle),),
+          ),
+        ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) => ListTile(title: Text('Element $index'),)),
+        )
+      ],
+    );
   }
 }

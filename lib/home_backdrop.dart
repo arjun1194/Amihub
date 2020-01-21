@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:amihub/components/about_us.dart';
 import 'package:amihub/components/backdrop.dart';
 import 'package:amihub/components/backdrop_buttons.dart';
@@ -8,7 +7,6 @@ import 'package:amihub/components/logout.dart';
 import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/home/body/faculty/faculty.dart';
 import 'package:amihub/home/body/home_body.dart';
-import 'package:amihub/home/body/home_time_table.dart';
 import 'package:amihub/home/body/my_courses.dart';
 import 'package:amihub/home/body/results.dart';
 import 'package:amihub/home/body/settings/settings.dart';
@@ -39,7 +37,6 @@ class _HomeState extends State<Home> {
     HomeBody(),
     HomeTodayClass(),
     HomeMyCourses(),
-    HomeTimeTable(),
     MyFaculty(),
     HomeResults(),
     Settings()
@@ -321,7 +318,6 @@ class _BackDropButtonsState extends State<BackDropButtons> {
       "Home",
       "Today's Class",
       "My Courses",
-      "Time Table",
       'My Faculty',
       "Results",
       "Settings"
@@ -330,7 +326,6 @@ class _BackDropButtonsState extends State<BackDropButtons> {
       Icons.home,
       Icons.list,
       Icons.library_books,
-      Icons.table_chart,
       Icons.group,
       Icons.assessment,
       Icons.settings
