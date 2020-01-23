@@ -2,8 +2,8 @@ class Profile {
   String enrollmentNumber;
   String program;
   String batch;
-  int semester;
-  int dateOfBirth;
+  String semester;
+  String dateOfBirth;
   String phoneNumber;
   String email;
   String photo;
@@ -21,15 +21,15 @@ class Profile {
         this.name});
 
   Profile.fromJson(Map<String, dynamic> json) {
-    enrollmentNumber = json['enrollmentNumber'];
-    program = json['program'];
-    batch = json['batch'];
-    semester = int.tryParse(json['semester']);
-    dateOfBirth = int.tryParse(json['dateOfBirth']);
-    phoneNumber = json['phoneNumber'];
-    email = json['email'];
-    photo = json['photo'];
-    name = json['name'];
+    enrollmentNumber = json['enrollmentNo'].toString();
+    program = json['program'].toString();
+    batch = json['batch'].toString();
+    semester = json['semester'].toString();
+    dateOfBirth = json['dob'].toString();
+    phoneNumber = json['phone'].toString();
+    email = json['email'].toString();
+    photo = json['photo'].toString();
+    name = json['name'].toString();
   }
 
   Map<String, dynamic> toJson() {

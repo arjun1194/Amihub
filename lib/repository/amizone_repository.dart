@@ -1,7 +1,8 @@
 import 'dart:convert' as convert;
-
 import 'package:amihub/database/database_helper.dart';
 import 'package:amihub/interceptors/amizone_http_interceptor.dart';
+import 'package:amihub/interceptors/post_interceptor.dart';
+import 'package:amihub/models/review.dart';
 import 'package:amihub/models/attendance.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_attendance.dart';
@@ -9,6 +10,7 @@ import 'package:amihub/models/course_attendance_type.dart';
 import 'package:amihub/models/course_info.dart' as ci;
 import 'package:amihub/models/faculty.dart';
 import 'package:amihub/models/faculty_info.dart' as fi;
+import 'package:amihub/models/profile.dart';
 import 'package:amihub/models/result.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/models/timetable.dart';
@@ -23,6 +25,30 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AmizoneRepository {
   DatabaseHelper dbHelper = DatabaseHelper.db;
+
+
+
+
+  Future<dynamic> createReview(String contentId,String review) async{
+    HttpClientWithInterceptor http =
+    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor(),PostInterceptor()]);
+    print("Content id is======================>${int.parse(contentId)}" );
+    Map<String,dynamic> reviewBody = {"contentId":int.parse(contentId), "review":review};
+
+    return await http.post('$amihubUrl/review',body: convert.jsonEncode(reviewBody));
+  }
+
+
+  Future<List<Review>> getFacultyReviews(String facultyCode) async{
+    List<Review> reviews = [];
+    String fCode = int.parse(facultyCode).toString();
+    HttpClientWithInterceptor http =
+    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    var response = await http.get('$amihubUrl/faculty/$fCode/reviews');
+    var jsonResponse = convert.jsonDecode(response.body);
+    for(var item in jsonResponse) reviews.add(Review.fromJson(item));
+    return reviews;
+  }
 
   Future<bool> checkServerStatus() async {
     var response = await http.get('$amihubUrl/serverDown');
@@ -290,11 +316,18 @@ class AmizoneRepository {
     return attendances;
   }
 
-  Future<dynamic> fetchMyProfile() async {
+  Future<Profile> fetchMyProfile() async {
+
     HttpWithInterceptor http =
         HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-    var response = await http.get('$amihubUrl/myProfile');
-    return await convert.jsonDecode(response.body);
+      var response = await http.get('$amihubUrl/myProfile');
+      var jsonResponse =  convert.jsonDecode(response.body);
+      var x = Profile.fromJson(jsonResponse);
+      print(x);
+      return x;
+
+
+
   }
 
   Future<Response> loginWithCaptcha(

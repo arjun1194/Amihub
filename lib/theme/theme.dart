@@ -87,7 +87,7 @@ const appTitle = 'Amihub';
 const appIcon = 'assets/logo.png';
 
 //api end point
-var amihubUrl = 'http://192.168.1.171:8080';
+var amihubUrl = 'http://api.avirias.xyz:8080';
 
 String facultyImage(String code) =>
     "https://amizone.net/AdminAmizone/images/StaffImages/${code}_p.png";

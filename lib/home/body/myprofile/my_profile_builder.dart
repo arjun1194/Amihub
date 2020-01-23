@@ -75,7 +75,7 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
                           child: PersonalDetails(
                             dateOfBirth: DateFormat.yMMMMd("en_US").format(
                                 DateTime.fromMillisecondsSinceEpoch(
-                                    snapshot.data.dateOfBirth,
+                                    int.tryParse(snapshot.data.dateOfBirth),
                                     isUtc: false)),
                             email: snapshot.data.email,
                             phoneNumber: snapshot.data.phoneNumber,
