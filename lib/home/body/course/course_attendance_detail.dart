@@ -43,7 +43,7 @@ class _CourseAttendanceDetailState extends State<CourseAttendanceDetail> {
               return Container();
             case ConnectionState.done:
               return (snapshot.hasError || snapshot.data == null)
-                  ? ErrorPage()
+                  ? ErrorPage(snapshot.error)
                   : attendanceBuild(snapshot.data);
               break;
           }

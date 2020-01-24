@@ -192,9 +192,9 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                         begin: Colors.grey.shade900, end: Color(0xff121212)),
                   );
           case ConnectionState.done:
-            if (snapshot.hasError) return ErrorPage();
+            if (snapshot.hasError) return ErrorPage(snapshot.error);
             // No Class check
-            if (snapshot.data.elementAt(0).title == "") return NoClassToday();
+            if (snapshot.data.length == 1 && snapshot.data.elementAt(0).title == "") return NoClassToday();
             return Container(
                 child: TodayClassBuild(
               snapshot: snapshot,
@@ -268,6 +268,8 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
       physics: AlwaysScrollableScrollPhysics(),
       children: List.generate(widget.snapshot.data.length, (int index) {
         TodayClass todayClass = widget.snapshot.data.elementAt(index);
+        if(todayClass.title == "")
+          return Container();
         DateTime end =
             DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.end);
         DateTime start =

@@ -186,7 +186,7 @@ class CourseInformation extends StatelessWidget {
             if (snapshot.hasData)
               return (snapshot.hasError || snapshot.data == null)
                   ? Padding(
-                      child: ErrorPage(),
+                      child: ErrorPage(snapshot.error),
                       padding: EdgeInsets.only(top: 50),
                     )
                   : Column(
@@ -363,7 +363,7 @@ class CourseInformation extends StatelessWidget {
                       ],
                     );
         }
-        return Text('end');
+        return Text('');
       },
     );
   }

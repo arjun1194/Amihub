@@ -289,8 +289,12 @@ class _HomeState extends State<Home> {
                 child: new Text(
                   'No',
                 ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5)),
               ),
               new FlatButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5)),
                 onPressed: () {
                   Navigator.of(context).pop(true);
                 },

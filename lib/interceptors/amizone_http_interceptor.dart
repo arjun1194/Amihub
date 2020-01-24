@@ -10,7 +10,6 @@ class AmizoneInterceptor extends InterceptorContract {
 
   AmizoneRepository amizoneRepository = AmizoneRepository();
 
-
   @override
   Future<RequestData> interceptRequest({RequestData data}) async {
     try {
@@ -18,6 +17,7 @@ class AmizoneInterceptor extends InterceptorContract {
           await SharedPreferences.getInstance();
       final jwtToken = sharedPreferences.get('Authorization');
       data.headers["Authorization"] = jwtToken;
+//      print(jwtToken);
     } catch (e) {
       print(e);
     }
@@ -26,21 +26,24 @@ class AmizoneInterceptor extends InterceptorContract {
 
   @override
   Future<ResponseData> interceptResponse({ResponseData data}) async {
+    if (data.headers['Authorization'] != null) {
+      await SharedPreferences.getInstance().then((sp) {
+        sp.setString("Authorization", data.headers['Authorization']);
+      });
+    }
 
     if (data.statusCode == 401) {
       amizoneRepository.logout(navKey.currentContext);
       navKey.currentState
           .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
     }
-    if(data.statusCode == 420){
+    if (data.statusCode == 420) {
       SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
+          await SharedPreferences.getInstance();
       sharedPreferences.setBool('appDown', true);
       navKey.currentState
           .pushNamedAndRemoveUntil('/down', (Route<dynamic> route) => false);
-
     }
     return data;
   }
-
 }

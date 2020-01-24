@@ -172,7 +172,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                   );
           case ConnectionState.done:
             return (snapshot.hasError || snapshot.data == null)
-                ? ErrorPage()
+                ? ErrorPage(snapshot.error)
                 : snapshot.data.length == 0
                     ? Center(
                         child: Text(

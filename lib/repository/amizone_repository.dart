@@ -1,4 +1,5 @@
 import 'dart:convert' as convert;
+import 'dart:io';
 import 'package:amihub/database/database_helper.dart';
 import 'package:amihub/interceptors/amizone_http_interceptor.dart';
 import 'package:amihub/interceptors/post_interceptor.dart';
@@ -21,32 +22,33 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AmizoneRepository {
   DatabaseHelper dbHelper = DatabaseHelper.db;
 
+  Future<dynamic> createReview(String contentId, String review) async {
+    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(
+        interceptors: [AmizoneInterceptor(), PostInterceptor()]);
+    print("Content id is======================>${int.parse(contentId)}");
+    Map<String, dynamic> reviewBody = {
+      "contentId": int.parse(contentId),
+      "review": review
+    };
 
-
-
-  Future<dynamic> createReview(String contentId,String review) async{
-    HttpClientWithInterceptor http =
-    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor(),PostInterceptor()]);
-    print("Content id is======================>${int.parse(contentId)}" );
-    Map<String,dynamic> reviewBody = {"contentId":int.parse(contentId), "review":review};
-
-    return await http.post('$amihubUrl/review',body: convert.jsonEncode(reviewBody));
+    return await http.post('$amihubUrl/review',
+        body: convert.jsonEncode(reviewBody));
   }
 
-
-  Future<List<Review>> getFacultyReviews(String facultyCode) async{
+  Future<List<Review>> getFacultyReviews(String facultyCode) async {
     List<Review> reviews = [];
     String fCode = int.parse(facultyCode).toString();
     HttpClientWithInterceptor http =
-    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/faculty/$fCode/reviews');
     var jsonResponse = convert.jsonDecode(response.body);
-    for(var item in jsonResponse) reviews.add(Review.fromJson(item));
+    for (var item in jsonResponse) reviews.add(Review.fromJson(item));
     return reviews;
   }
 
@@ -187,13 +189,13 @@ class AmizoneRepository {
     return results;
   }
 
-  Future<List<TimeTable>> networkCallTimeTable() async{
+  Future<List<TimeTable>> networkCallTimeTable() async {
     List<TimeTable> timetable = [];
     HttpWithInterceptor http =
-    HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+        HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response = await http.get('$amihubUrl/timetable');
     var jsonResponse = convert.jsonDecode(response.body);
-    for (var item in jsonResponse){
+    for (var item in jsonResponse) {
       TimeTable tt = TimeTable.fromJson(item);
       timetable.add(tt);
     }
@@ -220,18 +222,19 @@ class AmizoneRepository {
     if (dbResponse.isEmpty) {
       return networkCallTodayClass(start);
     }
-    return sortTodayClass(dbResponse);
+    return dbResponse;
   }
 
   Future<List<TodayClass>> networkCallTodayClass(String start) async {
     List<TodayClass> todayClass = [];
-    start =
+    String start2 =
         DateFormat("yyyy-MM-dd").format(DateFormat("MM/dd/yyyy").parse(start));
     HttpWithInterceptor http =
         HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     var response =
-        await http.get('$amihubUrl/todayClass?start=$start&end=$start');
+        await http.get('$amihubUrl/todayClass?start=$start2&end=$start2');
     var jsonResponse = convert.jsonDecode(response.body);
+    dbHelper.deleteTodayClassesWithDate(start);
     for (var item in jsonResponse) {
       TodayClass td = TodayClass.fromJson(item);
       todayClass.add(td);
@@ -239,15 +242,6 @@ class AmizoneRepository {
     }
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     sharedPreferences.setString("lastTimeTCUpdated", DateTime.now().toString());
-    return sortTodayClass(todayClass);
-  }
-
-  List<TodayClass> sortTodayClass(List<TodayClass> todayClass) {
-    todayClass.sort((a, b) {
-      DateTime date1 = DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(a.start);
-      DateTime date2 = DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(b.start);
-      return date1.isAfter(date2) ? 1 : -1;
-    });
     return todayClass;
   }
 
@@ -317,17 +311,13 @@ class AmizoneRepository {
   }
 
   Future<Profile> fetchMyProfile() async {
-
     HttpWithInterceptor http =
         HttpWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-      var response = await http.get('$amihubUrl/myProfile');
-      var jsonResponse =  convert.jsonDecode(response.body);
-      var x = Profile.fromJson(jsonResponse);
-      print(x);
-      return x;
-
-
-
+    var response = await http.get('$amihubUrl/myProfile');
+    var jsonResponse = convert.jsonDecode(response.body);
+    var x = Profile.fromJson(jsonResponse);
+    print(x);
+    return x;
   }
 
   Future<Response> loginWithCaptcha(
@@ -342,7 +332,7 @@ class AmizoneRepository {
   Future<Response> login(String username, String password) async {
     Client client = Client();
     String url = amihubUrl + "/login";
-    String requestBody = '{"username":$username, "password":"$password"}';
+    String requestBody = '{"username": $username, "password":"$password"}';
     var headers = {"content-type": "application/json"};
     Response resp = await client.post(url, headers: headers, body: requestBody);
 
@@ -360,5 +350,10 @@ class AmizoneRepository {
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     });
+
+    /// delete media
+    var documentDirectory = await getApplicationDocumentsDirectory();
+    var filePathAndName = documentDirectory.path + '/images/pic.png';
+    File(filePathAndName).delete();
   }
 }

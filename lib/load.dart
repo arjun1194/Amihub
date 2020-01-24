@@ -30,7 +30,7 @@ class _LoadApiState extends State<LoadApi> {
               return ServerUnreachable();
             }
             if (snapshot.hasError) {
-              return errorPage();
+              return errorPage(snapshot.error);
             }
             if (snapshot.data.statusCode == 401) {
               return usernameOrPasswordIncorrect(snapshot);
@@ -55,12 +55,12 @@ class _LoadApiState extends State<LoadApi> {
     );
   }
 
-  Scaffold errorPage() {
+  Scaffold errorPage(Object error) {
     return Scaffold(
         appBar: CustomAppbar(
           "Login Failed",
         ),
-        body: ErrorPage());
+        body: ErrorPage(error));
   }
 
   Scaffold usernameOrPasswordIncorrect(AsyncSnapshot<Response> snapshot) {

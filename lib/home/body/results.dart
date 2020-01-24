@@ -139,7 +139,7 @@ class _HomeResultsState extends State<HomeResults> {
                             case ConnectionState.waiting:
                               return Loader();
                             case ConnectionState.done:
-                              if (snapshot.hasError) return ErrorPage();
+                              if (snapshot.hasError) return ErrorPage(snapshot.error);
                               if (snapshot.data.isEmpty ||
                                   snapshot.data.first.courseTitle == "") {
                                 return ResultNotFound();

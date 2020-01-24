@@ -36,7 +36,7 @@ class _MyProfileBuilderState extends State<MyProfileBuilder> {
             );
           case ConnectionState.done:
             if (snapshot.hasError || snapshot.data == null)
-              return ErrorPage();
+              return ErrorPage(snapshot.error);
 
             return Container(
               color: isLight(context)

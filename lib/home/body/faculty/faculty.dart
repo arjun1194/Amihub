@@ -41,7 +41,7 @@ class MyFaculty extends StatelessWidget {
                     break;
                   case ConnectionState.done:
                     return (snapshot.hasError || snapshot.data == null)
-                        ? ErrorPage()
+                        ? ErrorPage(snapshot.error)
                         : FacultyBuild(faculties: snapshot.data);
                 }
                 return Text('end');
