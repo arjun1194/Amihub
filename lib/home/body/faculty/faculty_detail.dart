@@ -35,7 +35,7 @@ class _FacultyDetailState extends State<FacultyDetail> {
           case ConnectionState.done:
             return (snapshot.hasError || snapshot.data == null)
                 ? Padding(
-                    child: ErrorPage(),
+                    child: ErrorPage(snapshot.error),
                     padding: EdgeInsets.only(top: 50),
                   )
                 : FacultyDetailBuild(
@@ -242,6 +242,14 @@ class Reviews extends StatefulWidget {
 }
 
 class _ReviewsState extends State<Reviews> {
+  var myFuture;
+
+  @override
+  initState() {
+    super.initState();
+    myFuture = AmizoneRepository().getFacultyReviews(widget.facultyCode);
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -260,7 +268,7 @@ class _ReviewsState extends State<Reviews> {
                     child: Text(snapshot.error.toString()),
                     padding: EdgeInsets.only(top: 50),
                   )
-                : ReviewBuilder(snapshot, widget.facultyCode);
+                : ReviewBuilder(snapshot.data, widget.facultyCode);
         }
         return Text('end');
       },
@@ -268,18 +276,85 @@ class _ReviewsState extends State<Reviews> {
   }
 }
 
-class ReviewBuilder extends StatelessWidget {
-  AsyncSnapshot<List<Review>> snapshot;
-  String facultyCode;
-  int upvotes;
-  int downvotes;
+class ReviewBuilder extends StatefulWidget {
+  final List<Review> reviews;
+  final String facultyCode;
 
-  ReviewBuilder(this.snapshot, this.facultyCode);
+  ReviewBuilder(this.reviews, this.facultyCode);
+
+  @override
+  _ReviewBuilderState createState() => _ReviewBuilderState();
+}
+
+class _ReviewBuilderState extends State<ReviewBuilder> {
+  int upvotes;
+
+  int downvotes;
+  List<Widget> reviews = [];
+
+  addReview(String photo, String name, String reviewText) {
+    print('calling addreview');
+    reviews.add(Column(
+      children: <Widget>[
+        ListTile(
+          contentPadding: EdgeInsets.only(left: 8),
+          leading: ClipRRect(
+            borderRadius: new BorderRadius.circular(9999.0),
+            child: Image.network(
+              photo,
+              fit: BoxFit.fill,
+              height: 64.0,
+              width: 60.0,
+            ),
+          ),
+          title: Text(
+            name,
+            style: TextStyle(fontSize: 10, color: Colors.grey),
+          ),
+          subtitle: Text(reviewText,
+              style: TextStyle(fontSize: 12, color: Colors.black)),
+        ),
+        Container(
+          margin: EdgeInsets.only(left: 80),
+          height: 32,
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              FlatButton.icon(
+                  onPressed: () {},
+                  padding: EdgeInsets.all(0),
+                  icon: Icon(
+                    Icons.thumb_up,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
+                  label: Text('')),
+              FlatButton.icon(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.thumb_down,
+                  size: 16,
+                  color: Colors.grey,
+                ),
+                label: Text(''),
+              )
+            ],
+          ),
+        )
+      ],
+    ));
+
+    print("Reviews are "+reviews.toString());
+    setState(() {
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> reviews = List.generate(
-        snapshot.data.length,
+    reviews = List.generate(
+        widget.reviews.length,
         (index) => Column(
               children: <Widget>[
                 ListTile(
@@ -287,17 +362,17 @@ class ReviewBuilder extends StatelessWidget {
                   leading: ClipRRect(
                     borderRadius: new BorderRadius.circular(9999.0),
                     child: Image.network(
-                      snapshot.data[index].reviewerPhoto,
+                      widget.reviews[index].reviewerPhoto,
                       fit: BoxFit.fill,
                       height: 64.0,
                       width: 60.0,
                     ),
                   ),
                   title: Text(
-                    snapshot.data[index].reviewerName,
+                    widget.reviews[index].reviewerName,
                     style: TextStyle(fontSize: 10, color: Colors.grey),
                   ),
-                  subtitle: Text(snapshot.data[index].review,
+                  subtitle: Text(widget.reviews[index].review,
                       style: TextStyle(fontSize: 12, color: Colors.black)),
                 ),
                 Container(
@@ -315,9 +390,9 @@ class ReviewBuilder extends StatelessWidget {
                             size: 16,
                             color: Colors.grey,
                           ),
-                          label: Text((snapshot.data[index].upVotes == 0)
+                          label: Text((widget.reviews[index].upVotes == 0)
                               ? ''
-                              : snapshot.data[index].upVotes)),
+                              : widget.reviews[index].upVotes)),
                       FlatButton.icon(
                           onPressed: () {},
                           icon: Icon(
@@ -325,9 +400,9 @@ class ReviewBuilder extends StatelessWidget {
                             size: 16,
                             color: Colors.grey,
                           ),
-                          label: Text((snapshot.data[index].downVotes == 0)
+                          label: Text((widget.reviews[index].downVotes == 0)
                               ? ''
-                              : snapshot.data[index].downVotes)),
+                              : widget.reviews[index].downVotes)),
                     ],
                   ),
                 )
@@ -348,16 +423,16 @@ class ReviewBuilder extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 8),
                 child: Text(
-                  (snapshot.data.length == 0)
+                  (widget.reviews.length == 0)
                       ? ''
-                      : snapshot.data.length.toString(),
+                      : widget.reviews.length.toString(),
                   style: TextStyle(color: Colors.grey),
                 ),
               )
             ],
           ),
         ),
-        MyReview(facultyCode),
+        MyReview(widget.facultyCode, addReview),
         ...reviews,
       ],
     );
@@ -366,8 +441,9 @@ class ReviewBuilder extends StatelessWidget {
 
 class MyReview extends StatefulWidget {
   String facultyCode;
+  Function(String, String, String) addReview;
 
-  MyReview(this.facultyCode);
+  MyReview(this.facultyCode, this.addReview);
 
   @override
   _MyReviewState createState() => _MyReviewState();
@@ -380,7 +456,7 @@ class _MyReviewState extends State<MyReview> {
   void initState() {
     // TODO: implement initState
     super.initState();
-     myController = TextEditingController();
+    myController = TextEditingController();
   }
 
   @override
@@ -417,14 +493,8 @@ class _MyReviewState extends State<MyReview> {
               ),
               trailing: IconButton(
                   icon: Icon(Icons.send, color: Colors.blueAccent),
-                  onPressed: () {
-                    AmizoneRepository()
-                        .createReview(widget.facultyCode, myController.text).then((res){
-                         setState(() {
-
-                         });
-                    });
-                  }),
+                  onPressed: (){widget.addReview(snapshot.data.photo,
+                      snapshot.data.name, myController.text);print('child printed');}),
             );
         }
         return Text('end');
