@@ -234,7 +234,10 @@ class _AttendanceShimmerState extends State<AttendanceShimmer>
                                 color: Color(0xffadc0ca), width: 0.5))),
                     child: Center(
                       child: Container(
-                        color: animation.value,
+                        decoration: ShapeDecoration(
+                          color: animation.value,
+                          shape: StadiumBorder()
+                        ),
                         width: MediaQuery.of(context).size.width * 0.6,
                         height: 10,
                       ),
@@ -258,7 +261,10 @@ class _AttendanceShimmerState extends State<AttendanceShimmer>
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.33,
                           height: 9,
-                          color: animation.value,
+                          decoration: ShapeDecoration(
+                              color: animation.value,
+                              shape: StadiumBorder()
+                          ),
                         ),
                       ),
                     ),

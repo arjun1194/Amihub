@@ -14,6 +14,7 @@ class _AppDownState extends State<AppDown> {
 
   @override
   Widget build(BuildContext context) {
+    String message = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: CustomAppbar(
         "App Down",
@@ -47,7 +48,7 @@ class _AppDownState extends State<AppDown> {
               height: 10,
             ),
             Text(
-              'We are working under the hood \nto fix this problem',
+              message,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,

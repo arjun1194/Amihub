@@ -184,35 +184,37 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<String> getPhoto() async {
+  Future<int> getUsername() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getString('photo');
+    return sharedPreferences.getInt('username');
   }
 
   _downloadImage() async {
+    int username = await getUsername();
+
     var documentDirectory = await getApplicationDocumentsDirectory();
     var firstPath = documentDirectory.path + "/images";
-    var filePathAndName = documentDirectory.path + '/images/pic.png';
+    var filePathAndName = documentDirectory.path + '/images/$username.png';
 
-    File(filePathAndName).exists().then((value) {
+    File(filePathAndName).exists().then((value) async {
       if (value) {
         setState(() {
           imageData = filePathAndName;
           dataLoaded = true;
         });
       } else {
-        getPhoto().then((val) async {
-          var url = val;
-          var response = await http.get(url);
-          await Directory(firstPath).create(recursive: true);
-          File file2 = new File(filePathAndName);
-          file2.writeAsBytesSync(response.bodyBytes);
-          setState(() {
-            imageData = filePathAndName;
-            dataLoaded = true;
-          });
+        var url = userImage(username);
+        var response = await http.get(url);
+        await Directory(firstPath).create(recursive: true);
+        File file2 = new File(filePathAndName);
+        file2.writeAsBytesSync(response.bodyBytes);
+        setState(() {
+          imageData = filePathAndName;
+          dataLoaded = true;
         });
       }
+    }).catchError((err) {
+      print("error Occured");
     });
   }
 

@@ -351,9 +351,5 @@ class AmizoneRepository {
           .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     });
 
-    /// delete media
-    var documentDirectory = await getApplicationDocumentsDirectory();
-    var filePathAndName = documentDirectory.path + '/images/pic.png';
-    File(filePathAndName).delete();
   }
 }

@@ -2,6 +2,7 @@ import 'package:amihub/components/error.dart';
 import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/platform_specific.dart';
+import 'package:amihub/components/textfield.dart';
 import 'package:amihub/home/body/course/course_attendance_detail.dart';
 import 'package:amihub/home/body/faculty/faculty_detail.dart';
 import 'package:amihub/models/course.dart';
@@ -111,6 +112,7 @@ class _CoursePageState extends State<CoursePage> {
               height: 5,
             ),
             internalAssessmentBuild(),
+            AttendanceCalculator(widget.course, semester),
             isLoading
                 ? Padding(
                     padding: EdgeInsets.only(top: 40),
@@ -161,6 +163,162 @@ class _CoursePageState extends State<CoursePage> {
   }
 }
 
+class AttendanceCalculator extends StatefulWidget {
+  final Course course;
+  final int semester;
+
+  AttendanceCalculator(this.course, this.semester);
+
+  @override
+  _AttendanceCalculatorState createState() => _AttendanceCalculatorState();
+}
+
+class _AttendanceCalculatorState extends State<AttendanceCalculator> {
+  TextEditingController noOfClassController = TextEditingController(text: null);
+  double percentageSliderValue;
+  String attendanceText;
+
+  @override
+  void initState() {
+    super.initState();
+    percentageSliderValue = 85.0;
+    attendanceText = "Calculate attendance";
+  }
+
+  @override
+  void dispose() {
+    noOfClassController.dispose();
+    super.dispose();
+  }
+
+  setAttendanceText() {
+    String text;
+    if (noOfClassController.text != null && noOfClassController.text != "") {
+      int present = widget.course.present;
+      int totalClasses = widget.course.total;
+
+      if ((present / (totalClasses + int.parse(noOfClassController.text))) *
+              100 >=
+          percentageSliderValue) {
+        text =
+            "You can afford ${noOfClassController.text} ${noOfClassController.text == "1" ? "class" : "classes"}";
+      } else {
+        double percent = percentageSliderValue * 0.01;
+        double value =
+            (percent * (totalClasses + int.parse(noOfClassController.text)) -
+                    present) /
+                (1 - percent);
+        text =
+            "You'll have to attend ${value.ceil()} more ${value.ceil() == 1 ? "class" : "classes"}";
+      }
+      setState(() {
+        attendanceText = text;
+      });
+    } else {
+      int present = widget.course.present;
+      int totalClasses = widget.course.total;
+      String text;
+      if ((present / totalClasses) * 100 > percentageSliderValue) {
+        double percent = percentageSliderValue * 0.01;
+        double value = (present - (percent * totalClasses)) / percent;
+        if (value.floor() == 0)
+          text = "Don't skip any classes to maintain $percentageSliderValue%";
+        else
+        text =
+            "You can skip ${value.floor()} ${value.floor() == 1 ? "class" : "classes"} and maintain $percentageSliderValue%";
+      } else {
+        double percent = percentageSliderValue * 0.01;
+        double value = ((percent * totalClasses) - present) / (1 - percent);
+        text =
+            "You'll have to attend ${value.ceil()} more ${value.ceil() == 1 ? "class" : "classes"} for $percentageSliderValue%";
+      }
+      setState(() {
+        attendanceText = text;
+      });
+    }
+  }
+
+  sliderChanged(double percentage) {
+    setState(() {
+      percentageSliderValue = percentage;
+    });
+    setAttendanceText();
+  }
+
+  noOfClassSubmitted(String text) {
+    setAttendanceText();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+
+    return widget.semester == widget.course.semester
+        ? Container(
+            padding: EdgeInsets.all(8),
+            child: Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              color:
+                  isLight(context) ? Colors.grey.shade100 : Color(0xff121212),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  PageHeader('Calculate'),
+                  SizedBox(
+                    height: 18,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15),
+                    child: Text('Percentage'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4,right: 4),
+                    child: Slider(
+                      divisions: 4,
+                      max: 95.0,
+                      min: 75.0,
+                      onChanged: sliderChanged,
+                      value: percentageSliderValue,
+                      label: '$percentageSliderValue%',
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: width * 0.15,
+                        right: width * 0.15,
+                        bottom: 30,
+                        top: 20),
+                    child: MyTextField(
+                      hintText: "No of Classes",
+                      keyboardType: TextInputType.number,
+                      obscureText: false,
+                      textEditingController: noOfClassController,
+                      onSubmit: noOfClassSubmitted,
+                      onChange: noOfClassSubmitted,
+                      maxLength: 2,
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 20, left: 12, right: 12),
+                    child: Center(
+                      child: Text(
+                        attendanceText,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          )
+        : Container();
+  }
+}
+
 class CourseInformation extends StatelessWidget {
   final Course course;
   final AmizoneRepository amizoneRepository = AmizoneRepository();
@@ -190,7 +348,7 @@ class CourseInformation extends StatelessWidget {
                       padding: EdgeInsets.only(top: 50),
                     )
                   : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         snapshot.data.faculties.length != 0
                             ? PageHeader('Faculties')
@@ -290,7 +448,9 @@ class CourseInformation extends StatelessWidget {
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15)),
-                                  color: isLight(context) ? Colors.grey.shade100 : Color(0xff121212),
+                                  color: isLight(context)
+                                      ? Colors.grey.shade100
+                                      : Color(0xff121212),
                                   child: Container(
                                     child: Column(
                                       crossAxisAlignment:
@@ -334,8 +494,10 @@ class CourseInformation extends StatelessWidget {
                                                 .toStringAsFixed(2)),
                                         buildRow('No of backs',
                                             snapshot.data.noOfBacks),
-                                        buildRow('Average GPA',
-                                            snapshot.data.averageGpa.toStringAsFixed(2)),
+                                        buildRow(
+                                            'Average GPA',
+                                            snapshot.data.averageGpa
+                                                .toStringAsFixed(2)),
                                         buildRow('Students studied',
                                             snapshot.data.noOfStudentsStudied),
                                         SizedBox(
@@ -347,19 +509,25 @@ class CourseInformation extends StatelessWidget {
                                 ),
                               )
                             : Container(),
-                        snapshot.data.courseSyllabus != "#" ? PageHeader('Syllabus') : Container(),
-                        snapshot.data.courseSyllabus != "#" ? Center(
-                          child: RaisedButton(
-                              shape: StadiumBorder(),
-                              elevation: 0,
-                              hoverElevation: 0,
-                              color: isLight(context) ? Colors.grey.shade200 : Color(0xff121212),
-                              onPressed: () async {
-                                launch(snapshot.data.courseSyllabus);
-                              },
-                              child: Text(extractSyllabus(
-                                  snapshot.data.courseSyllabus))),
-                        ): Container()
+                        snapshot.data.courseSyllabus != "#"
+                            ? PageHeader('Syllabus')
+                            : Container(),
+                        snapshot.data.courseSyllabus != "#"
+                            ? Center(
+                                child: RaisedButton(
+                                    shape: StadiumBorder(),
+                                    elevation: 0,
+                                    hoverElevation: 0,
+                                    color: isLight(context)
+                                        ? Colors.grey.shade200
+                                        : Color(0xff121212),
+                                    onPressed: () async {
+                                      launch(snapshot.data.courseSyllabus);
+                                    },
+                                    child: Text(extractSyllabus(
+                                        snapshot.data.courseSyllabus))),
+                              )
+                            : Container()
                       ],
                     );
         }

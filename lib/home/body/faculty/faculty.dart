@@ -72,14 +72,14 @@ class FacultyBuild extends StatelessWidget {
         return Container(
           child: faculty.facultyImage != null
               ? Container(
-                  height: 130,
+                  height: 110,
                   child: Stack(
                     children: <Widget>[
                       CircleAvatar(
                         backgroundImage: NetworkImage(
                           faculty.facultyImage,
                         ),
-                        radius: 50,
+                        radius: 40,
                       ),
                       Positioned(
                         top: 70,

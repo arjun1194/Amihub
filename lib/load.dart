@@ -26,16 +26,18 @@ class _LoadApiState extends State<LoadApi> {
           case ConnectionState.waiting:
             return Scaffold(body: Loader());
           case ConnectionState.done:
-            if (snapshot.data == null || snapshot.data.statusCode >= 500) {
+            if (snapshot.data == null || snapshot.data.statusCode >= 500 || snapshot.data.statusCode == 420) {
               return ServerUnreachable();
             }
             if (snapshot.hasError) {
               return errorPage(snapshot.error);
             }
+
             if (snapshot.data.statusCode == 401) {
               return usernameOrPasswordIncorrect(snapshot);
             } else
               SharedPreferences.getInstance().then((sharedPreferences) {
+                sharedPreferences.setInt("username", int.parse(args.username));
                 sharedPreferences.setBool("appDown", false);
                 sharedPreferences.setString(
                     "Authorization", snapshot.data.headers['authorization']).then((saved) {
@@ -112,6 +114,7 @@ class _LoadApiState extends State<LoadApi> {
       appBar: CustomAppbar(
         'Logging in..',
         isBackEnabled: false,
+        isCenter: true,
       ),
       body: Center(
         child: Column(
@@ -134,13 +137,6 @@ class _LoadApiState extends State<LoadApi> {
                 maxLines: 2,
                 textAlign: TextAlign.center,
               ),
-              SizedBox(
-                height: 80,
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: 30),
-                child: Loader(),
-              )
             ]),
       ),
     );

@@ -41,8 +41,9 @@ class AmizoneInterceptor extends InterceptorContract {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       sharedPreferences.setBool('appDown', true);
+      sharedPreferences.setString("downMessage", data.body);
       navKey.currentState
-          .pushNamedAndRemoveUntil('/down', (Route<dynamic> route) => false);
+          .pushNamedAndRemoveUntil('/down', (Route<dynamic> route) => false,arguments: data.body);
     }
     return data;
   }

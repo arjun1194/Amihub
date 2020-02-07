@@ -18,8 +18,10 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.pushNamedAndRemoveUntil(
               context, '/home', (Route<dynamic> route) => false);
         } else {
+          String message = sharedPreferences.getString("downMessage");
           Navigator.pushNamedAndRemoveUntil(
-              context, '/down', (Route<dynamic> route) => false);
+              context, '/down', (Route<dynamic> route) => false,
+              arguments: message);
         }
       } else {
         Navigator.pushNamedAndRemoveUntil(
@@ -35,11 +37,8 @@ class _SplashScreenState extends State<SplashScreen> {
       statusBarColor: Colors.transparent,
       statusBarBrightness: Brightness.dark,
     ));
-    return Image(
-      image: AssetImage(
-        'assets/screen.png',
-      ),
-      fit: BoxFit.cover,
+    return Center(
+      child: Container(),
     );
   }
 

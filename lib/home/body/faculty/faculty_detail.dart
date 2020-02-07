@@ -1,9 +1,10 @@
 import 'package:amihub/components/error.dart';
 import 'package:amihub/components/loader.dart';
+import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/models/review.dart';
 import 'package:amihub/models/faculty_info.dart';
-import 'package:amihub/models/profile.dart';
 import 'package:amihub/repository/amizone_repository.dart';
+import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 class FacultyDetail extends StatefulWidget {
@@ -35,7 +36,7 @@ class _FacultyDetailState extends State<FacultyDetail> {
           case ConnectionState.done:
             return (snapshot.hasError || snapshot.data == null)
                 ? Padding(
-                    child: ErrorPage(),
+                    child: ErrorPage(snapshot.error),
                     padding: EdgeInsets.only(top: 50),
                   )
                 : FacultyDetailBuild(
@@ -61,9 +62,11 @@ class FacultyDetailBuild extends StatelessWidget {
       slivers: <Widget>[
         SliverAppBar(
           iconTheme: IconThemeData(
-            color: Colors.black, //change your color here
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black, //change your color here
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: blackOrWhite(context),
           floating: true,
           pinned: true,
           actions: <Widget>[
@@ -74,7 +77,7 @@ class FacultyDetailBuild extends StatelessWidget {
           delegate: SliverChildListDelegate(<Widget>[
             FacultyDetails(snapshot, width),
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
               child: Divider(
                 color: Colors.grey,
               ),
@@ -99,7 +102,7 @@ class FacultyDetailBuild extends StatelessWidget {
 
 class FacultyDetails extends StatelessWidget {
   final AsyncSnapshot<FacultyInfo> snapshot;
-  double width;
+  final double width;
 
   FacultyDetails(this.snapshot, this.width);
 
@@ -112,16 +115,19 @@ class FacultyDetails extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16),
-            child: Container(
-              height: 100,
-              width: 100,
-              padding: EdgeInsets.all(0),
-              decoration: BoxDecoration(color: Colors.white, boxShadow: [
-                BoxShadow(blurRadius: 2, color: Colors.grey[500])
-              ]),
-              child: Image.network(
-                snapshot.data.facultyImage,
-                fit: BoxFit.fill,
+            child: ClipRRect(
+              clipBehavior: Clip.antiAlias,
+              borderRadius: BorderRadius.circular(5),
+              child: Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(color: Colors.white, boxShadow: [
+                  BoxShadow(blurRadius: 2, color: Colors.grey[500])
+                ]),
+                child: Image.network(
+                  snapshot.data.facultyImage,
+                  fit: BoxFit.fill,
+                ),
               ),
             ),
           ),
@@ -134,6 +140,9 @@ class FacultyDetails extends StatelessWidget {
                   snapshot.data.facultyName,
                   style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
                 ),
+              ),
+              SizedBox(
+                height: 8,
               ),
               Container(
                 width: width - 132,
@@ -151,9 +160,10 @@ class FacultyDetails extends StatelessWidget {
 }
 
 class ContactActions extends StatelessWidget {
-  Widget actionButton(text, iconData) {
+  Widget actionButton(text, iconData, onPressed) {
     return FlatButton(
-      onPressed: () => {},
+      shape: CircleBorder(),
+      onPressed: onPressed,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -161,6 +171,9 @@ class ContactActions extends StatelessWidget {
             Icon(
               iconData,
               color: Colors.blue,
+            ),
+            SizedBox(
+              height: 4,
             ),
             Text(
               text,
@@ -177,18 +190,9 @@ class ContactActions extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        actionButton(
-          'Phone',
-          Icons.phone,
-        ),
-        actionButton(
-          'Email',
-          Icons.email,
-        ),
-        actionButton(
-          'Place',
-          Icons.place,
-        ),
+        actionButton('Phone', Icons.phone, () {}),
+        actionButton('Email', Icons.email, () {}),
+        actionButton('Cabin', Icons.place, () {}),
       ],
     );
   }
@@ -199,32 +203,24 @@ class CoursesList extends StatelessWidget {
 
   CoursesList({this.snapshot});
 
-  List<Widget> courseChips() {
-    List<Widget> chips = [];
-    snapshot.data.courses.forEach((course) {
-      chips.add(Chip(
-        label: Text(course.name),
-      ));
-    });
-    return chips;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(8),
       child: (this.snapshot.data.courses.length == 0)
           ? Text('')
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  'Courses',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                PageHeader('Courses'),
+                SizedBox(
+                  height: 4,
                 ),
                 Wrap(
-                  spacing: 8,
-                  children: courseChips(),
+                  spacing: 5,
+                  children: snapshot.data.courses.map((course) {
+                    return Chip(label: Text(course.name));
+                  }).toList(),
                 )
               ],
             ),
@@ -251,7 +247,7 @@ class _ReviewsState extends State<Reviews> {
           case ConnectionState.none:
             break;
           case ConnectionState.waiting:
-            return Text('Loading...');
+            return Center(child: Loader());
           case ConnectionState.active:
             break;
           case ConnectionState.done:
@@ -260,7 +256,7 @@ class _ReviewsState extends State<Reviews> {
                     child: Text(snapshot.error.toString()),
                     padding: EdgeInsets.only(top: 50),
                   )
-                : ReviewBuilder(snapshot, widget.facultyCode);
+                : ReviewBuilder(snapshot.data, widget.facultyCode);
         }
         return Text('end');
       },
@@ -269,68 +265,80 @@ class _ReviewsState extends State<Reviews> {
 }
 
 class ReviewBuilder extends StatelessWidget {
-  AsyncSnapshot<List<Review>> snapshot;
-  String facultyCode;
-  int upvotes;
-  int downvotes;
+  final List<Review> reviews;
+  final String facultyCode;
 
-  ReviewBuilder(this.snapshot, this.facultyCode);
+  ReviewBuilder(this.reviews, this.facultyCode);
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> reviews = List.generate(
-        snapshot.data.length,
+    List<Widget> reviewsList = List.generate(
+        reviews.length,
         (index) => Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 ListTile(
-                  contentPadding: EdgeInsets.only(left: 8),
-                  leading: ClipRRect(
-                    borderRadius: new BorderRadius.circular(9999.0),
-                    child: Image.network(
-                      snapshot.data[index].reviewerPhoto,
-                      fit: BoxFit.fill,
-                      height: 64.0,
-                      width: 60.0,
+                    isThreeLine: true,
+                    contentPadding: EdgeInsets.only(left: 8),
+                    dense: true,
+                    leading: ClipRRect(
+                      borderRadius: new BorderRadius.circular(24),
+                      child: Image.network(
+                        reviews[index].reviewerPhoto,
+                        fit: BoxFit.cover,
+                        height: 48.0,
+                        width: 48.0,
+                      ),
                     ),
-                  ),
-                  title: Text(
-                    snapshot.data[index].reviewerName,
-                    style: TextStyle(fontSize: 10, color: Colors.grey),
-                  ),
-                  subtitle: Text(snapshot.data[index].review,
-                      style: TextStyle(fontSize: 12, color: Colors.black)),
-                ),
-                Container(
-                  margin: EdgeInsets.only(left: 80),
-                  height: 32,
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      FlatButton.icon(
-                          onPressed: () {},
-                          padding: EdgeInsets.all(0),
-                          icon: Icon(
-                            Icons.thumb_up,
-                            size: 16,
-                            color: Colors.grey,
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: Text(
+                            reviews[index].reviewerName,
+                            style: TextStyle(
+                                fontSize: 13.5, color: Colors.grey.shade700),
                           ),
-                          label: Text((snapshot.data[index].upVotes == 0)
-                              ? ''
-                              : snapshot.data[index].upVotes)),
-                      FlatButton.icon(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.thumb_down,
-                            size: 16,
-                            color: Colors.grey,
-                          ),
-                          label: Text((snapshot.data[index].downVotes == 0)
-                              ? ''
-                              : snapshot.data[index].downVotes)),
-                    ],
-                  ),
-                )
+                        ),
+                        Text(
+                          reviews[index].review,
+                          style: TextStyle(fontSize: 15),
+                          textAlign: TextAlign.justify,
+                          maxLines: 8,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      ],
+                    ),
+                    trailing: IconButton(
+                        icon: Icon(Icons.more_vert), onPressed: () {}),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        FlatButton.icon(
+                            onPressed: () {},
+                            shape: StadiumBorder(),
+                            icon: Icon(
+                              Icons.thumb_up,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                            label: Text((reviews[index].upVotes == 0)
+                                ? ''
+                                : reviews[index].upVotes.toString())),
+                        FlatButton.icon(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.thumb_down,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                            shape: StadiumBorder(),
+                            label: Text((reviews[index].downVotes == 0)
+                                ? ''
+                                : reviews[index].downVotes.toString())),
+                      ],
+                    )),
               ],
             ));
     //reviews.add();
@@ -340,32 +348,28 @@ class ReviewBuilder extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Text(
-                'Reviews',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              reviews.length != 0 ? PageHeader('Reviews') : Container(),
               Padding(
                 padding: const EdgeInsets.only(left: 8),
                 child: Text(
-                  (snapshot.data.length == 0)
-                      ? ''
-                      : snapshot.data.length.toString(),
-                  style: TextStyle(color: Colors.grey),
+                  (reviews.length == 0) ? '' : reviews.length.toString(),
+                  style: TextStyle(color: Colors.grey, fontSize: 18),
                 ),
               )
             ],
           ),
         ),
         MyReview(facultyCode),
-        ...reviews,
+        ...reviewsList,
       ],
     );
   }
 }
 
 class MyReview extends StatefulWidget {
-  String facultyCode;
+  final String facultyCode;
 
   MyReview(this.facultyCode);
 
@@ -378,57 +382,42 @@ class _MyReviewState extends State<MyReview> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-     myController = TextEditingController();
+    myController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    myController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: AmizoneRepository().fetchMyProfile(),
-      builder: (context, AsyncSnapshot<Profile> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            break;
-          case ConnectionState.waiting:
-            return Loader();
-          case ConnectionState.active:
-            break;
-          case ConnectionState.done:
-            if (snapshot.hasError) return Text('${snapshot.error}');
-            return ListTile(
-              contentPadding: EdgeInsets.only(left: 8),
-              leading: ClipRRect(
-                borderRadius: new BorderRadius.circular(9999.0),
-                child: Image.network(
-                  snapshot.data.photo,
-                  fit: BoxFit.fill,
-                  height: 64.0,
-                  width: 60.0,
-                ),
-              ),
-              title: Text(
-                snapshot.data.name,
-                style: TextStyle(fontSize: 10, color: Colors.grey),
-              ),
-              subtitle: TextField(
-                controller: myController,
-              ),
-              trailing: IconButton(
-                  icon: Icon(Icons.send, color: Colors.blueAccent),
-                  onPressed: () {
-                    AmizoneRepository()
-                        .createReview(widget.facultyCode, myController.text).then((res){
-                         setState(() {
+    return Container();
 
-                         });
-                    });
-                  }),
-            );
-        }
-        return Text('end');
-      },
-    );
+//    return ListTile(
+//      contentPadding: EdgeInsets.only(left: 8),
+//      leading: ClipRRect(
+//        borderRadius: new BorderRadius.circular(9999.0),
+//        child: Image.file(File(imageData), fit: BoxFit.fitWidth)
+//      ),
+//      title: Text(
+//        name,
+//        style: TextStyle(fontSize: 10, color: Colors.grey),
+//      ),
+//      subtitle: TextField(
+//        controller: myController,
+//      ),
+//      trailing: IconButton(
+//          icon: Icon(Icons.send, color: Colors.blueAccent),
+//          onPressed: () {
+//            AmizoneRepository()
+//                .createReview(widget.facultyCode, myController.text)
+//                .then((res) {
+//              setState(() {});
+//            });
+//          }),
+//    );
   }
 }
