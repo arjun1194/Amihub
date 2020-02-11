@@ -26,7 +26,9 @@ class _LoadApiState extends State<LoadApi> {
           case ConnectionState.waiting:
             return Scaffold(body: Loader());
           case ConnectionState.done:
-            if (snapshot.data == null || snapshot.data.statusCode >= 500 || snapshot.data.statusCode == 420) {
+            if (snapshot.data == null ||
+                snapshot.data.statusCode >= 500 ||
+                snapshot.data.statusCode == 420) {
               return ServerUnreachable();
             }
             if (snapshot.hasError) {
@@ -39,8 +41,10 @@ class _LoadApiState extends State<LoadApi> {
               SharedPreferences.getInstance().then((sharedPreferences) {
                 sharedPreferences.setInt("username", int.parse(args.username));
                 sharedPreferences.setBool("appDown", false);
-                sharedPreferences.setString(
-                    "Authorization", snapshot.data.headers['authorization']).then((saved) {
+                sharedPreferences
+                    .setString(
+                        "Authorization", snapshot.data.headers['authorization'])
+                    .then((saved) {
                   Future.delayed(Duration(seconds: 3));
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/home', (Route<dynamic> route) => false);

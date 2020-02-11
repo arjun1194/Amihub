@@ -265,7 +265,7 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
   Widget build(BuildContext context) {
     return ListView(
       padding: EdgeInsets.only(left: 8, right: 8),
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       children: List.generate(widget.snapshot.data.length, (int index) {
         TodayClass todayClass = widget.snapshot.data.elementAt(index);
         if(todayClass.title == "")

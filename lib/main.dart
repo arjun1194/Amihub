@@ -3,7 +3,7 @@ import 'package:amihub/routes/routes.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-//import 'package:flutter_stetho/flutter_stetho.dart';
+import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   //TODO: Remove this
   WidgetsFlutterBinding.ensureInitialized();
-//  Stetho.initialize();
+   Stetho.initialize();
   SystemChrome.setApplicationSwitcherDescription(
     ApplicationSwitcherDescription(
       label: "Amihub",

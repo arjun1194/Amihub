@@ -1,8 +1,10 @@
+
 class Review {
   int reviewId;
   String contentId;
   String review;
   String reviewerName;
+  int reviewerId;
   String reviewerPhoto;
   int upVotes;
   int lastEdited;
@@ -17,6 +19,7 @@ class Review {
         this.reviewerPhoto,
         this.upVotes,
         this.lastEdited,
+        this.reviewerId,
         this.downVotes,
         this.timeStamp});
 
@@ -27,6 +30,7 @@ class Review {
     reviewerName = json['reviewerName'];
     reviewerPhoto = json['reviewerPhoto'];
     upVotes = json['upVotes'];
+    reviewerId = json['reviewerId'];
     lastEdited = json['lastEdited'];
     downVotes = json['downVotes'];
     timeStamp = json['timeStamp'];
@@ -41,6 +45,7 @@ class Review {
     data['reviewerPhoto'] = this.reviewerPhoto;
     data['upVotes'] = this.upVotes;
     data['lastEdited'] = this.lastEdited;
+    data['reviewerId'] = this.reviewerId;
     data['downVotes'] = this.downVotes;
     data['timeStamp'] = this.timeStamp;
     return data;

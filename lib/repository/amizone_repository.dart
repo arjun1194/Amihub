@@ -1,9 +1,6 @@
 import 'dart:convert' as convert;
-import 'dart:io';
 import 'package:amihub/database/database_helper.dart';
 import 'package:amihub/interceptors/amizone_http_interceptor.dart';
-import 'package:amihub/interceptors/post_interceptor.dart';
-import 'package:amihub/models/review.dart';
 import 'package:amihub/models/attendance.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_attendance.dart';
@@ -22,34 +19,48 @@ import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AmizoneRepository {
   DatabaseHelper dbHelper = DatabaseHelper.db;
 
-  Future<dynamic> createReview(String contentId, String review) async {
-    HttpClientWithInterceptor http = HttpClientWithInterceptor.build(
-        interceptors: [AmizoneInterceptor(), PostInterceptor()]);
-    print("Content id is======================>${int.parse(contentId)}");
+  Future<Response> deleteReview(int reviewId) async {
+    HttpClientWithInterceptor http =
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    return await http.delete('$amihubUrl/review/$reviewId');
+  }
+
+  Future<Response> createReview(String contentId, String review,{bool isCourse = false}) async {
+    HttpClientWithInterceptor http =
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     Map<String, dynamic> reviewBody = {
-      "contentId": int.parse(contentId),
+      "contentId": isCourse ? contentId :int.parse(contentId),
       "review": review
     };
 
     return await http.post('$amihubUrl/review',
-        body: convert.jsonEncode(reviewBody));
+        body: convert.jsonEncode(reviewBody),
+        headers: {"content-type": "application/json"});
   }
 
-  Future<List<Review>> getFacultyReviews(String facultyCode) async {
-    List<Review> reviews = [];
+  Future getCourseReviews(String contentId, {int page = 0}) async {
+    HttpClientWithInterceptor http =
+    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    String url = '$amihubUrl/myCourses/$contentId/reviews?page=$page';
+    var response = await http.get(url, params: null);
+    var jsonResponse = convert.jsonDecode(response.body);
+    return jsonResponse;
+  }
+
+
+  Future getFacultyReviews(String facultyCode, {int page = 0}) async {
     String fCode = int.parse(facultyCode).toString();
     HttpClientWithInterceptor http =
         HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
-    var response = await http.get('$amihubUrl/faculty/$fCode/reviews');
+    String url = '$amihubUrl/faculty/$fCode/reviews?page=$page';
+    var response = await http.get(url, params: null);
     var jsonResponse = convert.jsonDecode(response.body);
-    for (var item in jsonResponse) reviews.add(Review.fromJson(item));
-    return reviews;
+    return jsonResponse;
   }
 
   Future<bool> checkServerStatus() async {
@@ -350,6 +361,6 @@ class AmizoneRepository {
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     });
-
   }
+
 }

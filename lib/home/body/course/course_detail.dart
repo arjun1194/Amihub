@@ -5,6 +5,7 @@ import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/components/textfield.dart';
 import 'package:amihub/home/body/course/course_attendance_detail.dart';
 import 'package:amihub/home/body/faculty/faculty_detail.dart';
+import 'package:amihub/home/body/review.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_info.dart';
 import 'package:amihub/repository/amizone_repository.dart';
@@ -69,58 +70,55 @@ class _CoursePageState extends State<CoursePage> {
           },
         ),
       ),
-      body: Container(
-        child: ListView(
-          physics: BouncingScrollPhysics(),
-          children: <Widget>[
-            SizedBox(
-              height: 10,
-            ),
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Center(
-                      child: Text(
-                    getPercentage(),
-                    style: TextStyle(
-                        color: isLight(context) ? Colors.black : Colors.white,
-                        fontSize: 35),
-                  )),
-                  OutlineButton(
-                    borderSide: BorderSide(color: Colors.grey.shade300),
+      body: ListView(
+        children: <Widget>[
+          SizedBox(
+            height: 10,
+          ),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Center(
                     child: Text(
-                      'Attendance detail',
-                      style: TextStyle(
-                          color:
-                              isLight(context) ? Colors.black : Colors.white),
-                    ),
-                    onPressed: semester == widget.course.semester
-                        ? () {
-                            CustomPageRoute.pushPage(
-                                context: context,
-                                child: CourseAttendanceDetail(
-                                    course: widget.course));
-                          }
-                        : null,
-                    shape: StadiumBorder(),
-                  )
-                ],
-              ),
+                  getPercentage(),
+                  style: TextStyle(
+                      color: isLight(context) ? Colors.black : Colors.white,
+                      fontSize: 35),
+                )),
+                OutlineButton(
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                  child: Text(
+                    'Attendance detail',
+                    style: TextStyle(
+                        color:
+                            isLight(context) ? Colors.black : Colors.white),
+                  ),
+                  onPressed: semester == widget.course.semester
+                      ? () {
+                          CustomPageRoute.pushPage(
+                              context: context,
+                              child: CourseAttendanceDetail(
+                                  course: widget.course));
+                        }
+                      : null,
+                  shape: StadiumBorder(),
+                )
+              ],
             ),
-            SizedBox(
-              height: 5,
-            ),
-            internalAssessmentBuild(),
-            AttendanceCalculator(widget.course, semester),
-            isLoading
-                ? Padding(
-                    padding: EdgeInsets.only(top: 40),
-                    child: Loader(),
-                  )
-                : CourseInformation(course: widget.course)
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          internalAssessmentBuild(),
+          AttendanceCalculator(widget.course, semester),
+          isLoading
+              ? Padding(
+                  padding: EdgeInsets.only(top: 40),
+                  child: Loader(),
+                )
+              : CourseInformation(course: widget.course),
+        ],
       ),
     );
   }
@@ -201,7 +199,7 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
               100 >=
           percentageSliderValue) {
         text =
-            "You can afford ${noOfClassController.text} ${noOfClassController.text == "1" ? "class" : "classes"}";
+            "You can miss ${noOfClassController.text} ${noOfClassController.text == "1" ? "class" : "classes"} for $percentageSliderValue%";
       } else {
         double percent = percentageSliderValue * 0.01;
         double value =
@@ -209,7 +207,7 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
                     present) /
                 (1 - percent);
         text =
-            "You'll have to attend ${value.ceil()} more ${value.ceil() == 1 ? "class" : "classes"}";
+            "You'll have to attend ${value.ceil()} more ${value.ceil() == 1 ? "class" : "classes"} for $percentageSliderValue%";
       }
       setState(() {
         attendanceText = text;
@@ -271,7 +269,7 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 15),
-                    child: Text('Percentage'),
+                    child: Text('Set target percentage'),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 4,right: 4),
@@ -291,7 +289,7 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
                         bottom: 30,
                         top: 20),
                     child: MyTextField(
-                      hintText: "No of Classes",
+                      hintText: "Classes to skip",
                       keyboardType: TextInputType.number,
                       obscureText: false,
                       textEditingController: noOfClassController,
@@ -527,7 +525,11 @@ class CourseInformation extends StatelessWidget {
                                     child: Text(extractSyllabus(
                                         snapshot.data.courseSyllabus))),
                               )
-                            : Container()
+                            : Container(),
+                        SizedBox(
+                          height: 5,
+                        ),
+                        Reviews(contentId: course.courseCode,isCourse: true,)
                       ],
                     );
         }

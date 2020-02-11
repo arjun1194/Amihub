@@ -139,10 +139,6 @@ class FacultyBuild extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Divider(),
-                      )
                     ],
                   ),
                 )

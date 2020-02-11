@@ -5,7 +5,6 @@ class PostInterceptor extends InterceptorContract {
   @override
   Future<RequestData> interceptRequest({RequestData data}) async {
     data.headers["content-type"] = "application/json";
-    print(data.body);
     return data;
   }
 
