@@ -12,6 +12,7 @@ import 'package:amihub/home/body/result/results.dart';
 import 'package:amihub/home/body/settings/settings.dart';
 import 'package:amihub/home/body/todayclass/todays_classes.dart';
 import 'package:amihub/models/backdrop_selected.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Home extends StatefulWidget {
   final Key key;
@@ -151,37 +153,47 @@ class _HomeState extends State<Home> {
                 Center(
                   child: Padding(
                     padding:
-                        const EdgeInsets.only(bottom: 10, left: 30, right: 30),
-                    child: FlatButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        CustomPageRoute.pushPage(
-                            context: context, child: AboutUS());
-                      },
-                      shape: StadiumBorder(),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Icon(
-                            Icons.info_outline,
-                            size: 23,
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            'About us',
-                            style: TextStyle(fontSize: 18),
-                          )
-                        ],
-                      ),
+                        const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        FlatButton.icon(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              CustomPageRoute.pushPage(
+                                  context: context, child: AboutUS());
+                            },
+                            shape: StadiumBorder(),
+                            icon: Icon(
+                              Icons.info_outline,
+                            ),
+                            label: Text(
+                              'About us',
+                            )),
+                        FlatButton.icon(
+                            shape: StadiumBorder(),
+                            onPressed: () {
+                              launchUrl(
+                                  "https://www.instagram.com/amihubofficial");
+                            },
+                            icon: Icon(FontAwesomeIcons.instagram),
+                            label: Text("Follow"))
+                      ],
                     ),
                   ),
-                )
+                ),
               ],
             );
           });
     });
+  }
+
+  Future launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   Future<int> getUsername() async {

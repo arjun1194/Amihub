@@ -191,7 +191,9 @@ class _ContactActionsState extends State<ContactActions> {
   Widget actionButton(String text, IconData iconData, VoidCallback onPressed) {
     return FlatButton(
       shape: CircleBorder(),
-      onPressed: onPressed,
+      //TODO: Uncomment it
+//      onPressed: onPressed,
+      onPressed: null,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

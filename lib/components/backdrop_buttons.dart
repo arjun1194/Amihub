@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class BackDropButton extends StatefulWidget {
   final IconData iconData;
   final String titleText;
-  bool isSelected;
+  final bool isSelected;
   final VoidCallback onPressed;
 
   BackDropButton(
@@ -19,32 +19,20 @@ class BackDropButton extends StatefulWidget {
 class _BackDropButtonState extends State<BackDropButton> {
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      shape: StadiumBorder(),
-      onPressed: widget.onPressed,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Icon(
-            widget.iconData,
+    return FlatButton.icon(
+        shape: StadiumBorder(),
+        onPressed: widget.onPressed,
+        icon: Icon(
+          widget.iconData,
+          color: Colors.grey.shade200.withOpacity(widget.isSelected ? 1 : 0.5),
+        ),
+        label: Text(
+          widget.titleText,
+          style: TextStyle(
             color:
-                Colors.grey.shade200.withOpacity(widget.isSelected ? 1 : 0.5),
+                Colors.grey.shade300.withOpacity(widget.isSelected ? 1 : 0.5),
+            fontSize: 18.0,
           ),
-          SizedBox(
-            width: 5,
-          ),
-          Text(
-            widget.titleText,
-            style: TextStyle(
-              color:
-                  Colors.grey.shade300.withOpacity(widget.isSelected ? 1 : 0.5),
-              fontSize: 18.0,
-            ),
-          )
-        ],
-      ),
-    );
+        ));
   }
 }

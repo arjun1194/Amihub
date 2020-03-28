@@ -121,11 +121,51 @@ class _HomeBodyState extends State<HomeBody> {
                         topRight: Radius.circular(15)),
                   ),
                 ),
-                height: MediaQuery.of(context).size.height * 0.3,
+                height: MediaQuery.of(context).size.height * 0.35,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                   child: ListView(
                     children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Container(
+                              decoration: ShapeDecoration(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)
+                                  ), color: Colors.grey.shade300.withOpacity(0.3)),
+                              padding: EdgeInsets.all(8),
+                              child: Text(double.parse(course.percentage)
+                                  .toStringAsFixed(2),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16
+                              ),)),
+                          Text("Attendance",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontStyle: FontStyle.italic,
+                            shadows: [
+                              Shadow(
+                                color: Colors.grey.shade300.withOpacity(0.3),
+                                blurRadius: 10,
+                              )
+                            ]
+                          ),),
+                          Container(
+                              decoration: ShapeDecoration(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)
+                                  ), color: Colors.grey.shade300.withOpacity(0.3),),
+                              padding: EdgeInsets.all(8),
+                              child: Text('${course.present}/${course.total}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16
+                                ),)),
+                        ],
+                      ),
+                      SizedBox(height: 15,),
                       listTileElement(
                           title: todayClass.title,
                           onTap: () {

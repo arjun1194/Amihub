@@ -2,6 +2,7 @@ import 'package:amihub/components/custom_appbar.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutUS extends StatefulWidget {
@@ -60,7 +61,9 @@ class _AboutUSState extends State<AboutUS> {
                 githubButton("@arjun1194", "https://github.com/arjun1194")
               ],
             ),
-            SizedBox(height: 20,)
+            SizedBox(
+              height: 20,
+            )
           ],
         ),
       ),
@@ -68,23 +71,16 @@ class _AboutUSState extends State<AboutUS> {
   }
 
   RaisedButton githubButton(String username, String link) {
-    return RaisedButton(
-      highlightElevation: 2,
-      focusElevation: 2,
-      hoverElevation: 2,
-      onPressed: () {
-        launchUrl(link);
-      },
-      shape: StadiumBorder(),
-      color: isLight(context) ? Colors.grey.shade100 : Color(0xff121212),
-      elevation: 0,
-      child: Row(
-        children: <Widget>[
-          Image.network('https://img.icons8.com/windows/32/000000/github.png'),
-          Text(username),
-        ],
-      ),
-    );
+    return RaisedButton.icon(
+        highlightElevation: 2,
+        onPressed: () {
+          launchUrl(link);
+        },
+        shape: StadiumBorder(),
+        color: isLight(context) ? Colors.grey.shade100 : Color(0xff121212),
+        elevation: 0,
+        icon: Icon(FontAwesomeIcons.github),
+        label: Text(username));
   }
 
   launchUrl(String url) async {
@@ -105,11 +101,11 @@ class _AboutUSState extends State<AboutUS> {
               padding: EdgeInsets.only(left: 20),
               child: Container(
                 child: CircleAvatar(
-                  backgroundColor: isLight(context) ? Colors.blue : Color(0xff121229),
+                  backgroundColor:
+                      isLight(context) ? Colors.blue : Color(0xff121229),
                   radius: 35,
                   child: Icon(
-                    Icons.person,
-                    size: 35,
+                    FontAwesomeIcons.user,
                   ),
                 ),
               ),

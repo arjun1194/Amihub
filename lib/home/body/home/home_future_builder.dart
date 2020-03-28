@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class HomeTodayClassBuilder extends StatefulWidget {
-
   final Function(TodayClass) onCardTap;
 
   HomeTodayClassBuilder({this.onCardTap});
@@ -22,29 +21,12 @@ class HomeTodayClassBuilder extends StatefulWidget {
 
 class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   AmizoneRepository amizoneRepository = AmizoneRepository();
-  int currentPage;
   Future todayClassFuture;
-  PageController pageController;
-  List<TodayClass> todayClasses;
-
-  changePage(int page) {
-    setState(() {
-      pageController.jumpToPage(page);
-    });
-  }
 
   @override
   void initState() {
     super.initState();
-    currentPage = 0;
     todayClassFuture = amizoneRepository.fetchTodayClass();
-    pageController = PageController(initialPage: currentPage);
-  }
-
-  @override
-  void dispose() {
-    pageController.dispose();
-    super.dispose();
   }
 
   @override
@@ -71,7 +53,10 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
                 ? errorClassBuilder()
                 : (snapshot.data.elementAt(0).title == "")
                     ? noClassBuilder(height, width)
-                    : todayClassBuilder(snapshot);
+                    : TodayClassWidget(
+                        todayClasses: snapshot.data,
+                        onTap: widget.onCardTap,
+                      );
 
           case ConnectionState.none:
             break;
@@ -81,10 +66,6 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
         return Text("End"); // Unreachable
       },
     );
-  }
-
-  pageTapped() {
-    widget.onCardTap(todayClasses.elementAt(currentPage));
   }
 
   Padding errorClassBuilder() {
@@ -141,51 +122,6 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
               ],
             ),
           )),
-    );
-  }
-
-  PageView todayClassBuilder(AsyncSnapshot<List<TodayClass>> snapshot) {
-    todayClasses = snapshot.data;
-    return PageView(
-      onPageChanged: (int val) {
-        currentPage = val;
-        pageController.animateToPage(val,
-            duration: Duration(milliseconds: 500), curve: Curves.decelerate);
-      },
-      scrollDirection: Axis.horizontal,
-      physics: BouncingScrollPhysics(),
-      children: List.generate(snapshot.data.length, (index) {
-        TodayClass todayClass = snapshot.data.elementAt(index);
-        DateTime end =
-            DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.end);
-        DateTime start =
-            DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: InkWell(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            onTap: pageTapped,
-            child: TodayClassCard(
-              todayClass.title,
-              todayClass.facultyName.split(",")[0].split("[")[0],
-              todayClass.color,
-              todayClass.roomNo,
-              todayClass.courseCode,
-              start,
-              end,
-              isLight(context)
-                  ? lightColors[math.min(index, index % lightColors.length)]
-                  : Colors.blueGrey.shade900,
-              isLight(context)
-                  ? darkColors[math.min(index, index % lightColors.length)]
-                  : Colors.black,
-            ),
-          ),
-        );
-      }),
-      pageSnapping: true,
-      controller: pageController,
     );
   }
 
@@ -249,6 +185,117 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class TodayClassWidget extends StatefulWidget {
+  final List<TodayClass> todayClasses;
+  final Function(TodayClass) onTap;
+
+  TodayClassWidget({@required this.todayClasses, this.onTap});
+
+  @override
+  _TodayClassWidgetState createState() => _TodayClassWidgetState();
+}
+
+class _TodayClassWidgetState extends State<TodayClassWidget> {
+  int currentPage;
+  PageController pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    pageController = PageController(initialPage: 0);
+    currentPage = pageController.initialPage;
+    Future.delayed(Duration(milliseconds: 1000), () {
+      pageController.animateToPage(_calculateInitialPage(),
+          duration: Duration(milliseconds: 1300),
+          curve: Curves.linearToEaseOut);
+    });
+  }
+
+  pageTapped() {
+    widget.onTap(widget.todayClasses.elementAt(currentPage));
+  }
+
+  changePage(int page) {
+    setState(() {
+      pageController.jumpToPage(page);
+    });
+  }
+
+  int _calculateInitialPage() {
+    DateTime currentTime = DateTime.now();
+
+    List<DateTime> classTimes = widget.todayClasses
+        .map((e) => DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(e.end))
+        .toList();
+
+    DateTime predictedTime;
+    try {
+      predictedTime = classTimes.firstWhere((f) {
+        return currentTime.isBefore(f);
+      });
+    } catch (e) {}
+    if (predictedTime == null) {
+      DateTime lastElementStart = DateFormat("MM/dd/yyyy HH:mm:ss aaa")
+          .parse(widget.todayClasses.last.start);
+      if (currentTime.isBefore(lastElementStart) &&
+          currentTime.isAfter(classTimes.last))
+        return classTimes.length - 1;
+      else
+        return 0;
+    }
+    return classTimes.indexOf(predictedTime);
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PageView(
+      onPageChanged: (int val) {
+        currentPage = val;
+      },
+      scrollDirection: Axis.horizontal,
+      physics: BouncingScrollPhysics(),
+      children: List.generate(widget.todayClasses.length, (index) {
+        TodayClass todayClass = widget.todayClasses.elementAt(index);
+        DateTime end =
+            DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.end);
+        DateTime start =
+            DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: pageTapped,
+            child: TodayClassCard(
+              todayClass.title,
+              todayClass.facultyName.split(",")[0].split("[")[0],
+              todayClass.color,
+              todayClass.roomNo,
+              todayClass.courseCode,
+              start,
+              end,
+              isLight(context)
+                  ? lightColors[math.min(index, index % lightColors.length)]
+                  : Colors.blueGrey.shade900,
+              isLight(context)
+                  ? darkColors[math.min(index, index % lightColors.length)]
+                  : Colors.black,
+            ),
+          ),
+        );
+      }),
+      pageSnapping: true,
+      controller: pageController,
     );
   }
 }

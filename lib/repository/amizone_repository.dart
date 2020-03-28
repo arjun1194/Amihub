@@ -24,9 +24,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AmizoneRepository {
   DatabaseHelper dbHelper = DatabaseHelper.db;
 
-  Future<Response> reportReview(int reviewId) async{
+  Future<Response> reportReview(int reviewId) async {
     HttpClientWithInterceptor http =
-    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     return await http.put('$amihubUrl/review/flag/$reviewId');
   }
 
@@ -36,11 +36,12 @@ class AmizoneRepository {
     return await http.delete('$amihubUrl/review/$reviewId');
   }
 
-  Future<Response> createReview(String contentId, String review,{bool isCourse = false}) async {
+  Future<Response> createReview(String contentId, String review,
+      {bool isCourse = false}) async {
     HttpClientWithInterceptor http =
         HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     Map<String, dynamic> reviewBody = {
-      "contentId": isCourse ? contentId :int.parse(contentId),
+      "contentId": isCourse ? contentId : int.parse(contentId),
       "review": review
     };
 
@@ -48,22 +49,21 @@ class AmizoneRepository {
         body: convert.jsonEncode(reviewBody),
         headers: {"content-type": "application/json"});
   }
-  Future<Response> editReview(int reviewId,String review) {
+
+  Future<Response> editReview(int reviewId, String review) {
     HttpClientWithInterceptor http =
-    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     return http.put('$amihubUrl/review/$reviewId?review=$review');
   }
 
-
   Future getCourseReviews(String contentId, {int page = 0}) async {
     HttpClientWithInterceptor http =
-    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+        HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
     String url = '$amihubUrl/myCourses/$contentId/reviews?page=$page';
     var response = await http.get(url, params: null);
     var jsonResponse = convert.jsonDecode(response.body);
     return jsonResponse;
   }
-
 
   Future getFacultyReviews(String facultyCode, {int page = 0}) async {
     String fCode = int.parse(facultyCode).toString();
@@ -374,6 +374,4 @@ class AmizoneRepository {
           .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     });
   }
-
-
 }
