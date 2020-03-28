@@ -5,7 +5,7 @@ import 'package:amihub/components/platform_specific.dart';
 import 'package:amihub/components/textfield.dart';
 import 'package:amihub/home/body/course/course_attendance_detail.dart';
 import 'package:amihub/home/body/faculty/faculty_detail.dart';
-import 'package:amihub/home/body/review.dart';
+import 'package:amihub/home/body/review/review.dart';
 import 'package:amihub/models/course.dart';
 import 'package:amihub/models/course_info.dart';
 import 'package:amihub/repository/amizone_repository.dart';

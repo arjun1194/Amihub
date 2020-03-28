@@ -24,6 +24,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AmizoneRepository {
   DatabaseHelper dbHelper = DatabaseHelper.db;
 
+  Future<Response> reportReview(int reviewId) async{
+    HttpClientWithInterceptor http =
+    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    return await http.put('$amihubUrl/review/flag/$reviewId');
+  }
+
   Future<Response> deleteReview(int reviewId) async {
     HttpClientWithInterceptor http =
         HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
@@ -42,6 +48,12 @@ class AmizoneRepository {
         body: convert.jsonEncode(reviewBody),
         headers: {"content-type": "application/json"});
   }
+  Future<Response> editReview(int reviewId,String review) {
+    HttpClientWithInterceptor http =
+    HttpClientWithInterceptor.build(interceptors: [AmizoneInterceptor()]);
+    return http.put('$amihubUrl/review/$reviewId?review=$review');
+  }
+
 
   Future getCourseReviews(String contentId, {int page = 0}) async {
     HttpClientWithInterceptor http =
@@ -362,5 +374,6 @@ class AmizoneRepository {
           .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     });
   }
+
 
 }

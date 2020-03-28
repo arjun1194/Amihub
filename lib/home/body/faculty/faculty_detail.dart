@@ -1,20 +1,16 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:amihub/components/custom_appbar.dart';
 import 'package:amihub/components/error.dart';
 import 'package:amihub/components/loader.dart';
 import 'package:amihub/components/page_heading.dart';
 import 'package:amihub/components/platform_specific.dart';
-import 'package:amihub/home/body/review.dart';
-import 'package:amihub/models/review.dart';
+import 'package:amihub/home/body/review/review.dart';
 import 'package:amihub/models/faculty_info.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FacultyDetail extends StatefulWidget {
   final String facultyCode;
@@ -26,20 +22,32 @@ class FacultyDetail extends StatefulWidget {
   _FacultyDetailState createState() => _FacultyDetailState();
 }
 
+GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
 class _FacultyDetailState extends State<FacultyDetail> {
   AmizoneRepository amizoneRepository = AmizoneRepository();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: scaffoldKey,
         appBar: AppBar(
+          elevation: 0,
+          brightness: Theme.of(context).brightness,
           iconTheme: IconThemeData(
             color: Theme.of(context).brightness == Brightness.dark
                 ? Colors.white
                 : Colors.black, //change your color here
           ),
           backgroundColor: blackOrWhite(context),
-          title: Text(widget.facultyName),
+          title: Text(
+            widget.facultyName,
+            style: TextStyle(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+          ),
           actions: <Widget>[
             IconButton(icon: Icon(Icons.more_vert), onPressed: () => {})
           ],
@@ -93,7 +101,7 @@ class FacultyDetailBuild extends StatelessWidget {
             color: Colors.grey,
           ),
         ),
-        ContactActions(),
+        ContactActions(facultyInfo: snapshot.data),
         Padding(
           padding: const EdgeInsets.only(left: 16, right: 16),
           child: Divider(
@@ -168,8 +176,19 @@ class FacultyDetails extends StatelessWidget {
   }
 }
 
-class ContactActions extends StatelessWidget {
-  Widget actionButton(text, iconData, onPressed) {
+class ContactActions extends StatefulWidget {
+  final FacultyInfo facultyInfo;
+
+  const ContactActions({Key key, this.facultyInfo}) : super(key: key);
+
+  @override
+  _ContactActionsState createState() => _ContactActionsState();
+}
+
+class _ContactActionsState extends State<ContactActions> {
+  TextEditingController _textFieldController = TextEditingController();
+
+  Widget actionButton(String text, IconData iconData, VoidCallback onPressed) {
     return FlatButton(
       shape: CircleBorder(),
       onPressed: onPressed,
@@ -194,16 +213,308 @@ class ContactActions extends StatelessWidget {
     );
   }
 
+  _phoneButtonModalSheet() {
+    showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(10.0))),
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(left: 15, right: 15),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  subtitle: Text("+918860356201"),
+                  trailing: IconButton(
+                    icon: Icon(Icons.phone),
+                    onPressed: () {
+                      launchUrl("tel:${widget.facultyInfo.phoneNo}");
+                    },
+                  ),
+                  title: Text("Call"),
+                ),
+                ListTile(
+                  trailing: IconButton(
+                    icon: Icon(Icons.question_answer),
+                    onPressed: () {
+                      launchUrl("sms:${widget.facultyInfo.phoneNo}");
+                    },
+                  ),
+                  title: Text("Message"),
+                ),
+                ListTile(
+                  trailing: IconButton(
+                    icon: Icon(FontAwesomeIcons.whatsapp),
+                    onPressed: () {
+                      launchUrl(
+                          "https://api.whatsapp.com/send?phone=${widget.facultyInfo.phoneNo}");
+                    },
+                  ),
+                  title: Text("WhatsApp"),
+                ),
+                _isCorrectCheck("phone number",
+                    iconData: Icons.call, textInputType: TextInputType.phone)
+              ],
+            ),
+          );
+        });
+  }
+
+  Column _isCorrectCheck(String type,
+      {IconData iconData, TextInputType textInputType}) {
+    return Column(
+      children: <Widget>[
+        SizedBox(
+          height: 8,
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Text("Is this correct?"),
+            Container(
+              height: 30,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  OutlineButton(
+                    padding: EdgeInsets.all(0),
+                    shape: StadiumBorder(),
+                    child: Text(
+                      "Yes",
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Future.delayed(Duration(milliseconds: 500)).then((val) {
+                        scaffoldKey.currentState.showSnackBar(platformSnackBar(
+                            content: Text("Thanks for feedback"),
+                            duration: Duration(milliseconds: 1000)));
+                      });
+                    },
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  OutlineButton(
+                    padding: EdgeInsets.all(0),
+                    shape: StadiumBorder(),
+                    child: Text("No"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Future.delayed(Duration(milliseconds: 100)).then((val) {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
+                                content: Text("Do you have the correct $type?"),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                    child: new Text(
+                                      'No'.toUpperCase(),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5)),
+                                  ),
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(true);
+                                      _correctInfoTextField(
+                                          textInputType: textInputType,
+                                          iconData: iconData);
+                                    },
+                                    child: new Text(
+                                      'Yes'.toUpperCase(),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5)),
+                                  ),
+                                ],
+                              );
+                            });
+                      });
+                    },
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: 15,
+        )
+      ],
+    );
+  }
+
+  _correctInfoTextField(
+      {IconData iconData, TextInputType textInputType, int maxLength}) {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () {
+              return _onWillPop(
+                  iconData: iconData, textInputType: textInputType);
+            },
+            child: Container(
+              color: getColor(),
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: TextField(
+                controller: _textFieldController,
+                decoration: InputDecoration(
+                  enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: getColor())),
+                  border: UnderlineInputBorder(
+                      borderSide: BorderSide(color: getColor())),
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: getColor())),
+                  contentPadding: EdgeInsets.only(left: 15),
+                  alignLabelWithHint: true,
+                  labelText: '',
+                  hintText: "What's the correct?",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  prefixIcon: Icon(iconData),
+                  counter: Container(
+                    height: 0,
+                    width: 0,
+                  ),
+                ),
+                autofocus: true,
+                maxLength: iconData == Icons.call ? 10 : null,
+                maxLines: null,
+                keyboardType: textInputType,
+              ),
+            ),
+          );
+        });
+  }
+
+  Color getColor() {
+    return Theme.of(context).brightness == Brightness.dark
+        ? Color(0xff121212)
+        : Colors.white;
+  }
+
+  _cabinButtonPressed() {
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(8.0))),
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(left: 15, right: 15),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  title: Text('Cabin'),
+                  trailing: Text("E1-202"),
+                ),
+                _isCorrectCheck("cabin",
+                    iconData: Icons.place, textInputType: TextInputType.text)
+              ],
+            ),
+          );
+        });
+  }
+
+  Future launchUrl(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        actionButton('Phone', Icons.phone, () {}),
-        actionButton('Email', Icons.email, () {}),
-        actionButton('Cabin', Icons.place, () {}),
+        actionButton('Phone', Icons.phone, _phoneButtonModalSheet),
+        actionButton('Email', Icons.email, _emailButtonPressed),
+        actionButton('Cabin', Icons.place, _cabinButtonPressed),
       ],
     );
+  }
+
+  void _emailButtonPressed() {
+    showModalBottomSheet(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(8.0))),
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(left: 15, right: 15),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  title: Text("Email"),
+                  subtitle: Text("avirias@live.com"),
+                  trailing: IconButton(
+                      icon: Icon(Icons.mail_outline),
+                      onPressed: () {
+                        launchUrl("mailto:${widget.facultyInfo.email}");
+                      }),
+                ),
+                _isCorrectCheck("email",
+                    iconData: Icons.email,
+                    textInputType: TextInputType.emailAddress)
+              ],
+            ),
+          );
+        });
+  }
+
+  Future<bool> _onWillPop(
+      {IconData iconData, TextInputType textInputType, int maxLength}) {
+    if (_textFieldController != null && _textFieldController.text != "") {
+      Navigator.pop(context);
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              title: new Text('Discard edit?'),
+              actions: <Widget>[
+                new FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                    _correctInfoTextField(
+                        iconData: iconData,
+                        textInputType: textInputType,
+                        maxLength: maxLength);
+                  },
+                  child: new Text(
+                    'keep writing'.toUpperCase(),
+                  ),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)),
+                ),
+                new FlatButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)),
+                  onPressed: () {
+                    _textFieldController.clear();
+                    Navigator.of(context).pop(false);
+                  },
+                  child: new Text('discard'.toUpperCase()),
+                ),
+              ],
+            );
+          });
+    }
+    return Future.value(true);
   }
 }
 
@@ -236,4 +547,3 @@ class CoursesList extends StatelessWidget {
     );
   }
 }
-

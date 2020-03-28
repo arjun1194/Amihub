@@ -11,6 +11,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class HomeTodayClassBuilder extends StatefulWidget {
+
+  final Function(TodayClass) onCardTap;
+
+  HomeTodayClassBuilder({this.onCardTap});
+
   @override
   _HomeTodayClassBuilderState createState() => _HomeTodayClassBuilderState();
 }
@@ -20,6 +25,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   int currentPage;
   Future todayClassFuture;
   PageController pageController;
+  List<TodayClass> todayClasses;
 
   changePage(int page) {
     setState(() {
@@ -75,6 +81,10 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
         return Text("End"); // Unreachable
       },
     );
+  }
+
+  pageTapped() {
+    widget.onCardTap(todayClasses.elementAt(currentPage));
   }
 
   Padding errorClassBuilder() {
@@ -135,6 +145,7 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
   }
 
   PageView todayClassBuilder(AsyncSnapshot<List<TodayClass>> snapshot) {
+    todayClasses = snapshot.data;
     return PageView(
       onPageChanged: (int val) {
         currentPage = val;
@@ -151,20 +162,25 @@ class _HomeTodayClassBuilderState extends State<HomeTodayClassBuilder> {
             DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: TodayClassCard(
-            todayClass.title,
-            todayClass.facultyName.split(",")[0].split("[")[0],
-            todayClass.color,
-            todayClass.roomNo,
-            todayClass.courseCode,
-            start,
-            end,
-            isLight(context)
-                ? lightColors[math.min(index, index % lightColors.length)]
-                : Colors.blueGrey.shade900,
-            isLight(context)
-                ? darkColors[math.min(index, index % lightColors.length)]
-                : Colors.black,
+          child: InkWell(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            onTap: pageTapped,
+            child: TodayClassCard(
+              todayClass.title,
+              todayClass.facultyName.split(",")[0].split("[")[0],
+              todayClass.color,
+              todayClass.roomNo,
+              todayClass.courseCode,
+              start,
+              end,
+              isLight(context)
+                  ? lightColors[math.min(index, index % lightColors.length)]
+                  : Colors.blueGrey.shade900,
+              isLight(context)
+                  ? darkColors[math.min(index, index % lightColors.length)]
+                  : Colors.black,
+            ),
           ),
         );
       }),

@@ -87,7 +87,7 @@ const appTitle = 'Amihub';
 const appIcon = 'assets/logo.png';
 
 //api end point
-var amihubUrl = 'http://192.168.1.171:8080';
+var amihubUrl = 'http://api.avirias.xyz:8080';
 
 String facultyImage(String code) =>
     "https://amizone.net/AdminAmizone/images/StaffImages/${code}_p.png";
@@ -107,37 +107,3 @@ var jsSetWebViewCenter =
 var jsGetCaptchaResponse =
     "document.getElementById('g-recaptcha-response').value;";
 
-List<BottomNavigationBarItem> list = [
-  BottomNavItem(
-          "Home",
-          Icon(
-            Icons.home,
-          ),
-          greenMain,
-          "Home")
-      .bottomNavItem,
-  BottomNavItem(
-          "Academics",
-          Icon(
-            Icons.school,
-          ),
-          greenMain,
-          "Home")
-      .bottomNavItem,
-  BottomNavItem(
-          "Chat",
-          Icon(
-            Icons.question_answer,
-          ),
-          greenMain,
-          "Home")
-      .bottomNavItem,
-  BottomNavItem(
-          "Profile",
-          Icon(
-            Icons.person,
-          ),
-          greenMain,
-          "Home")
-      .bottomNavItem,
-];

@@ -15,7 +15,7 @@ void main() {
   SystemChrome.setApplicationSwitcherDescription(
     ApplicationSwitcherDescription(
       label: "Amihub",
-      primaryColor: 0xffffffff
+      primaryColor: 0xffffffff,
     )
   );
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])

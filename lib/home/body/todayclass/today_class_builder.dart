@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:amihub/components/error.dart';
 import 'package:amihub/components/page_heading.dart';
@@ -331,128 +332,131 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
           return Material(
             color: Colors.transparent,
             elevation: 0,
-            child: Container(
-              decoration: ShapeDecoration(
-                color: isLight(context)? Colors.white.withOpacity(0.87) : Colors.black87,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(15),
-                      topRight: Radius.circular(15)),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5,sigmaY: 5),
+              child: Container(
+                decoration: ShapeDecoration(
+                  color: isLight(context)? Colors.grey.shade200.withOpacity(0.5) : Colors.grey.shade800.withOpacity(0.6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15)),
+                  ),
                 ),
-              ),
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: ListView(
-                physics: BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(15, 10, 15, 15),
-                children: <Widget>[
-                  SizedBox(
-                    height: 10,
-                  ),
-                  stack(
-                    Text(
-                      "Course",
-                      style: TextStyle(fontSize: 15, color: Colors.white),
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: ListView(
+                  physics: BouncingScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(15, 10, 15, 15),
+                  children: <Widget>[
+                    SizedBox(
+                      height: 10,
                     ),
-                    Text(
-                      todayClass.title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  stack(
-                    Text(
-                      "Time",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
+                    stack(
+                      Text(
+                        "Course",
+                        style: TextStyle(fontSize: 15, color: Colors.white),
+                      ),
+                      Text(
+                        todayClass.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                    Text(
-                      '${DateFormat.jm().format(start)} to ${DateFormat.jm().format(end)}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                      ),
+                    SizedBox(
+                      height: 8,
                     ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  stack(
-                    Text('Date',
+                    stack(
+                      Text(
+                        "Time",
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.white,
-                        )),
-                    Text(
-                      '${DateFormat.yMMMMEEEEd().format(start)}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        '${DateFormat.jm().format(start)} to ${DateFormat.jm().format(end)}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  stack(
-                    Text("Room no",
+                    SizedBox(
+                      height: 8,
+                    ),
+                    stack(
+                      Text('Date',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                          )),
+                      Text(
+                        '${DateFormat.yMMMMEEEEd().format(start)}',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    stack(
+                      Text("Room no",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                          )),
+                      Text(
+                        todayClass.roomNo,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    stack(
+                      Text("Code",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                          )),
+                      Text(
+                        todayClass.courseCode,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    stack(
+                      Text(
+                        faculties.length == 1 ? "Faculty" : "Faculties",
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.white,
-                        )),
-                    Text(
-                      todayClass.roomNo,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  stack(
-                    Text("Code",
+                      Text(
+                        faculties.join("\n"),
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 14,
                           color: Colors.white,
-                        )),
-                    Text(
-                      todayClass.courseCode,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
+                        ),
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  stack(
-                    Text(
-                      faculties.length == 1 ? "Faculty" : "Faculties",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      faculties.join("\n"),
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
           );

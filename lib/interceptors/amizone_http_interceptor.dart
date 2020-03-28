@@ -37,13 +37,20 @@ class AmizoneInterceptor extends InterceptorContract {
       navKey.currentState
           .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
     }
+    if (data.statusCode == 403) {
+      // JWT Expired
+      amizoneRepository.logout(navKey.currentContext);
+      navKey.currentState
+          .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+    }
     if (data.statusCode == 420) {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       sharedPreferences.setBool('appDown', true);
       sharedPreferences.setString("downMessage", data.body);
-      navKey.currentState
-          .pushNamedAndRemoveUntil('/down', (Route<dynamic> route) => false,arguments: data.body);
+      navKey.currentState.pushNamedAndRemoveUntil(
+          '/down', (Route<dynamic> route) => false,
+          arguments: data.body);
     }
     return data;
   }

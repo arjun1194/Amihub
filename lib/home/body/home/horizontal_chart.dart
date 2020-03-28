@@ -1,4 +1,3 @@
-
 import 'package:amihub/models/score.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
@@ -87,7 +86,7 @@ class HorizontalChartBuild extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(13),
                 child: Container(
-                  padding: EdgeInsets.fromLTRB(10,10,10,3),
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 3),
                   decoration: ShapeDecoration(
                       color: blackOrWhite(context),
                       shape: RoundedRectangleBorder(
@@ -135,20 +134,20 @@ class HorizontalChart extends StatefulWidget {
 }
 
 class _HorizontalChartState extends State<HorizontalChart> {
-
   Score _selectedScore;
 
-  _onSelectionChanged(SelectionModel model){
+  _onSelectionChanged(SelectionModel model) {
     final selectedDatum = model.selectedDatum;
     Score score;
 
-    if(selectedDatum.isNotEmpty){
+    if (selectedDatum.isNotEmpty) {
       score = selectedDatum.elementAt(0).datum as Score;
     }
 
-    setState(() {
-      _selectedScore = score;
-    });
+    if (mounted)
+      setState(() {
+        _selectedScore = score;
+      });
   }
 
   @override
@@ -174,19 +173,19 @@ class _HorizontalChartState extends State<HorizontalChart> {
             ],
             selectionModels: [
               SelectionModelConfig(
-                type: SelectionModelType.info,
-                changedListener: _onSelectionChanged
-              )
+                  type: SelectionModelType.info,
+                  changedListener: _onSelectionChanged)
             ],
             primaryMeasureAxis: new NumericAxisSpec(
-                tickProviderSpec: new StaticNumericTickProviderSpec(List.generate(
-                    10,
-                    (index) => TickSpec(index + 1,
-                        label: index % 2 != 0 ? '${index + 1}' : '',
-                        style: TextStyleSpec(
-                            color: isLight(context)
-                                ? Color.black
-                                : Color.white)))),
+                tickProviderSpec: new StaticNumericTickProviderSpec(
+                    List.generate(
+                        10,
+                        (index) => TickSpec(index + 1,
+                            label: index % 2 != 0 ? '${index + 1}' : '',
+                            style: TextStyleSpec(
+                                color: isLight(context)
+                                    ? Color.black
+                                    : Color.white)))),
                 showAxisLine: true),
             domainAxis: NumericAxisSpec(
                 tickProviderSpec: StaticNumericTickProviderSpec(List.generate(
@@ -200,18 +199,26 @@ class _HorizontalChartState extends State<HorizontalChart> {
             animate: false,
           ),
         ),
-        _selectedScore != null ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('CGPA :'),
-            SizedBox(width: 2,),
-            Text(_selectedScore.cgpa.toString()),
-            SizedBox(width: 13,),
-            Text('SGPA :'),
-            SizedBox(width: 2,),
-            Text(_selectedScore.sgpa.toString())
-          ],
-        ) : Container()
+        _selectedScore != null
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('CGPA :'),
+                  SizedBox(
+                    width: 2,
+                  ),
+                  Text(_selectedScore.cgpa.toString()),
+                  SizedBox(
+                    width: 13,
+                  ),
+                  Text('SGPA :'),
+                  SizedBox(
+                    width: 2,
+                  ),
+                  Text(_selectedScore.sgpa.toString())
+                ],
+              )
+            : Container()
       ],
     );
   }
