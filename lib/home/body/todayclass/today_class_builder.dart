@@ -14,7 +14,10 @@ import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TodayClassBuilder extends StatefulWidget {
@@ -89,15 +92,15 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    iconSize: 20,
-                    color: isLight(context)
-                        ? Colors.grey.shade700
-                        : Colors.white70,
-                    onPressed: () {
-                      changeState(selectDate.subtract(Duration(days: 1)));
-                    },
+                  Opacity(
+                    opacity: 0.7,
+                    child: IconButton(
+                      icon: Icon(FontAwesomeIcons.arrowLeft),
+                      color: isLight(context) ? Colors.black : Colors.white,
+                      onPressed: () {
+                        changeState(selectDate.subtract(Duration(days: 1)));
+                      },
+                    ),
                   ),
                   OutlineButton(
                     shape: StadiumBorder(),
@@ -136,15 +139,15 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
                           TextStyle(color: Colors.blue.shade700, fontSize: 15),
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.arrow_forward),
-                    iconSize: 20,
-                    color: isLight(context)
-                        ? Colors.grey.shade700
-                        : Colors.white70,
-                    onPressed: () {
-                      changeState(selectDate.add(Duration(days: 1)));
-                    },
+                  Opacity(
+                    opacity: 0.7,
+                    child: IconButton(
+                      icon: Icon(FontAwesomeIcons.arrowRight),
+                      color: isLight(context) ? Colors.black : Colors.white,
+                      onPressed: () {
+                        changeState(selectDate.add(Duration(days: 1)));
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -195,10 +198,11 @@ class _TodayClassBuilderState extends State<TodayClassBuilder> {
           case ConnectionState.done:
             if (snapshot.hasError) return ErrorPage(snapshot.error);
             // No Class check
-            if (snapshot.data.length == 1 && snapshot.data.elementAt(0).title == "") return NoClassToday();
+            if (snapshot.data.length == 1 &&
+                snapshot.data.elementAt(0).title == "") return NoClassToday();
             return Container(
                 child: TodayClassBuild(
-              snapshot: snapshot,
+              todayClasses: snapshot.data,
             ));
           case ConnectionState.none:
             break;
@@ -253,208 +257,231 @@ class NoClassToday extends StatelessWidget {
 }
 
 class TodayClassBuild extends StatefulWidget {
-  final AsyncSnapshot<List<TodayClass>> snapshot;
+  final List<TodayClass> todayClasses;
 
-  TodayClassBuild({this.snapshot});
+  TodayClassBuild({this.todayClasses});
 
   @override
   _TodayClassBuildState createState() => _TodayClassBuildState();
 }
 
 class _TodayClassBuildState extends State<TodayClassBuild> {
+  List<TodayClass> todayClass = [];
+
+  @override
+  void initState() {
+    super.initState();
+    todayClass = widget.todayClasses;
+    todayClass.removeWhere((f) => f.title == "");
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: EdgeInsets.only(left: 8, right: 8),
-      physics: NeverScrollableScrollPhysics(),
-      children: List.generate(widget.snapshot.data.length, (int index) {
-        TodayClass todayClass = widget.snapshot.data.elementAt(index);
-        if(todayClass.title == "")
-          return Container();
-        DateTime end =
-            DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.end);
-        DateTime start =
-            DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
-        return Column(
-          children: <Widget>[
-            ListTile(
-              onLongPress: () {
-                todayClassBottomSheet(todayClass);
-              },
-              title: Text(
-                todayClass.title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+    return AnimationLimiter(
+      child: ListView.builder(
+        padding: EdgeInsets.only(left: 8, right: 8),
+        itemCount: todayClass.length,
+        itemBuilder: (context, index) {
+          TodayClass todayClass = this.todayClass.elementAt(index);
+          DateTime end = Jiffy(todayClass.end, "MM/dd/yyyy h:mm:ss a").dateTime;
+          DateTime start =
+              Jiffy(todayClass.start, "MM/dd/yyyy h:mm:ss a").dateTime;
+          return AnimationConfiguration.staggeredList(
+            position: index,
+            duration: Duration(milliseconds: 400),
+            child: SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      onLongPress: () {
+                        todayClassBottomSheet(todayClass);
+                      },
+                      title: Text(
+                        todayClass.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                              '${DateFormat("hh:mm").format(start)} - ${DateFormat("hh:mm").format(end)}'),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 15),
+                            child: Text(todayClass.roomNo),
+                          )
+                        ],
+                      ),
+                      leading: Container(
+                        color: (todayClass.color == "#f00")
+                            ? Colors.red
+                            : (todayClass.color == "#4FCC4F")
+                                ? Colors.green
+                                : Colors.transparent,
+                        width: 8,
+                      ),
+                      contentPadding: EdgeInsets.only(left: 0, right: 8),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 15, right: 15),
+                      child: Divider(
+                        color: Colors.grey.shade600.withOpacity(0.3),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              subtitle: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                      '${DateFormat("hh:mm").format(start)} - ${DateFormat("hh:mm").format(end)}'),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: Text(todayClass.roomNo),
-                  )
-                ],
-              ),
-              leading: Container(
-                color: (todayClass.color == "#f00")
-                    ? Colors.red
-                    : (todayClass.color == "#4FCC4F")
-                        ? Colors.green
-                        : Colors.transparent,
-                width: 8,
-              ),
-              contentPadding: EdgeInsets.only(left: 0, right: 8),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 15, right: 15),
-              child: Divider(
-                color: Colors.grey.shade600.withOpacity(0.3),
-              ),
-            ),
-          ],
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 
   todayClassBottomSheet(TodayClass todayClass) {
+    String markText = (todayClass.color == "#f00")
+        ? "Absent"
+        : (todayClass.color == "#4FCC4F") ? "Present" : '';
     showCupertinoModalPopup(
         context: context,
         builder: (context) {
           List<String> faculties = todayClass.facultyName.split(",");
-          DateTime end =
-              DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.end);
+          DateTime end = Jiffy(todayClass.end, "MM/dd/yyyy h:mm:ss a").dateTime;
           DateTime start =
-              DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(todayClass.start);
+              Jiffy(todayClass.start, "MM/dd/yyyy h:mm:ss a").dateTime;
           return Material(
             color: Colors.transparent,
             elevation: 0,
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 5,sigmaY: 5),
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
               child: Container(
                 decoration: ShapeDecoration(
-                  color: isLight(context)? Colors.grey.shade200.withOpacity(0.5) : Colors.grey.shade800.withOpacity(0.6),
+                  color: isLight(context)
+                      ? Colors.grey.shade200.withOpacity(0.5)
+                      : Colors.grey.shade800.withOpacity(0.6),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(15),
                         topRight: Radius.circular(15)),
                   ),
                 ),
-                height: MediaQuery.of(context).size.height * 0.6,
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  padding: EdgeInsets.fromLTRB(15, 10, 15, 15),
+                height: MediaQuery.of(context).size.height * 0.55,
+                child: Stack(
                   children: <Widget>[
-                    SizedBox(
-                      height: 10,
-                    ),
-                    stack(
-                      Text(
-                        "Course",
-                        style: TextStyle(fontSize: 15, color: Colors.white),
-                      ),
-                      Text(
-                        todayClass.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text(
-                        "Time",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        '${DateFormat.jm().format(start)} to ${DateFormat.jm().format(end)}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
+                    Positioned(
+                      bottom: 4,
+                      right: 10,
+                      child: Opacity(
+                        opacity: 0.1,
+                        child: Text(
+                          markText,
+                          style: TextStyle(fontSize: 50),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text('Date',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                          )),
-                      Text(
-                        '${DateFormat.yMMMMEEEEd().format(start)}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
+                    ListView(
+                      physics: BouncingScrollPhysics(),
+                      padding: EdgeInsets.fromLTRB(15, 10, 15, 15),
+                      children: <Widget>[
+                        SizedBox(
+                          height: 10,
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text("Room no",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                          )),
-                      Text(
-                        todayClass.roomNo,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
+                        stack(
+                          Text(
+                            "Course",
+                            style: TextStyle(fontSize: 40),
+                          ),
+                          Text(
+                            todayClass.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 30),
+                          ),
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text("Code",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white,
-                          )),
-                      Text(
-                        todayClass.courseCode,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
+                        SizedBox(
+                          height: 8,
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    stack(
-                      Text(
-                        faculties.length == 1 ? "Faculty" : "Faculties",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
+                        stack(
+                          Text(
+                            "Time",
+                            style: TextStyle(
+                              fontSize: 30,
+                            ),
+                          ),
+                          Text(
+                            '${DateFormat.jm().format(start)} to ${DateFormat.jm().format(end)}',
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
                         ),
-                      ),
-                      Text(
-                        faculties.join("\n"),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
+                        SizedBox(
+                          height: 8,
                         ),
-                      ),
-                    )
+                        stack(
+                          Text('Date',
+                              style: TextStyle(
+                                fontSize: 30,
+                              )),
+                          Text(
+                            '${DateFormat.yMMMMEEEEd().format(start)}',
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        stack(
+                          Text("Room no",
+                              style: TextStyle(
+                                fontSize: 30,
+                              )),
+                          Text(
+                            todayClass.roomNo,
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        stack(
+                          Text("Code",
+                              style: TextStyle(
+                                fontSize: 30,
+                              )),
+                          Text(
+                            todayClass.courseCode,
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        stack(
+                          Text(
+                            faculties.length == 1 ? "Faculty" : "Faculties",
+                            style: TextStyle(
+                              fontSize: 30,
+                            ),
+                          ),
+                          Text(
+                            faculties.join("\n"),
+                            style: TextStyle(
+                              fontSize: 20,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -467,21 +494,14 @@ class _TodayClassBuildState extends State<TodayClassBuild> {
     return Stack(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 10, top: 18),
-          child: Container(
-            decoration: ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                color: Color(0xff474c5d)),
-            child: Padding(
-                padding: EdgeInsets.fromLTRB(18, 20, 18, 18), child: text1),
-          ),
+          padding: const EdgeInsets.only(top: 18),
+          child: Padding(
+              padding: EdgeInsets.fromLTRB(20, 20, 0, 0),
+              child: Opacity(opacity: 0.6, child: text1)),
         ),
-        Container(
-          decoration:
-              ShapeDecoration(shape: StadiumBorder(), color: Color(0xff696b60)),
-          child: Padding(padding: EdgeInsets.all(8.0), child: text2),
-        ),
+        Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Opacity(opacity: 0.2, child: text2)),
       ],
     );
   }

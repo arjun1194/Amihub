@@ -206,7 +206,7 @@ class DatabaseHelper {
     String sql = "SELECT * FROM course WHERE courseName LIKE '$courseName'";
     var response = await db.rawQuery(sql);
     List<Course> courses = response.map((c) => Course.fromJson(c)).toList();
-    return courses.first;
+    return courses.length != 0 ? courses.first : null;
   }
 
   Future<List<CourseAttendanceType>> getCourseType() async {

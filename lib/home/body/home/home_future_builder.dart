@@ -7,6 +7,7 @@ import 'package:amihub/models/today_class.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -206,6 +207,14 @@ class _TodayClassWidgetState extends State<TodayClassWidget> {
   @override
   void initState() {
     super.initState();
+//    widget.todayClasses
+//        .map((f) {
+//          print(f.start);
+//          return f;
+//        })
+//        .map((f) => Jiffy(f.start, "MM/dd/yyyy h:mm:ss a"))
+//        .forEach((f) => print(f.format('MMMM do yyyy, h:mm:ss a')));
+
     pageController = PageController(initialPage: 0);
     currentPage = pageController.initialPage;
     Future.delayed(Duration(milliseconds: 1000), () {
@@ -229,7 +238,7 @@ class _TodayClassWidgetState extends State<TodayClassWidget> {
     DateTime currentTime = DateTime.now();
 
     List<DateTime> classTimes = widget.todayClasses
-        .map((e) => DateFormat("MM/dd/yyyy HH:mm:ss aaa").parse(e.end))
+        .map((e) => Jiffy(e.end, "MM/dd/yyyy h:mm:ss a").dateTime)
         .toList();
 
     DateTime predictedTime;
@@ -239,8 +248,9 @@ class _TodayClassWidgetState extends State<TodayClassWidget> {
       });
     } catch (e) {}
     if (predictedTime == null) {
-      DateTime lastElementStart = DateFormat("MM/dd/yyyy HH:mm:ss aaa")
-          .parse(widget.todayClasses.last.start);
+      DateTime lastElementStart =
+          Jiffy(widget.todayClasses.last.start, "MM/dd/yyyy h:mm:ss a")
+              .dateTime;
       if (currentTime.isBefore(lastElementStart) &&
           currentTime.isAfter(classTimes.last))
         return classTimes.length - 1;

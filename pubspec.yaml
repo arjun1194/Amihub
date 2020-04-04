@@ -11,7 +11,7 @@ description: Attendance tracker for Amity University
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.0.22+6
+version: 0.0.3+7
 
 environment:
   sdk: ">=2.3.0 <3.0.0"
@@ -34,7 +34,10 @@ dependencies:
   sqflite:
   charts_flutter:
   url_launcher: ^5.4.1
+  jiffy: ^3.0.1
   font_awesome_flutter:
+  flutter_staggered_animations: ^0.1.2
+
 
   provider: ^3.1.0+1
   #stetho for chrome debug tools

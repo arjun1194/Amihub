@@ -9,6 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class DonutChartFutureBuilder extends StatelessWidget {
+  final Function(CourseAttendanceType) tapped;
+
+  DonutChartFutureBuilder(this.tapped);
+
   @override
   Widget build(BuildContext context) {
     int noOfCourseFound = 0;
@@ -27,7 +31,7 @@ class DonutChartFutureBuilder extends StatelessWidget {
             snapshot.data.forEach((f) => noOfCourseFound += f.noOfCourses);
             if (noOfCourseFound == 0) return noCourseFound(context);
             return DonutChartBuild(
-                snapshot.data, "#56CD93", "#ECA24D", "#FF5479");
+                snapshot.data, "#56CD93", "#ECA24D", "#FF5479", tapped);
         }
         return Text(''); // unreachable
       },
@@ -121,7 +125,7 @@ class _DonutChartShimmerState extends State<DonutChartShimmer>
     var width = MediaQuery.of(context).size.width;
 
     var series = [
-      charts.Series<CourseAttendance, dynamic>(
+      charts.Series<CourseAttendance, String>(
         id: 'attendance',
         domainFn: (CourseAttendance courseAttendance, _) =>
             courseAttendance.courseName,
@@ -199,16 +203,18 @@ class DonutChartBuild extends StatelessWidget {
   final String color1;
   final String color2;
   final String color3;
+  final Function(CourseAttendanceType) donutTapped;
 
-  DonutChartBuild(this.courses, this.color1, this.color2, this.color3);
+  DonutChartBuild(
+      this.courses, this.color1, this.color2, this.color3, this.donutTapped);
 
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     var backdropSelected = Provider.of<BackdropSelected>(context);
-    var series = [
-      charts.Series<CourseAttendanceType, dynamic>(
+    List<charts.Series<CourseAttendanceType, String>> series = [
+      charts.Series<CourseAttendanceType, String>(
         id: 'attendance',
         displayName: "sdsdd",
         domainFn: (CourseAttendanceType courseAttendance, _) =>
@@ -263,6 +269,7 @@ class DonutChartBuild extends StatelessWidget {
                   child: DonutChart(
                     seriesList: series,
                     animate: true,
+                    donutTapped: donutTapped,
                   ),
                 ),
                 Column(
@@ -319,8 +326,13 @@ class DonutChartBuild extends StatelessWidget {
 class DonutChart extends StatelessWidget {
   final List<charts.Series> seriesList;
   final bool animate;
+  final Function(CourseAttendanceType) donutTapped;
 
-  DonutChart({Key key, @required this.seriesList, @required this.animate});
+  DonutChart(
+      {Key key,
+      @required this.seriesList,
+      @required this.animate,
+      this.donutTapped});
 
   @override
   Widget build(BuildContext context) {
@@ -328,11 +340,28 @@ class DonutChart extends StatelessWidget {
     return charts.PieChart(
       seriesList,
       animate: animate,
+      selectionModels: [
+        charts.SelectionModelConfig(
+            type: charts.SelectionModelType.info,
+            changedListener: _onSelectionChanged)
+      ],
       animationDuration: Duration(milliseconds: 500),
       defaultRenderer: new charts.ArcRendererConfig(
           arcWidth: width >= 350 ? 40 : 30,
           arcRendererDecorators: [new charts.ArcLabelDecorator()]),
     );
+  }
+
+  _onSelectionChanged(charts.SelectionModel model) {
+    CourseAttendanceType courseAttendanceType;
+
+    final selectedDatum = model.selectedDatum;
+    if (selectedDatum.isNotEmpty) {
+      selectedDatum.forEach((f) {
+        courseAttendanceType = f.datum as CourseAttendanceType;
+      });
+    }
+    donutTapped(courseAttendanceType);
   }
 }
 

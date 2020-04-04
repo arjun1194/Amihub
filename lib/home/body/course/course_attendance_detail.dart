@@ -8,6 +8,7 @@ import 'package:amihub/models/course.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
 
 class CourseAttendanceDetail extends StatefulWidget {
@@ -56,113 +57,124 @@ class _CourseAttendanceDetailState extends State<CourseAttendanceDetail> {
 
   attendanceBuild(List<Attendance> attendances) {
     ScrollController scrollController = ScrollController();
-    return DraggableScrollbar.semicircle(
-      controller: scrollController,
-      backgroundColor: Colors.blueGrey.shade700,
-      labelTextBuilder: (offset) {
-        int currentItem = scrollController.hasClients
-            ? (scrollController.offset /
-                    scrollController.position.maxScrollExtent *
-                    attendances.length)
-                .floor()
-            : 0;
-        if (currentItem >= attendances.length)
-          currentItem = attendances.length - 1;
-        DateTime dateTime = DateFormat('dd/MM/yyyy')
-            .parse(attendances.elementAt(currentItem).date);
-
-        return Text(DateFormat.MMMd().format(dateTime),
-        style: TextStyle(color: Colors.white),);
-      },
-      scrollbarTimeToFade: Duration(seconds: 2),
-      labelConstraints: BoxConstraints.tightFor(width: 80.0, height: 30.0),
-      heightScrollThumb: 45,
-      child: ListView.builder(
+    return AnimationLimiter(
+      child: DraggableScrollbar.semicircle(
         controller: scrollController,
-        physics: BouncingScrollPhysics(),
-        padding: EdgeInsets.all(10),
-        itemCount: attendances.length,
-        itemBuilder: (context, index) {
-          Attendance attendance = attendances.elementAt(index);
-          DateTime dateTime = DateFormat('dd/MM/yyyy').parse(attendance.date);
-          int total = attendance.present + attendance.absent;
-          return Container(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  width: double.infinity,
-                  decoration: ShapeDecoration(
-                      shape: StadiumBorder(
-                          side: BorderSide(
-                              color: Color(0xffadc0ca), width: 0.5))),
-                  child: InkWell(
-                    onTap: () {
-                      CustomPageRoute.pushPage(
-                          context: context,
-                          child: Scaffold(
-                            appBar: CustomAppbar('Classes'),
-                            body: TodayClassBuilder(
-                              isHeader: false,
-                              date: dateTime,
+        backgroundColor: Colors.blueGrey.shade700,
+        labelTextBuilder: (offset) {
+          int currentItem = scrollController.hasClients
+              ? (scrollController.offset /
+                      scrollController.position.maxScrollExtent *
+                      attendances.length)
+                  .floor()
+              : 0;
+          if (currentItem >= attendances.length)
+            currentItem = attendances.length - 1;
+          DateTime dateTime = DateFormat('dd/MM/yyyy')
+              .parse(attendances.elementAt(currentItem).date);
+
+          return Text(DateFormat.MMMd().format(dateTime),
+          style: TextStyle(color: Colors.white),);
+        },
+        scrollbarTimeToFade: Duration(seconds: 2),
+        labelConstraints: BoxConstraints.tightFor(width: 80.0, height: 30.0),
+        heightScrollThumb: 45,
+        child: ListView.builder(
+          controller: scrollController,
+          physics: BouncingScrollPhysics(),
+          padding: EdgeInsets.all(10),
+          itemCount: attendances.length,
+          itemBuilder: (context, index) {
+            Attendance attendance = attendances.elementAt(index);
+            DateTime dateTime = DateFormat('dd/MM/yyyy').parse(attendance.date);
+            int total = attendance.present + attendance.absent;
+            return AnimationConfiguration.staggeredList(
+              duration: Duration(milliseconds: 400),
+              position: index,
+              child: SlideAnimation(
+                verticalOffset: 50,
+                child: FadeInAnimation(
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          decoration: ShapeDecoration(
+                              shape: StadiumBorder(
+                                  side: BorderSide(
+                                      color: Color(0xffadc0ca), width: 0.5))),
+                          child: InkWell(
+                            onTap: () {
+                              CustomPageRoute.pushPage(
+                                  context: context,
+                                  child: Scaffold(
+                                    appBar: CustomAppbar('Classes'),
+                                    body: TodayClassBuilder(
+                                      isHeader: false,
+                                      date: dateTime,
+                                    ),
+                                  ));
+                            },
+                            borderRadius: BorderRadius.circular(30),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                  child:
+                                      Text(DateFormat.yMMMMEEEEd().format(dateTime))),
                             ),
-                          ));
-                    },
-                    borderRadius: BorderRadius.circular(30),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                          child:
-                              Text(DateFormat.yMMMMEEEEd().format(dateTime))),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10)),
+                                  side:
+                                      BorderSide(color: Color(0xffadc0ca), width: 0.5)),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 5, bottom: 5),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    'Attendance ${attendance.present}/$total',
+                                    style: TextStyle(
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Color(0xffdbdbdf)
+                                            : Color(0xff2e4362)),
+                                  ),
+                                  SizedBox(
+                                    height: 3,
+                                  ),
+                                  attendance.remarks != ""
+                                      ? Text(
+                                          attendance.remarks,
+                                          style: TextStyle(fontWeight: FontWeight.bold),
+                                        )
+                                      : Container()
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(10),
-                              bottomLeft: Radius.circular(10)),
-                          side:
-                              BorderSide(color: Color(0xffadc0ca), width: 0.5)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 5, bottom: 5),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'Attendance ${attendance.present}/$total',
-                            style: TextStyle(
-                                color: Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Color(0xffdbdbdf)
-                                    : Color(0xff2e4362)),
-                          ),
-                          SizedBox(
-                            height: 3,
-                          ),
-                          attendance.remarks != ""
-                              ? Text(
-                                  attendance.remarks,
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )
-                              : Container()
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          );
-        },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -215,65 +227,76 @@ class _AttendanceShimmerState extends State<AttendanceShimmer>
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: ListView.builder(
-        itemCount: 7,
-        itemBuilder: (context, index) {
-          return Container(
-            padding: EdgeInsets.all(8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                    width: double.infinity,
-                    height: 35,
-                    decoration: ShapeDecoration(
-                        shape: StadiumBorder(
-                            side: BorderSide(
-                                color: Color(0xffadc0ca), width: 0.5))),
-                    child: Center(
-                      child: Container(
-                        decoration: ShapeDecoration(
-                          color: animation.value,
-                          shape: StadiumBorder()
-                        ),
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        height: 10,
-                      ),
-                    )),
-                Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20),
+      child: AnimationLimiter(
+        child: ListView.builder(
+          itemCount: 7,
+          itemBuilder: (context, index) {
+            return AnimationConfiguration.staggeredList(
+              position: index,
+              duration: Duration(milliseconds: 400),
+              child: SlideAnimation(
+                verticalOffset: 50,
+                child: FadeInAnimation(
                   child: Container(
-                    width: double.infinity,
-                    height: 34,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(10),
-                              bottomLeft: Radius.circular(10)),
-                          side:
-                              BorderSide(color: Color(0xffadc0ca), width: 0.5)),
-                    ),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 5, bottom: 5),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 0.33,
-                          height: 9,
-                          decoration: ShapeDecoration(
-                              color: animation.value,
-                              shape: StadiumBorder()
+                    padding: EdgeInsets.all(8),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                            width: double.infinity,
+                            height: 35,
+                            decoration: ShapeDecoration(
+                                shape: StadiumBorder(
+                                    side: BorderSide(
+                                        color: Color(0xffadc0ca), width: 0.5))),
+                            child: Center(
+                              child: Container(
+                                decoration: ShapeDecoration(
+                                  color: animation.value,
+                                  shape: StadiumBorder()
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                height: 10,
+                              ),
+                            )),
+                        Padding(
+                          padding: EdgeInsets.only(left: 20, right: 20),
+                          child: Container(
+                            width: double.infinity,
+                            height: 34,
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(10),
+                                      bottomLeft: Radius.circular(10)),
+                                  side:
+                                      BorderSide(color: Color(0xffadc0ca), width: 0.5)),
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 5, bottom: 5),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width * 0.33,
+                                  height: 9,
+                                  decoration: ShapeDecoration(
+                                      color: animation.value,
+                                      shape: StadiumBorder()
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        )
+                      ],
                     ),
                   ),
-                )
-              ],
-            ),
-          );
-        },
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

@@ -19,6 +19,10 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeResults extends StatefulWidget {
+  final Score score;
+
+  const HomeResults({Key key, this.score}) : super(key: key);
+
   @override
   _HomeResultsState createState() => _HomeResultsState();
 }
@@ -36,11 +40,13 @@ class _HomeResultsState extends State<HomeResults> {
   RefreshRepository refreshRepository = RefreshRepository();
 
   openSharedPref() async {
+    if (widget.score != null) return Future.value(widget.score.semester);
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     return userSemester = sharedPreferences.getInt('semester');
   }
 
   Future<Score> getSemScore(int sem) async {
+    if (widget.score != null) return Future.value(widget.score);
     return await amizoneRepository.fetchScoreWithSemester(sem);
   }
 
@@ -87,7 +93,7 @@ class _HomeResultsState extends State<HomeResults> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    PageHeader('Results'),
+                    widget.score == null ? PageHeader('Results') : Container(),
                     SizedBox(
                       height: 10,
                     ),
@@ -139,7 +145,8 @@ class _HomeResultsState extends State<HomeResults> {
                             case ConnectionState.waiting:
                               return Loader();
                             case ConnectionState.done:
-                              if (snapshot.hasError) return ErrorPage(snapshot.error);
+                              if (snapshot.hasError)
+                                return ErrorPage(snapshot.error);
                               if (snapshot.data.isEmpty ||
                                   snapshot.data.first.courseTitle == "") {
                                 return ResultNotFound();

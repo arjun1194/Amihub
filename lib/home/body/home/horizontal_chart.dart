@@ -1,3 +1,4 @@
+import 'package:amihub/home/body/faculty/faculty_detail.dart';
 import 'package:amihub/models/score.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
@@ -6,6 +7,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HorizontalChartBuilder extends StatefulWidget {
+  final Function(Score) tapped;
+
+  const HorizontalChartBuilder({Key key, this.tapped}) : super(key: key);
   @override
   _HorizontalChartBuilderState createState() => _HorizontalChartBuilderState();
 }
@@ -24,7 +28,7 @@ class _HorizontalChartBuilderState extends State<HorizontalChartBuilder> {
             return HorizontalChartShimmer();
           case ConnectionState.done:
             if (snapshot.hasError) return Text('Error: ${snapshot.error}');
-            return HorizontalChartBuild(snapshot.data);
+            return HorizontalChartBuild(snapshot.data,widget.tapped);
         }
         return Text(''); // unreachable
       },
@@ -69,8 +73,8 @@ class HorizontalChartShimmer extends StatelessWidget {
 
 class HorizontalChartBuild extends StatelessWidget {
   final List<Score> score;
-
-  HorizontalChartBuild(this.score);
+  final Function(Score) tapped;
+  HorizontalChartBuild(this.score,this.tapped);
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +99,7 @@ class HorizontalChartBuild extends StatelessWidget {
                             width: 0.3,
                             color: Colors.grey.shade400,
                           ))),
-                  child: HorizontalChart(score: score),
+                  child: HorizontalChart(score: score,tapped: tapped,),
                 ),
               ),
             ),
@@ -108,8 +112,9 @@ class HorizontalChartBuild extends StatelessWidget {
 class HorizontalChart extends StatefulWidget {
   final List<Score> score;
   List<Series<Score, int>> seriesList;
+  final Function(Score) tapped;
 
-  HorizontalChart({Key key, @required this.score}) {
+  HorizontalChart({Key key, @required this.score, this.tapped}) {
     this.seriesList = [
       Series<Score, int>(
         id: "cgpa",
@@ -134,92 +139,54 @@ class HorizontalChart extends StatefulWidget {
 }
 
 class _HorizontalChartState extends State<HorizontalChart> {
-  Score _selectedScore;
-
   _onSelectionChanged(SelectionModel model) {
     final selectedDatum = model.selectedDatum;
     Score score;
 
     if (selectedDatum.isNotEmpty) {
       score = selectedDatum.elementAt(0).datum as Score;
+      widget.tapped(score);
     }
 
-    if (mounted)
-      setState(() {
-        _selectedScore = score;
-      });
   }
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.height;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          height: 0.24 * height,
-          width: width * 0.95,
-          child: LineChart(
-            widget.seriesList,
-            defaultRenderer:
-                LineRendererConfig(includeLine: true, includePoints: true),
-            behaviors: [
-              SeriesLegend(
-                position: BehaviorPosition.inside,
-                insideJustification: InsideJustification.topEnd,
-              ),
-            ],
-            selectionModels: [
-              SelectionModelConfig(
-                  type: SelectionModelType.info,
-                  changedListener: _onSelectionChanged)
-            ],
-            primaryMeasureAxis: new NumericAxisSpec(
-                tickProviderSpec: new StaticNumericTickProviderSpec(
-                    List.generate(
-                        10,
-                        (index) => TickSpec(index + 1,
-                            label: index % 2 != 0 ? '${index + 1}' : '',
-                            style: TextStyleSpec(
-                                color: isLight(context)
-                                    ? Color.black
-                                    : Color.white)))),
-                showAxisLine: true),
-            domainAxis: NumericAxisSpec(
-                tickProviderSpec: StaticNumericTickProviderSpec(List.generate(
-                    widget.score.length,
-                    (index) => TickSpec(index + 1,
-                        label: '${index + 1}',
-                        style: TextStyleSpec(
-                            color: isLight(context)
-                                ? Color.black
-                                : Color.white))))),
-            animate: false,
+    return Container(
+      padding: EdgeInsets.only(bottom: 10),
+      child: LineChart(
+        widget.seriesList,
+        defaultRenderer:
+            LineRendererConfig(includeLine: true, includePoints: true),
+        behaviors: [
+          SeriesLegend(
+            position: BehaviorPosition.inside,
+            insideJustification: InsideJustification.topEnd,
           ),
-        ),
-        _selectedScore != null
-            ? Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('CGPA :'),
-                  SizedBox(
-                    width: 2,
-                  ),
-                  Text(_selectedScore.cgpa.toString()),
-                  SizedBox(
-                    width: 13,
-                  ),
-                  Text('SGPA :'),
-                  SizedBox(
-                    width: 2,
-                  ),
-                  Text(_selectedScore.sgpa.toString())
-                ],
-              )
-            : Container()
-      ],
+        ],
+        selectionModels: [
+          SelectionModelConfig(
+              type: SelectionModelType.info,
+              changedListener: _onSelectionChanged)
+        ],
+        primaryMeasureAxis: new NumericAxisSpec(
+            tickProviderSpec: new StaticNumericTickProviderSpec(List.generate(
+                10,
+                (index) => TickSpec(index + 1,
+                    label: index % 2 != 0 ? '${index + 1}' : '',
+                    style: TextStyleSpec(
+                        color: isLight(context) ? Color.black : Color.white)))),
+            showAxisLine: true),
+        domainAxis: NumericAxisSpec(
+            tickProviderSpec: StaticNumericTickProviderSpec(List.generate(
+                widget.score.length,
+                (index) => TickSpec(index + 1,
+                    label: '${index + 1}',
+                    style: TextStyleSpec(
+                        color:
+                            isLight(context) ? Color.black : Color.white))))),
+        animate: true,
+      ),
     );
   }
 }

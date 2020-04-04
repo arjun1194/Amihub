@@ -91,7 +91,7 @@ class _TodayClassCardState extends State<TodayClassCard> {
                           Icon(
                             Icons.person,
                             color: Colors.white,
-                            size: 25,
+                            size: 22,
                           ),
                           SizedBox(
                             width: 5,
@@ -110,7 +110,7 @@ class _TodayClassCardState extends State<TodayClassCard> {
                           Icon(
                             Icons.timer,
                             color: Colors.white,
-                            size: 25,
+                            size: 22,
                           ),
                           SizedBox(
                             width: 5,
@@ -128,7 +128,7 @@ class _TodayClassCardState extends State<TodayClassCard> {
                               Icon(
                                 Icons.account_balance,
                                 color: Colors.white,
-                                size: 25,
+                                size: 22,
                               ),
                               SizedBox(
                                 width: 5.0,
@@ -144,7 +144,7 @@ class _TodayClassCardState extends State<TodayClassCard> {
                             children: <Widget>[
                               Icon(
                                 Icons.description,
-                                size: 25,
+                                size: 22,
                                 color: Colors.white,
                               ),
                               SizedBox(
@@ -163,13 +163,13 @@ class _TodayClassCardState extends State<TodayClassCard> {
                                   ? Icon(
                                       Icons.check_circle,
                                       color: Colors.white,
-                                      size: 25,
+                                      size: 22,
                                     )
                                   : (attendanceState == 2)
                                       ? Icon(
                                           Icons.block,
                                           color: Colors.white,
-                                          size: 25,
+                                          size: 22,
                                         )
                                       : Icon(Icons.home,
                                           color: Colors.transparent),

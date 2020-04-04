@@ -11,6 +11,7 @@ import 'package:amihub/models/faculty.dart';
 import 'package:amihub/repository/amizone_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class MyFaculty extends StatelessWidget {
   final AmizoneRepository amizoneRepository = AmizoneRepository();
@@ -61,90 +62,105 @@ class FacultyBuild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: BouncingScrollPhysics(),
-      padding: EdgeInsets.all(8),
-      scrollDirection: Axis.vertical,
-      itemCount: faculties.length,
-      itemBuilder: (context, index) {
-        Faculty faculty = faculties.elementAt(index);
-        return Container(
-          child: faculty.facultyImage != null
-              ? Container(
-                  height: 110,
-                  child: Stack(
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          faculty.facultyImage,
-                        ),
-                        radius: 40,
-                      ),
-                      Positioned(
-                        top: 70,
-                        left: 70,
-                        child: InkWell(
-                          onTap: () {
-                            CustomPageRoute.pushPage(
-                                context: context,
-                                child: FacultyDetail(
-                                  facultyCode: faculty.facultyCode,
-                                  facultyName: faculty.facultyName,
-                                ));
-                          },
-                          child: Container(
-                            decoration: ShapeDecoration(
-                                shape: StadiumBorder(),
-                                color: isLight(context)
-                                    ? Color(0xffe6f8f9)
-                                    : Color(0xff3c3d47)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(faculty.facultyName),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 20,
-                        left: 105,
-                        child: InkWell(
-                          onTap: () async {
-                            AmizoneRepository amizoneRepo = AmizoneRepository();
-                            Course course = await amizoneRepo
-                                .fetchCourseWithCourseName(faculty.courseName);
-                            CustomPageRoute.pushPage(
-                                context: context,
-                                child: CoursePage(
-                                  course: course,
-                                ));
-                          },
-                          child: Container(
-                            width: 200,
-                            decoration: ShapeDecoration(
-                              shape: StadiumBorder(),
-                              color: Color(0xff35495e),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text(
-                                faculty.courseName,
-                                maxLines: 1,
-                                style: TextStyle(color: Colors.white),
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
+    faculties.removeWhere((f) => f.facultyName == "");
+    return AnimationLimiter(
+      child: ListView.builder(
+        shrinkWrap: true,
+        physics: BouncingScrollPhysics(),
+        padding: EdgeInsets.all(8),
+        scrollDirection: Axis.vertical,
+        itemCount: faculties.length,
+        itemBuilder: (context, index) {
+          Faculty faculty = faculties.elementAt(index);
+          return AnimationConfiguration.staggeredList(
+            position: index,
+            duration: Duration(milliseconds: 400),
+            child: SlideAnimation(
+              verticalOffset: 50,
+              child: FadeInAnimation(
+                child: Container(
+                  child: faculty.facultyImage != null
+                      ? Container(
+                          height: 110,
+                          child: Stack(
+                            children: <Widget>[
+                              CircleAvatar(
+                                backgroundColor: isLight(context)
+                                    ? Colors.grey.shade200
+                                    : Colors.grey.shade800,
+                                backgroundImage: NetworkImage(
+                                  faculty.facultyImage,
+                                ),
+                                radius: 40,
                               ),
-                            ),
+                              Positioned(
+                                top: 70,
+                                left: 70,
+                                child: InkWell(
+                                  onTap: () {
+                                    CustomPageRoute.pushPage(
+                                        context: context,
+                                        child: FacultyDetail(
+                                          facultyCode: faculty.facultyCode,
+                                          facultyName: faculty.facultyName,
+                                        ));
+                                  },
+                                  child: Container(
+                                    decoration: ShapeDecoration(
+                                        shape: StadiumBorder(),
+                                        color: isLight(context)
+                                            ? Color(0xffe6f8f9)
+                                            : Color(0xff3c3d47)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(faculty.facultyName),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 20,
+                                left: 105,
+                                child: InkWell(
+                                  onTap: () async {
+                                    AmizoneRepository amizoneRepo = AmizoneRepository();
+                                    Course course = await amizoneRepo
+                                        .fetchCourseWithCourseName(faculty.courseName);
+                                    CustomPageRoute.pushPage(
+                                        context: context,
+                                        child: CoursePage(
+                                          course: course,
+                                        ));
+                                  },
+                                  child: Container(
+                                    width: 200,
+                                    decoration: ShapeDecoration(
+                                      shape: StadiumBorder(),
+                                      color: Color(0xff35495e),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        faculty.courseName,
+                                        maxLines: 1,
+                                        style: TextStyle(color: Colors.white),
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              : Container(),
-        );
-      },
+                        )
+                      : Container(),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

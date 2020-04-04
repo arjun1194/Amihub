@@ -11,6 +11,7 @@ import 'package:amihub/repository/refresh_repository.dart';
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyCourseBuilder extends StatefulWidget {
@@ -180,7 +181,7 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
                           style: TextStyle(fontSize: 28),
                         ),
                       )
-                    : CourseBuild(snapshot: snapshot, semester: semester);
+                    : CourseBuild(courses: snapshot.data, semester: semester);
           case ConnectionState.none:
             break;
           case ConnectionState.active:
@@ -193,11 +194,10 @@ class _MyCourseBuilderState extends State<MyCourseBuilder> {
 }
 
 class CourseBuild extends StatefulWidget {
-  final AsyncSnapshot<List<Course>> snapshot;
-
+  final List<Course> courses;
   final int semester;
 
-  CourseBuild({this.snapshot, this.semester});
+  CourseBuild({this.courses, this.semester});
 
   @override
   _CourseBuildState createState() => _CourseBuildState();
@@ -206,65 +206,74 @@ class CourseBuild extends StatefulWidget {
 class _CourseBuildState extends State<CourseBuild> {
   @override
   Widget build(BuildContext context) {
-    return ListView(
-        physics: AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.all(10),
-        children: List<Widget>.generate(
-          widget.snapshot.data.length,
-          (int index) {
-            Course course = widget.snapshot.data.elementAt(index);
+    return AnimationLimiter(
+      child: ListView.builder(
+          padding: EdgeInsets.all(10),
+          itemCount: widget.courses.length,
+          itemBuilder: (context,index){
+            Course course = widget.courses.elementAt(index);
             var percentage = double.tryParse("${course.percentage}");
-            return Column(
-              children: <Widget>[
-                ListTile(
-                  contentPadding: EdgeInsets.only(
-                    left: 0,
-                    right: 5,
-                  ),
-                  title: Text(
-                    course.courseName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: Text(course.courseCode),
-                  leading: Container(
-                    color: (percentage < 75.00)
-                        ? Colors.red
-                        : (percentage >= 75.00 && percentage < 85.00)
-                            ? Colors.yellow
-                            : Colors.green,
-                    width: 8,
-                  ),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            return AnimationConfiguration.staggeredList(
+              position: index,
+              duration: Duration(milliseconds: 400),
+              child: SlideAnimation(
+                verticalOffset: 50,
+                child: FadeInAnimation(
+                  child: Column(
                     children: <Widget>[
-                      Text("${course.present}/${course.total} "),
-                      !percentage.isNaN
-                          ? Text("(" + percentage.toStringAsFixed(2) + ")",
-                              style: TextStyle(fontSize: 12))
-                          : Text('')
+                      ListTile(
+                        contentPadding: EdgeInsets.only(
+                          left: 0,
+                          right: 5,
+                        ),
+                        title: Text(
+                          course.courseName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(course.courseCode),
+                        leading: Container(
+                          color: (percentage < 75.00)
+                              ? Colors.red
+                              : (percentage >= 75.00 && percentage < 85.00)
+                              ? Colors.yellow
+                              : Colors.green,
+                          width: 8,
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text("${course.present}/${course.total} "),
+                            !percentage.isNaN
+                                ? Text("(" + percentage.toStringAsFixed(2) + ")",
+                                style: TextStyle(fontSize: 12))
+                                : Text('')
+                          ],
+                        ),
+                        onTap: () {
+                          CustomPageRoute.pushPage(
+                              context: context, child: CoursePage(course: course));
+                        },
+                      ),
+                      Divider(
+                        color: Colors.grey.shade600.withOpacity(0.4),
+                      ),
+                      (index == widget.courses.length - 1)
+                          ? Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(
+                              child: Text("Tap a Course for more details",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey))))
+                          : Container()
                     ],
                   ),
-                  onTap: () {
-                    CustomPageRoute.pushPage(
-                        context: context, child: CoursePage(course: course));
-                  },
                 ),
-                Divider(
-                  color: Colors.grey.shade600.withOpacity(0.4),
-                ),
-                (index == widget.snapshot.data.length - 1)
-                    ? Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Center(
-                            child: Text("Tap a Course for more details",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey))))
-                    : Container()
-              ],
+              ),
             );
           },
-        ));
+          ),
+    );
   }
 }

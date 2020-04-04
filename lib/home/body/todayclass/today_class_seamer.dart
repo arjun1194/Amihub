@@ -1,5 +1,6 @@
 import 'package:amihub/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class TodayClassShimmer extends StatefulWidget {
   
@@ -50,39 +51,50 @@ class _TodayClassShimmerState extends State<TodayClassShimmer>
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
 
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      shrinkWrap: true,
-      itemCount: 6,
-      physics: ClampingScrollPhysics(),
-      itemBuilder: (context, int index) {
-        return Column(
-          children: <Widget>[
-            ListTile(
-              title: Padding(
-                padding: const EdgeInsets.only(right: 40),
-                child: Container(
-                  color: animation.value,
-                  width: width * 0.5,
-                  height: 20,
+    return AnimationLimiter(
+      child: ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: 6,
+        physics: ClampingScrollPhysics(),
+        itemBuilder: (context, int index) {
+          return AnimationConfiguration.staggeredList(
+            position: index,
+            duration: Duration(milliseconds: 400),
+            child: SlideAnimation(
+              verticalOffset: 50,
+              child: FadeInAnimation(
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      title: Padding(
+                        padding: const EdgeInsets.only(right: 40),
+                        child: Container(
+                          color: animation.value,
+                          width: width * 0.5,
+                          height: 20,
+                        ),
+                      ),
+                      subtitle: Padding(
+                        padding: EdgeInsets.only(left: 0, right: 0.6 * width, top: 8),
+                        child: Container(color: animation.value, height: 10),
+                      ),
+                      contentPadding: EdgeInsets.only(left: 0),
+                      leading: Container(
+                        decoration: BoxDecoration(
+                          color: animation.value,
+                        ),
+                        width: 8,
+                      ),
+                    ),
+                    Divider(),
+                  ],
                 ),
-              ),
-              subtitle: Padding(
-                padding: EdgeInsets.only(left: 0, right: 0.6 * width, top: 8),
-                child: Container(color: animation.value, height: 10),
-              ),
-              contentPadding: EdgeInsets.only(left: 0),
-              leading: Container(
-                decoration: BoxDecoration(
-                  color: animation.value,
-                ),
-                width: 8,
               ),
             ),
-            Divider(),
-          ],
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

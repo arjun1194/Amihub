@@ -71,6 +71,7 @@ class _CoursePageState extends State<CoursePage> {
         ),
       ),
       body: ListView(
+        physics: BouncingScrollPhysics(),
         children: <Widget>[
           SizedBox(
             height: 10,
@@ -91,8 +92,7 @@ class _CoursePageState extends State<CoursePage> {
                   child: Text(
                     'Attendance detail',
                     style: TextStyle(
-                        color:
-                            isLight(context) ? Colors.black : Colors.white),
+                        color: isLight(context) ? Colors.black : Colors.white),
                   ),
                   onPressed: semester == widget.course.semester
                       ? () {
@@ -222,8 +222,8 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
         if (value.floor() == 0)
           text = "Don't skip any classes to maintain $percentageSliderValue%";
         else
-        text =
-            "You can skip ${value.floor()} ${value.floor() == 1 ? "class" : "classes"} and maintain $percentageSliderValue%";
+          text =
+              "You can skip ${value.floor()} ${value.floor() == 1 ? "class" : "classes"} and maintain $percentageSliderValue%";
       } else {
         double percent = percentageSliderValue * 0.01;
         double value = ((percent * totalClasses) - present) / (1 - percent);
@@ -272,7 +272,7 @@ class _AttendanceCalculatorState extends State<AttendanceCalculator> {
                     child: Text('Set target percentage'),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 4,right: 4),
+                    padding: const EdgeInsets.only(left: 4, right: 4),
                     child: Slider(
                       divisions: 4,
                       max: 95.0,
@@ -390,6 +390,12 @@ class CourseInformation extends StatelessWidget {
                                                                           .name));
                                                         },
                                                         child: CircleAvatar(
+                                                          backgroundColor:
+                                                              isLight(context)
+                                                                  ? Colors.grey
+                                                                      .shade200
+                                                                  : Colors.grey
+                                                                      .shade800,
                                                           backgroundImage:
                                                               NetworkImage(
                                                             faculty.photo,
@@ -529,7 +535,10 @@ class CourseInformation extends StatelessWidget {
                         SizedBox(
                           height: 5,
                         ),
-                        Reviews(contentId: course.courseCode,isCourse: true,)
+                        Reviews(
+                          contentId: course.courseCode,
+                          isCourse: true,
+                        )
                       ],
                     );
         }
