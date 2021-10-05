@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # amihub
 
 A new Flutter project.
